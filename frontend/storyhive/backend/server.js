@@ -13,6 +13,12 @@ app.use(express.static(buildPath));
 app.use(express.json());
 app.use(cors());
 
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true) // allow any origin
+    .AllowCredentials()); // allow credentials
+
 //create ssh object that will log into our ec2
 const ssh = new NodeSSH()
 app.get('/clicked', (req, res) => {
