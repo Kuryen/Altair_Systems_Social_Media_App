@@ -12,7 +12,6 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 app.use(express.static(buildPath));
 app.use(express.json());
 app.use(cors({ origin: true, credentials: true }));
-
 //create ssh object that will log into our ec2
 const ssh = new NodeSSH()
 app.get('/clicked', (req, res) => {
