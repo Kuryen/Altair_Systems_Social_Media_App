@@ -17,7 +17,7 @@ root.render(
 
       //make a GET request to /clicked endpoint
       try{
-        fetch('http://localhost:5000/clicked', {method: 'GET'})
+        fetch('http://localhost:10000/clicked', {method: 'GET'})
         .then(response => response.text())
         .then(data => {
           //change the text in the <p> when we get a response from the backend

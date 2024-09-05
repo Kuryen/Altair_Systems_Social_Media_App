@@ -1,7 +1,7 @@
 //adding all of our dependencies
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 const {NodeSSH} = require('node-ssh');
 var cors = require('cors');
 const path = require('path');
