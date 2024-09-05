@@ -2,11 +2,16 @@
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 5000;
-const {NodeSSH} = require('node-ssh')
-var cors = require('cors')
-const path = require('path')
+const {NodeSSH} = require('node-ssh');
+var cors = require('cors');
+const path = require('path');
+
+const buildPath = path.join(__dirname, '../build');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-app.use(cors())
+
+app.use(express.static(buildPath));
+app.use(express.json());
+app.use(cors());
 
 //create ssh object that will log into our ec2
 const ssh = new NodeSSH()
@@ -22,14 +27,18 @@ app.get('/clicked', (req, res) => {
         ssh.execCommand("mongo --quiet --eval 'db.user.find({})'").then(function (result) {
             //store the output in a const called data and send it back to the frontend
             const data = result.stdout;
-            res.send(data)
+            res.send(data);
           });
       });
   });
 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(buildPath, 'index.html'));
+})
+
 app.listen(PORT, (error) =>{
     if(!error)
-        console.log("Server is Successfully Running, and App is listening on port "+ PORT)
+        console.log("Server is Successfully Running, and App is listening on port "+ PORT);
     else 
         console.log("Error occurred, server can't start", error);
     }
