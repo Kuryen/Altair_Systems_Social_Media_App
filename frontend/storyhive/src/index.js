@@ -16,25 +16,17 @@ root.render(
       text.textContent = "waiting...";
 
       //make a GET request to /clicked endpoint
-      try{
-        fetch('http://localhost:10000/clicked', {method: 'GET'})
-        .then(response => response.text())
-        .then(data => {
-          //change the text in the <p> when we get a response from the backend
-          text.textContent = data;
-        });
-      }catch(err){
-        fetch('https://storyhive.onrender.com/backend/clicked', {method: 'GET'})
-        .then(response => response.text())
-        .then(data => {
-          //change the text in the <p> when we get a response from the backend
-          text.textContent = data;
-        });
-      }
+      fetch('https://storyhive-app.onrender.com/backend/clicked', {method: 'GET'})
+      .then(response => response.text())
+      .then(data => {
+        //change the text in the <p> when we get a response from the backend
+        text.textContent = data;
+      });
     }}>
       Press Me
     </button>
   </React.StrictMode>
 );
 
-//'https://storyhive.onrender.com/backend/clicked'
+//'https://storyhive-app.onrender.com/backend/clicked'
+//http://localhost:10000/clicked
