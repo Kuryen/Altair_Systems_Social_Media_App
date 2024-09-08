@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cors());
 //create ssh object that will log into our ec2
 const ssh = new NodeSSH()
-app.get('/clicked', (req, res) => {
+app.get('/clicked', async (req, res) => {
     console.log("hi!!!")
     try{
         ssh.connect({
