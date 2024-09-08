@@ -16,7 +16,7 @@ root.render(
       text.textContent = "waiting...";
 
       //make a GET request to /clicked endpoint
-      fetch('http://localhost:10000/clicked', {method: 'GET'})
+      fetch('https://storyhive-app.onrender.com/clicked', {method: 'GET'})
       .then(response => response.text())
       .then(data => {
         //change the text in the <p> when we get a response from the backend
