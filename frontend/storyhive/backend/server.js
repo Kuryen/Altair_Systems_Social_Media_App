@@ -15,6 +15,8 @@ app.use(cors());
 //create ssh object that will log into our ec2
 const ssh = new NodeSSH();
 
+//COPY PASTE LINES 20-40 TO MAKE A NEW ENDPOINT FOR EACH BUTTON TO CALL
+//JUST MAKE SURE IT IS NAMED SOMETHING DIFFERENT THAN /CLICKED
 app.get('/clicked', async (req, res) => {
     console.log("hi!!!")
     try{
