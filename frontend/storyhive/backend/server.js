@@ -28,9 +28,9 @@ app.get('/clicked', async (req, res) => {
         }).then((status) => {
             //now that we're logged in, we can run mongo commands
             //db.user.find({}) will display table from a collection called user
-            ssh.execCommand("mongo --quiet --eval 'db.user.find({})'").then(function (result) {
+            ssh.execCommand("mongo --quiet --eval 'EJSON.stringify(db.user.find({})')").then(function (result) {
                 //store the output in a const called data and send it back to the frontend
-                const data = result.stdout;
+                const data = result.stdout
                 res.send(data);
             });
         });

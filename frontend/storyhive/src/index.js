@@ -19,7 +19,11 @@ root.render(
       .then(response => response.text())
       .then(data => {
         //change the text in the <p> when we get a response from the backend
-        text.textContent = data;
+        var text = "";
+        for(var key in data){
+          text += (key + " | " + data[key] + "\n");
+        }
+        text.textContent = text;
       });
     }}>
       Table 1
@@ -54,25 +58,6 @@ root.render(
     <p id="post-comments">PostComments contents: </p>
 
     <p id="post-comment-stats">PostCommentStats contents: </p>
-
-    <button onClick={() =>{
-      //stores the text from our <p> element
-      const text = document.querySelector("#db-text");
-
-      //change the text in the <p> when button is pressed
-      text.textContent = "waiting...";
-
-      //make a GET request to /clicked endpoint
-      //WHEN ADDING NEW BUTTONS, THIS CODE IS OKAY TO COPY PASTE. JUST CHANGE /CLICKED TO THE APPROPRIATE ENDPOINT
-      fetch('https://storyhive-app.onrender.com/clicked', {method: 'GET'})
-      .then(response => response.text())
-      .then(data => {
-        //change the text in the <p> when we get a response from the backend
-        text.textContent = data;
-      });
-    }}>
-      Table 1
-    </button>
   </React.StrictMode>
 );
 
