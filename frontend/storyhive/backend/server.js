@@ -15,7 +15,7 @@ app.use(cors());
 //create ssh object that will log into our ec2
 const ssh = new NodeSSH();
 
-/*app.get('/clicked', async (req, res) => {
+app.get('/clicked', async (req, res) => {
     console.log("hi!!!")
     try{
         ssh.connect({
@@ -35,27 +35,6 @@ const ssh = new NodeSSH();
     }catch(err){
         res.send("Database not found")
     }
-});*/
-
-ssh.connect({
-    //credentials stored in .env 
-    host: process.env.SECRET_IP,
-    username: process.env.SECRET_USER,
-    privateKeyPath: process.env.SECRET_KEY,
-}).then((status) => {
-    //now that we're logged in, we can run mongo commands
-    //db.user.find({}) will display table from a collection called user
-    app.get('/clicked', async (req, res) => {
-        /*ssh.execCommand("mongo --quiet --eval 'db.user.find({})'").then(function (result) {
-            //store the output in a const called data and send it back to the frontend
-            const data = result.stdout;
-            res.send(data);
-        });*/
-
-        result = await ssh.execCommand("mongo --quiet --eval 'db.user.find({})'");
-        const data = result.stdout
-        res.send(data);
-    });
 });
 
 app.get('*', (req, res) => {
