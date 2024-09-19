@@ -54,7 +54,7 @@ app.get("/fetch-data", async (req, res) => {
     privateKeyPath: process.env.SECRET_KEY,
   }).then((status) => {
     //`mongo --quiet --eval '${query}'`
-      ssh.execCommand("mongosh --quiet --eval '" + query + "'").then(function(result){
+      ssh.execCommand("mongosh testDB --quiet --eval '" + query + "'").then(function(result){
         const data = result.stdout;
         console.log("hi");
         res.send(data);
