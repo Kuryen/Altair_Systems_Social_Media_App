@@ -17,7 +17,8 @@ const ssh = new NodeSSH();
 //added a reusable function called `executeMongoQuery(query)` to handle MongoDB queries over SSH
 //this function takes a MongoDB query as a parameter, connects to our EC2 instance via SSH using the credentials from `.env`, executes the query, and returns the result
 //avoid having redundant SSH calls for each MongoDB collection.
-async function executeMongoQuery(query) {
+
+/*async function executeMongoQuery(query) {
   try {
     ssh.connect({
       //credentials stored in .env
@@ -33,7 +34,7 @@ async function executeMongoQuery(query) {
     console.error("Error executing Mongo query", err);
     return null;
   }
-}
+}*/
 
 //created an endpoint `/fetch-data` that we can use to fetch data from any MongoDB collection by passing the collection name as a query parameter
 //the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)

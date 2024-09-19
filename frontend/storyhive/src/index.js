@@ -18,21 +18,15 @@ root.render(
         //make a GET request to /clicked endpoint
         //when fetching data from the frontend, you just need to pass the collection name as a query parameter like this:
         fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=testCollect",
+          "https://storyhive-app.onrender.com/fetch-data?collection==testCollect",
           { method: "GET" }
         )
           .then((response) => response.text())
           .then((data) => {
             //pretty printing the data
-            var output = data.replace("{", "");
-            output = output.replace("}", "");
-            output = output.replace("[", "");
-            output = output.replace("]", "");
-            output = output.replace(",", " ||");
-            output = output.trim()
+            var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
-
           });
       }}
     >
@@ -53,21 +47,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=user",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -89,21 +73,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=user-profile",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -125,21 +99,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=user-settings",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -161,21 +125,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=location",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -197,21 +151,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=user-status",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -233,21 +177,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=following-status",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -269,21 +203,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=friend-status",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -305,21 +229,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=block-status",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -341,21 +255,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=user-stats",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -377,21 +281,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=admin",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -413,21 +307,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=employee",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -449,21 +333,11 @@ root.render(
           "https://storyhive-app.onrender.com/fetch-data?collection=posts",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -487,21 +361,11 @@ root.render(
             method: "GET",
           }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -525,21 +389,11 @@ root.render(
             method: "GET",
           }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -563,21 +417,11 @@ root.render(
             method: "GET",
           }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            // Process the response from the API
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
-            // Pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + value + " | ";
-              }
-            }
-            // Change the text in the <p> element to display the data
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
             text.textContent = output;
           });
       }}
@@ -586,6 +430,16 @@ root.render(
     </button>
   </React.StrictMode>
 );
+
+function pretty_print(input){
+  var output = input.replace("{", "");
+  output = output.replace("}", "");
+  output = output.replace("[", "");
+  output = output.replace("]", "");
+  output = output.replace(",", " ||");
+  output = output.trim();
+  return output;
+}
 
 //USE THIS FOR DEPLOYMENT
 //'https://storyhive-app.onrender.com/fetch-data?collection=[COLLECTION NAME]'
