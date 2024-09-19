@@ -19,15 +19,16 @@ const ssh = new NodeSSH();
 //avoid having redundant SSH calls for each MongoDB collection.
 async function executeMongoQuery(query) {
   try {
-    await ssh.connect({
+    ssh.connect({
       //credentials stored in .env
       host: process.env.SECRET_IP,
       username: process.env.SECRET_USER,
       privateKeyPath: process.env.SECRET_KEY,
+    }).then((status) => {
+        const result = ssh.execCommand(`mongo --quiet --eval '${query}'`);
+        console.log(result.stdout);
+        return result.stdout;
     });
-
-    const result = await ssh.execCommand(`mongo --quiet --eval '${query}'`);
-    return result.stdout;
   } catch (err) {
     console.error("Error executing Mongo query", err);
     return null;
@@ -38,22 +39,26 @@ async function executeMongoQuery(query) {
 //the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)
 app.get("/fetch-data", async (req, res) => {
   const { collection } = req.query;
+  const query = `db.${collection}.find({},{_id:0}).pretty()`;
 
   if (!collection) {
     return res.status(400).send("Collection not specified");
   }
 
-  //now that we're logged in, we can run mongo commands
-  //db.user.find({}) will display table from a collection called user
-  const query = `printjson(db.${collection}.find({},{_id:0}).toArray())`;
-  const data = await executeMongoQuery(query);
 
-  //store the output in a const called data and send it back to the frontend
-  if (data) {
-    res.send(data);
-  } else {
-    res.status(500).send("Database query failed");
-  }
+  ssh.connect({
+    //credentials stored in .env
+    host: process.env.SECRET_IP,
+    username: process.env.SECRET_USER,
+    privateKeyPath: process.env.SECRET_KEY,
+  }).then((status) => {
+    //`mongo --quiet --eval '${query}'`
+      ssh.execCommand("mongosh --quiet --eval '" + query + "'").then(function(result){
+        const data = result.stdout;
+        console.log("hi");
+        res.send(data);
+      })
+  });
 });
 
 app.get("*", (req, res) => {

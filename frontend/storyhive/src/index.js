@@ -18,25 +18,21 @@ root.render(
         //make a GET request to /clicked endpoint
         //when fetching data from the frontend, you just need to pass the collection name as a query parameter like this:
         fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=clicked",
+          "https://storyhive-app.onrender.com/fetch-data?collection=testCollect",
           { method: "GET" }
         )
-          .then((response) => response.json())
+          .then((response) => response.text())
           .then((data) => {
-            //creating a JSON from the data sent from the api
-            var data_obj = JSON.stringify(data);
-            data_obj = JSON.parse(data_obj);
-
             //pretty printing the data
-            var output = "| ";
-            for (let key in data_obj[0]) {
-              if (data_obj[0].hasOwnProperty(key)) {
-                let value = data_obj[0][key];
-                output += key + " : " + (key, value) + " | ";
-              }
-            }
+            var output = data.replace("{", "");
+            output = output.replace("}", "");
+            output = output.replace("[", "");
+            output = output.replace("]", "");
+            output = output.replace(",", " ||");
+            output = output.trim()
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+
           });
       }}
     >
@@ -592,7 +588,7 @@ root.render(
 );
 
 //USE THIS FOR DEPLOYMENT
-//'https://storyhive-app.onrender.com/clicked'
+//'https://storyhive-app.onrender.com/fetch-data?collection=[COLLECTION NAME]'
 
 //USE THIS TO TEST CHANGES LOCALLY
-//http://localhost:10000/clicked
+//http://localhost:10000/fetch-data?collection=[COLLECTION NAME]
