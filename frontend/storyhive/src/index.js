@@ -18,7 +18,7 @@ root.render(
         //make a GET request to /clicked endpoint
         //when fetching data from the frontend, you just need to pass the collection name as a query parameter like this:
         fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection==testCollect",
+          "https://storyhive-app.onrender.com/fetch-data?collection=testCollect",
           { method: "GET" }
         )
           .then((response) => response.text())
