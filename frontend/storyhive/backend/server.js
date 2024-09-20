@@ -40,7 +40,7 @@ const ssh = new NodeSSH();
 //the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)
 app.get("/fetch-data", async (req, res) => {
   const { collection } = req.query;
-  const query = `db.${collection}.find({},{_id:0}).pretty()`;
+  const query = `db.${collection}.find({},{_id:0}).lean()`;
 
   if (!collection) {
     return res.status(400).send("Collection not specified");

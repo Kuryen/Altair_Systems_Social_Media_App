@@ -5,39 +5,11 @@ import "./index.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <p id="db-text">table 1 contents: </p>
-    {/*WHEN COPYING BUTTON CODE, MAKE SURE TO CHANGE THE ENDPOINT FROM /CLICKED TO THE ENDPOINT YOU CREATED*/}
-    <button
-      onClick={() => {
-        //stores the text from our <p> element
-        const text = document.querySelector("#db-text");
-
-        //change the text in the <p> when button is pressed
-        text.textContent = "waiting...";
-
-        //make a GET request to /clicked endpoint
-        //when fetching data from the frontend, you just need to pass the collection name as a query parameter like this:
-        fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=testCollect",
-          { method: "GET" }
-        )
-          .then((response) => response.text())
-          .then((data) => {
-            //pretty printing the data
-            var output = pretty_print(data);
-            //change the text in the <p> when we get a response from the backend
-            text.textContent = output;
-          });
-      }}
-    >
-      Table 1
-    </button>
-
     <p id="user">User contents: </p>
     <button
       onClick={() => {
         // Stores the text from the <p> element for posts
-        const text = document.querySelector("#user");
+        var text = document.querySelector("#user");
 
         // Change the text in the <p> when the button is pressed
         text.textContent = "waiting...";
@@ -50,9 +22,14 @@ root.render(
           .then((response) => response.text())
           .then((data) => {
             //pretty printing the data
+            console.log(data);
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
+            
           });
       }}
     >
@@ -70,15 +47,19 @@ root.render(
 
         // Make a GET request to the '/posts' endpoint
         fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=user-profile",
+          "https://storyhive-app.onrender.com/fetch-data?collection=userProfile",
           { method: "GET" }
         )
           .then((response) => response.text())
           .then((data) => {
             //pretty printing the data
             var output = pretty_print(data);
+            console.log(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -96,7 +77,7 @@ root.render(
 
         // Make a GET request to the '/posts' endpoint
         fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=user-settings",
+          "https://storyhive-app.onrender.com/fetch-data?collection=userSettings",
           { method: "GET" }
         )
           .then((response) => response.text())
@@ -105,6 +86,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -131,6 +115,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -157,6 +144,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -183,6 +173,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -200,7 +193,7 @@ root.render(
 
         // Make a GET request to the '/posts' endpoint
         fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=friend-status",
+          "https://storyhive-app.onrender.com/fetch-data?collection=friends",
           { method: "GET" }
         )
           .then((response) => response.text())
@@ -209,6 +202,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -235,6 +231,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -261,6 +260,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -287,6 +289,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -313,6 +318,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -339,6 +347,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -356,7 +367,7 @@ root.render(
 
         // Make a GET request to the '/posts' endpoint
         fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=post-stats",
+          "https://storyhive-app.onrender.com/fetch-data?collection=posts",
           {
             method: "GET",
           }
@@ -367,6 +378,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -384,7 +398,7 @@ root.render(
 
         // Make a GET request to the '/posts' endpoint
         fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=post-comments",
+          "https://storyhive-app.onrender.com/fetch-data?collection=comments",
           {
             method: "GET",
           }
@@ -395,6 +409,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -412,7 +429,7 @@ root.render(
 
         // Make a GET request to the '/posts' endpoint
         fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=post-comment-stats",
+          "https://storyhive-app.onrender.com/fetch-data?collection=likes",
           {
             method: "GET",
           }
@@ -423,6 +440,9 @@ root.render(
             var output = pretty_print(data);
             //change the text in the <p> when we get a response from the backend
             text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
           });
       }}
     >
@@ -432,11 +452,11 @@ root.render(
 );
 
 function pretty_print(input){
-  var output = input.replace("{", "");
-  output = output.replace("}", "");
-  output = output.replace("[", "");
-  output = output.replace("]", "");
-  output = output.replace(",", " ||");
+  var output = input.replaceAll("{", "");
+  output = output.replaceAll("}", "-----------------");
+  output = output.replaceAll("[", "");
+  output = output.replaceAll("]", "");
+  output = output.replaceAll(",", "\n");
   output = output.trim();
   return output;
 }
