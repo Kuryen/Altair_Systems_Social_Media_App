@@ -36,6 +36,97 @@ root.render(
       User
     </button>
 
+    <p id="posts">Posts contents: </p>
+    <button
+      onClick={() => {
+        // Stores the text from the <p> element for posts
+        const text = document.querySelector("#posts");
+
+        // Change the text in the <p> when the button is pressed
+        text.textContent = "waiting...";
+
+        // Make a GET request to the '/posts' endpoint
+        fetch(
+          "https://storyhive-app.onrender.com/fetch-data?collection=posts",
+          { method: "GET" }
+        )
+          .then((response) => response.text())
+          .then((data) => {
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
+            text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
+          });
+      }}
+    >
+      Posts
+    </button>
+
+    <p id="post-stats">PostStats contents: </p>
+    <button
+      onClick={() => {
+        // Stores the text from the <p> element for posts
+        const text = document.querySelector("#post-stats");
+
+        // Change the text in the <p> when the button is pressed
+        text.textContent = "waiting...";
+
+        // Make a GET request to the '/posts' endpoint
+        fetch(
+          "https://storyhive-app.onrender.com/fetch-data?collection=shares",
+          {
+            method: "GET",
+          }
+        )
+          .then((response) => response.text())
+          .then((data) => {
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
+            text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
+          });
+      }}
+    >
+      Post Stats
+    </button>
+
+    <p id="post-comments">PostComments contents: </p>
+    <button
+      onClick={() => {
+        // Stores the text from the <p> element for posts
+        const text = document.querySelector("#post-comments");
+
+        // Change the text in the <p> when the button is pressed
+        text.textContent = "waiting...";
+
+        // Make a GET request to the '/posts' endpoint
+        fetch(
+          "https://storyhive-app.onrender.com/fetch-data?collection=comments",
+          {
+            method: "GET",
+          }
+        )
+          .then((response) => response.text())
+          .then((data) => {
+            //pretty printing the data
+            var output = pretty_print(data);
+            //change the text in the <p> when we get a response from the backend
+            text.textContent = output;
+            let str = text.innerHTML;
+            str = str.split("\n").join("<br />");
+            text.innerHTML = str;
+          });
+      }}
+    >
+      Post Comments
+    </button>
+
     <p id="user-profile">UserProfile contents: </p>
     <button
       onClick={() => {
@@ -66,6 +157,7 @@ root.render(
       UserProfile
     </button>
 
+{/*
     <p id="user-settings">UserSettings contents: </p>
     <button
       onClick={() => {
@@ -93,35 +185,6 @@ root.render(
       }}
     >
       UserSettings
-    </button>
-
-    <p id="location">Location contents: </p>
-    <button
-      onClick={() => {
-        // Stores the text from the <p> element for posts
-        const text = document.querySelector("#location");
-
-        // Change the text in the <p> when the button is pressed
-        text.textContent = "waiting...";
-
-        // Make a GET request to the '/posts' endpoint
-        fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=location",
-          { method: "GET" }
-        )
-          .then((response) => response.text())
-          .then((data) => {
-            //pretty printing the data
-            var output = pretty_print(data);
-            //change the text in the <p> when we get a response from the backend
-            text.textContent = output;
-            let str = text.innerHTML;
-            str = str.split("\n").join("<br />");
-            text.innerHTML = str;
-          });
-      }}
-    >
-      Location
     </button>
 
     <p id="user-status">UserStatus contents: </p>
@@ -269,155 +332,6 @@ root.render(
       UserStats
     </button>
 
-    <p id="admin">Admin contents: </p>
-    <button
-      onClick={() => {
-        // Stores the text from the <p> element for posts
-        const text = document.querySelector("#admin");
-
-        // Change the text in the <p> when the button is pressed
-        text.textContent = "waiting...";
-
-        // Make a GET request to the '/posts' endpoint
-        fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=admin",
-          { method: "GET" }
-        )
-          .then((response) => response.text())
-          .then((data) => {
-            //pretty printing the data
-            var output = pretty_print(data);
-            //change the text in the <p> when we get a response from the backend
-            text.textContent = output;
-            let str = text.innerHTML;
-            str = str.split("\n").join("<br />");
-            text.innerHTML = str;
-          });
-      }}
-    >
-      Admin
-    </button>
-
-    <p id="employee">Employee contents: </p>
-    <button
-      onClick={() => {
-        // Stores the text from the <p> element for posts
-        const text = document.querySelector("#employee");
-
-        // Change the text in the <p> when the button is pressed
-        text.textContent = "waiting...";
-
-        // Make a GET request to the '/posts' endpoint
-        fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=employee",
-          { method: "GET" }
-        )
-          .then((response) => response.text())
-          .then((data) => {
-            //pretty printing the data
-            var output = pretty_print(data);
-            //change the text in the <p> when we get a response from the backend
-            text.textContent = output;
-            let str = text.innerHTML;
-            str = str.split("\n").join("<br />");
-            text.innerHTML = str;
-          });
-      }}
-    >
-      Employee
-    </button>
-
-    <p id="posts">Posts contents: </p>
-    <button
-      onClick={() => {
-        // Stores the text from the <p> element for posts
-        const text = document.querySelector("#posts");
-
-        // Change the text in the <p> when the button is pressed
-        text.textContent = "waiting...";
-
-        // Make a GET request to the '/posts' endpoint
-        fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=posts",
-          { method: "GET" }
-        )
-          .then((response) => response.text())
-          .then((data) => {
-            //pretty printing the data
-            var output = pretty_print(data);
-            //change the text in the <p> when we get a response from the backend
-            text.textContent = output;
-            let str = text.innerHTML;
-            str = str.split("\n").join("<br />");
-            text.innerHTML = str;
-          });
-      }}
-    >
-      Posts
-    </button>
-
-    <p id="post-stats">PostStats contents: </p>
-    <button
-      onClick={() => {
-        // Stores the text from the <p> element for posts
-        const text = document.querySelector("#post-stats");
-
-        // Change the text in the <p> when the button is pressed
-        text.textContent = "waiting...";
-
-        // Make a GET request to the '/posts' endpoint
-        fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=posts",
-          {
-            method: "GET",
-          }
-        )
-          .then((response) => response.text())
-          .then((data) => {
-            //pretty printing the data
-            var output = pretty_print(data);
-            //change the text in the <p> when we get a response from the backend
-            text.textContent = output;
-            let str = text.innerHTML;
-            str = str.split("\n").join("<br />");
-            text.innerHTML = str;
-          });
-      }}
-    >
-      Post Stats
-    </button>
-
-    <p id="post-comments">PostComments contents: </p>
-    <button
-      onClick={() => {
-        // Stores the text from the <p> element for posts
-        const text = document.querySelector("#post-comments");
-
-        // Change the text in the <p> when the button is pressed
-        text.textContent = "waiting...";
-
-        // Make a GET request to the '/posts' endpoint
-        fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=comments",
-          {
-            method: "GET",
-          }
-        )
-          .then((response) => response.text())
-          .then((data) => {
-            //pretty printing the data
-            var output = pretty_print(data);
-            //change the text in the <p> when we get a response from the backend
-            text.textContent = output;
-            let str = text.innerHTML;
-            str = str.split("\n").join("<br />");
-            text.innerHTML = str;
-          });
-      }}
-    >
-      Post Comments
-    </button>
-
     <p id="post-comment-stats">PostCommentStats contents: </p>
     <button
       onClick={() => {
@@ -448,11 +362,13 @@ root.render(
     >
       Post Comment Stats
     </button>
+*/}
   </React.StrictMode>
 );
 
+
 function pretty_print(input){
-  var output = input.replaceAll("{", "");
+  let output = input.replaceAll("{", "");
   output = output.replaceAll("}", "-----------------");
   output = output.replaceAll("[", "");
   output = output.replaceAll("]", "");
