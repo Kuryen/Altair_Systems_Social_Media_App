@@ -40,26 +40,29 @@ const ssh = new NodeSSH();
 //the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)
 app.get("/fetch-data", async (req, res) => {
   const { collection } = req.query;
-  const query = `db.${collection}.find({},{_id:0}).pretty()`;
+  const query = `db.${collection}.find({},{_id:0}).toArray()`;
 
   if (!collection) {
     return res.status(400).send("Collection not specified");
   }
 
-
-  ssh.connect({
-    //credentials stored in .env
-    host: process.env.SECRET_IP,
-    username: process.env.SECRET_USER,
-    privateKeyPath: process.env.SECRET_KEY,
-  }).then((status) => {
-    //`mongo --quiet --eval '${query}'`
-      ssh.execCommand("mongosh testDB --quiet --eval '" + query + "'").then(function(result){
-        const data = result.stdout;
-        console.log("hi");
-        res.send(data);
-      })
-  });
+  ssh
+    .connect({
+      //credentials stored in .env
+      host: process.env.SECRET_IP,
+      username: process.env.SECRET_USER,
+      privateKeyPath: process.env.SECRET_KEY,
+    })
+    .then((status) => {
+      //`mongo --quiet --eval '${query}'`
+      ssh
+        .execCommand("mongosh testDB --quiet --eval '" + query + "'")
+        .then(function (result) {
+          const data = JSON.parse(result.stdout); // Parse the string to an object
+          console.log("hi");
+          res.json(data); // Send it as JSON
+        });
+    });
 });
 
 app.get("*", (req, res) => {

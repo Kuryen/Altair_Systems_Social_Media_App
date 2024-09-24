@@ -14,28 +14,53 @@ root.render(
         // Change the text in the <p> when the button is pressed
         text.textContent = "waiting...";
 
-        // Make a GET request to the '/posts' endpoint
-        fetch(
-          "https://storyhive-app.onrender.com/fetch-data?collection=user",
-          { method: "GET" }
-        )
-          .then((response) => response.text())
+        // Make a GET request to the '/fetch-data' endpoint
+        fetch("https://storyhive-app.onrender.com/fetch-data?collection=user", {
+          method: "GET",
+        })
+          .then((response) => response.json()) // Expect JSON data
           .then((data) => {
-            //pretty printing the data
-            console.log(data);
-            var output = pretty_print(data);
-            //change the text in the <p> when we get a response from the backend
-            text.textContent = output;
-            let str = text.innerHTML;
-            str = str.split("\n").join("<br />");
-            text.innerHTML = str;
-            
+            // Clear waiting text
+            text.textContent = "";
+
+            // Convert JSON data to table format
+            const table = document.createElement("table");
+            table.id = "dataTable"; // Add an id for the table to print later
+            const headers = Object.keys(data[0]); // Use the keys of the first object for table headers
+
+            // Create table header
+            const headerRow = document.createElement("tr");
+            headers.forEach((header) => {
+              const th = document.createElement("th");
+              th.textContent = header;
+              headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+
+            // Populate rows
+            data.forEach((item) => {
+              const row = document.createElement("tr");
+              headers.forEach((key) => {
+                const td = document.createElement("td");
+                td.textContent = item[key];
+                row.appendChild(td);
+              });
+              table.appendChild(row);
+            });
+
+            // Append the table to the #user element
+            text.appendChild(table);
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+            text.textContent = "Error fetching data";
           });
       }}
     >
       User
     </button>
 
+    {/*
     <p id="posts">Posts contents: </p>
     <button
       onClick={() => {
@@ -157,7 +182,6 @@ root.render(
       UserProfile
     </button>
 
-{/*
     <p id="user-settings">UserSettings contents: </p>
     <button
       onClick={() => {
@@ -365,17 +389,6 @@ root.render(
 */}
   </React.StrictMode>
 );
-
-
-function pretty_print(input){
-  let output = input.replaceAll("{", "");
-  output = output.replaceAll("}", "-----------------");
-  output = output.replaceAll("[", "");
-  output = output.replaceAll("]", "");
-  output = output.replaceAll(",", "\n");
-  output = output.trim();
-  return output;
-}
 
 //USE THIS FOR DEPLOYMENT
 //'https://storyhive-app.onrender.com/fetch-data?collection=[COLLECTION NAME]'
