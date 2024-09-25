@@ -1,5 +1,7 @@
 import React from "react";
 import TableDisplay from "./TableDisplay";
+import LoginForm from "./LoginForm";
+
 function Body(){
     return(
         <div>
@@ -8,6 +10,9 @@ function Body(){
             <TableDisplay collection_name={"shares"}/>
             <TableDisplay collection_name={"comments"}/>
             <TableDisplay collection_name={"userProfile"}/>
+            <br/>
+            <br/>
+            <LoginForm />
         </div>
     )
 }

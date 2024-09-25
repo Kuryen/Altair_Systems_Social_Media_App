@@ -15,7 +15,7 @@ function TableDisplay({collection_name}){
 
                     // Make a GET request to the '/posts' endpoint
                     fetch(
-                    "https://storyhive-app.onrender.com/fetch-data?collection=" + placeholder,
+                    "http://localhost:10000/fetch-data?collection=" + placeholder,
                     { method: "GET" }
                     )
                     .then((response) => response.text())

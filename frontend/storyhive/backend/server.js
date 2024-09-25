@@ -6,11 +6,13 @@ const { NodeSSH } = require("node-ssh");
 var cors = require("cors");
 const path = require("path");
 const buildPath = path.join(__dirname, "../build");
+const bodyParser = require('body-parser');
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 app.use(express.static(buildPath));
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.text());
 
 
 //create ssh object that will log into our ec2
@@ -41,6 +43,57 @@ app.get("/fetch-data", async (req, res) => {
         console.log("hi");
         res.send(data);
       })
+  });
+});
+
+/*app.post('/check-form', (req, res) => {
+  let input = req.body;
+  let user = input.name;
+  let pass = input.pass;
+  ssh.connect({
+    //credentials stored in .env
+    host: process.env.SECRET_IP,
+    username: process.env.SECRET_USER,
+    privateKeyPath: process.env.SECRET_KEY,
+  }).then((status) => {
+    //`mongo --quiet --eval '${query}'`
+      const userQuery = `db.user.find({ userName: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}}).pretty()`;
+      ssh.execCommand("mongosh testDB --quiet --eval '" + userQuery + "'").then(function(result){
+        const data = result.stdout;
+        console.log(data);
+        console.log("request received");
+        return res.send("login successful!");
+      });
+  });
+})*/
+
+app.post('/check-form', (req, res) => {
+  //parsing the json we received
+  let input = req.body;
+  let user = input.name;
+  let pass = input.pass;
+  ssh.connect({
+    //credentials stored in .env
+    host: process.env.SECRET_IP,
+    username: process.env.SECRET_USER,
+    privateKeyPath: process.env.SECRET_KEY,
+  }).then((status) => {
+
+      //searches the user collection to see if the given username and password match an entity in the collection
+      const userQuery = `db.user.find({ userName: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}}).pretty()`;
+      ssh.execCommand("mongosh testDB --quiet --eval '" + userQuery + "'").then(function(result){
+        const data = result.stdout;
+        let output = "";
+        //mongodb returns an empty string if there are no matches. if data is empty, the wrong credentials were entered
+        if(data === ""){
+          output = "Username or password do not match an existing user!";
+        }else{
+          output = "Login successful!";
+        }
+        res.json({
+          status: output
+        });
+    });
   });
 });
 
