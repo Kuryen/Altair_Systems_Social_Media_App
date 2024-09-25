@@ -108,9 +108,9 @@ app.post("/register", (req, res) => {
   //parsing information received
 
   let input = req.body;
-  let user = input.name;
-  let pass = input.pass;
-  let email = input.email;
+  let userr = input.namer;
+  let passr = input.passr;
+  let email = input.emailr;
 
   ssh
     .connect({
@@ -121,7 +121,7 @@ app.post("/register", (req, res) => {
     })
     .then((status) => {
       //searches the user collection to see if the given username and password match an entity in the collection
-      const userQuery = `db.user.find({ userName: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}, email: {$exists: true, $eq: "${email}"}}).pretty()`;
+      const userQuery = `db.user.find({ userName: {$exists: true, $eq: "${userr}"}, password: {$exists: true, $eq: "${passr}"}, email: {$exists: true, $eq: "${email}"}}).pretty()`;
       ssh
         .execCommand("mongosh testDB --quiet --eval '" + userQuery + "'")
         .then(function (result) {
@@ -132,8 +132,8 @@ app.post("/register", (req, res) => {
             const insertUserQuery = `
           db.user.insertOne({
             userID: ObjectId(),
-            userName: "${user}",
-            password: "${pass}",
+            userName: "${userr}",
+            password: "${passr}",
             email: "${email}",
             createdAt: new Date()
           })
