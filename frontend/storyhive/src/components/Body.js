@@ -2,6 +2,7 @@ import React from "react";
 import TableDisplay from "./TableDisplay";
 import LoginForm from "./LoginForm";
 import RegisterPage from "./RegisterPage";
+import LoginPage from "./LoginPage";
 
 function Body(){
     return(
@@ -14,6 +15,7 @@ function Body(){
             <br/>
             <br/>
             <LoginForm />
+            <LoginPage />
             <RegisterPage />
         </div>
     )

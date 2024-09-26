@@ -1,10 +1,45 @@
 
+import React, { useState } from "react"; 
 import beeLogo from './bee.png';
 
 export default function SignupPage() {
+
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const data = {
+      namer: username,
+      passr: password,
+      emailr: email
+    };
+
+    const options = {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    try {
+      const response = await fetch("http://localhost:10000/register", options);
+      const json = await response.json();
+      alert(json.status);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred during registration.");
+    }
+  };
+
+
     return (
 
-        <div class="w-[1920px] h-[1239px] relative bg-[#bf6a02] border border-white">
+
+    <div class="w-[1920px] h-[1239px] relative bg-[#bf6a02] border border-white">
     <div class="w-[1920px] h-[1239px] left-0 top-0 absolute border border-black">
 
     

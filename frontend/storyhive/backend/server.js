@@ -131,7 +131,6 @@ app.post("/register", (req, res) => {
           if (data === "") {
             const insertUserQuery = `
           db.user.insertOne({
-            userID: ObjectId(),
             userName: "${userr}",
             password: "${passr}",
             email: "${email}",
