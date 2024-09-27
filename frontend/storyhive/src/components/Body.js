@@ -17,6 +17,8 @@ function Body(){
             <LoginForm />
             <RegisterPage />
             <LoginPage />
+            <Profile />
+
         </div>
     )
 }

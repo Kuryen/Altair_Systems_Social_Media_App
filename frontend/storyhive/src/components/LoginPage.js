@@ -1,7 +1,10 @@
 import { Button } from 'bootstrap';
 import beeLogo from './bee.png';
+import { useNavigate } from 'react-router-dom';  // Import the useNavigate hook
 
 export default function LoginPage({onSwitchLoginClick}) {
+
+  const navigate = useNavigate();  // Initialize useNavigate
   return (
   <div class="w-[1920px] h-[1239px] relative bg-[#bf6a02] border border-white">
   <div class="w-[1920px] h-[1239px] left-0 top-0 absolute border border-black">
@@ -53,6 +56,13 @@ export default function LoginPage({onSwitchLoginClick}) {
                     const response = await fetch('http://localhost:10000/check-form', options);
                     const json = await response.json();
                     alert(json.status);
+
+                    if (json.status === "Login successful!") {
+                      navigate('/profile');  // Redirect to profile page on successful login
+                    } else {
+                      alert(json.status);  // Display error message
+                    }
+                    
                 }} class="w-[186px] h-[80px] top-[12px] relative bg-[#e5a000] text-black text-3xl font-semibold font-['Arial'] rounded-[100px] hover:text-white">
                     Submit
       </button>
