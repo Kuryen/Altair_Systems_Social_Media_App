@@ -115,7 +115,7 @@ function RegisterPage({onSwitchLoginClick}) {
                 };
 
                 //send the json to the api and return the result
-                const response = await fetch('http://localhost:10000/register', options);
+                const response = await fetch('https://storyhive-app.onrender.com/register', options);
                     const json = await response.json();
                     alert(json.status);
                 }}
