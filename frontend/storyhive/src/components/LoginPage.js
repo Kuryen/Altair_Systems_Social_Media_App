@@ -1,16 +1,17 @@
+import { Button } from 'bootstrap';
 import beeLogo from './bee.png';
 
-export default function LoginPage() {
+export default function LoginPage({onSwitchLoginClick}) {
   return (
   <div class="w-[1920px] h-[1239px] relative bg-[#bf6a02] border border-white">
   <div class="w-[1920px] h-[1239px] left-0 top-0 absolute border border-black">
 
-  <div class="w-[350px] h-[95px] left-[1366px] top-[100px] absolute">
+  <button onClick = {onSwitchLoginClick} class="w-[350px] h-[95px] left-[1366px] top-[100px] absolute">
       <div class="w-[350px] h-[95px] left-0 top-[1px] absolute bg-[#a2845e] rounded-[100px]"></div>
       <div class="left-[215px] top-[33px] absolute text-[#111111] text-xl font-bold font-['Poppins'] lowercase">SIGNUP</div>
       <div class="w-[198px] h-[95px] left-0 top-0 absolute bg-[#fff1c2] rounded-[100px]"></div>
       <div class="left-[60px] top-[25px] absolute text-[#222222] text-3xl font-bold font-['Poppins'] lowercase">LOGIN</div>
-    </div>
+    </button>
     
     <div class="w-[771px] h-[820px] left-[575px] top-[244px] absolute rounded-[100px] bg-white shadow-xl"></div>
     <div class="w-[607px] h-[60px] left-[701px] top-[409px] relative pl-7 text-black text-[40px] font-bold font-['Poppins']">Welcome back to Storyhive<br/></div>
@@ -19,7 +20,7 @@ export default function LoginPage() {
       {/* username bubble and input */}
       <div class="w-[584px] h-[126px] left-[669px] top-[420px] relative">
         <label class="w-full h-full" for="uname">
-          <input class="rounded-[100px] border-ern2 border-[#aaaaaa] text-black text-2xl w-full h-full pl-10 placeholder:text-2xl placeholder:italic" type="text" id="uname" name = "uname" placeholder="Enter Username" required/>
+          <input class="rounded-[100px] border-2 border-[#aaaaaa] text-black text-2xl w-full h-full pl-10 placeholder:text-2xl placeholder:italic" type="text" id="uname" name = "uname" placeholder="Enter Username" required/>
         </label>
       </div>
 

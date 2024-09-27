@@ -1,7 +1,7 @@
 import React, { useState } from "react"; 
 import beeLogo from './bee.png'
 
-function RegisterPage() {
+function RegisterPage({onSwitchLoginClick}) {
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -39,13 +39,13 @@ function RegisterPage() {
     <div className="w-[1920px] h-[1239px] relative bg-[#bf6a02] border border-white">
       <div className="w-[1920px] h-[1239px] left-0 top-0 absolute border border-black">
 
-      <div class="w-[350px] h-[95px] left-[1366px] top-[100px] absolute">
+      <button onClick = {onSwitchLoginClick} class="w-[350px] h-[95px] left-[1366px] top-[100px] absolute">
       <div class="w-[350px] h-[95px] left-0 top-[1px] absolute bg-[#a2845e] rounded-[100px]"></div>
       
       <div class="w-[198px] h-[95px] left-40 top-0 absolute bg-[#fff1c2] rounded-[100px]"></div>
       <div class="left-[215px] top-[29px] absolute text-[#111111] text-3xl font-bold font-['Poppins'] lowercase">SIGNUP</div>
       <div class="left-[60px] top-[35px] absolute text-[#222222] text-xl font-bold font-['Poppins'] lowercase">LOGIN</div>
-    </div>
+    </button>
 
         <div className="w-[771px] h-[820px] left-[575px] top-[244px] absolute rounded-[100px] bg-white shadow-xl"></div>
         <div className="w-[607px] h-[60px] left-[760px] top-[409px] relative pl-7 text-black text-[40px] font-bold font-['Poppins']">

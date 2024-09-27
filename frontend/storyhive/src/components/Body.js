@@ -16,6 +16,7 @@ function Body(){
             <br/>
             <LoginForm />
             <RegisterPage />
+            <LoginPage />
         </div>
     )
 }
