@@ -49,27 +49,7 @@ app.get("/fetch-data", async (req, res) => {
     });
 });
 
-/*app.post('/check-form', (req, res) => {
-  let input = req.body;
-  let user = input.name;
-  let pass = input.pass;
-  ssh.connect({
-    //credentials stored in .env
-    host: process.env.SECRET_IP,
-    username: process.env.SECRET_USER,
-    privateKeyPath: process.env.SECRET_KEY,
-  }).then((status) => {
-    //`mongo --quiet --eval '${query}'`
-      const userQuery = `db.user.find({ userName: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}}).pretty()`;
-      ssh.execCommand("mongosh testDB --quiet --eval '" + userQuery + "'").then(function(result){
-        const data = result.stdout;
-        console.log(data);
-        console.log("request received");
-        return res.send("login successful!");
-      });
-  });
-})*/
-
+//login endpoint
 app.post("/check-form", (req, res) => {
   //parsing the json we received
   let input = req.body;
@@ -174,57 +154,6 @@ app.post("/register", (req, res) => {
         status: "SSH connection failed: " + error.message,
       });
     });
-});
-
-// Route to handle sign-up
-app.post("/signup", async (req, res) => {
-  const { userName, email, password } = req.body;
-
-  try {
-    // Auto-generate a salt and hash the password
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Store the user in the database
-    const newUser = {
-      userName,
-      email,
-      password: hashedPassword, // Store the hashed password
-    };
-
-    // Insert the new user into the collection
-    db.collection("users").insertOne(newUser, (err, result) => {
-      if (err) {
-        return res.status(500).send("Error saving user to the database");
-      }
-      res.status(201).send("User created successfully");
-    });
-  } catch (error) {
-    res.status(500).send("Error hashing password");
-  }
-});
-
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  // Fetch the user from the database (replace with your database code)
-  db.collection("users").findOne({ email }, async (err, user) => {
-    if (err || !user) {
-      return res.status(400).send("User not found");
-    }
-
-    try {
-      // Compare the password with the stored hash
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (isMatch) {
-        res.status(200).send("Login successful");
-      } else {
-        res.status(400).send("Invalid password");
-      }
-    } catch (error) {
-      res.status(500).send("Error comparing passwords");
-    }
-  });
 });
 
 //launches the frontend from server.js
