@@ -199,7 +199,7 @@ app.get("/posts", (req, res) => {
 
 
 //USED TO TEST THE /POSTS ROUTE AND ITERATE THROUGH ALL POSTS BY A USER. DELETE ONCE WE CAN SUCCESSFULLY CREATE POSTS
-fetch("https://storyhive-app.onrender.com/posts")
+fetch("http://localhost:10000/posts")
   .then((response) => response.json())
   .then((json) => {
     for(var key in json){
@@ -208,6 +208,8 @@ fetch("https://storyhive-app.onrender.com/posts")
     }
   });
 
+
+//USED TO INSERT POSTS INTO THE DATABASE
 app.post("/make-post", (req, res) => {
   //parsing the json we received
   let useID = current_user;
@@ -249,6 +251,8 @@ app.post("/make-post", (req, res) => {
 //that will allow us to create posts!
 
 
+//FRONTEND CODE TO INSERT POST INTO DATABASE. ATTACH TO A BUTTON EVENT LISTENER
+/*
 const post_data = {
   textContent: "i LOVE mondays!"
 };
@@ -259,9 +263,10 @@ const options = {
       'Content-Type': 'application/json'
   }
 };
-const response = fetch('https://storyhive-app.onrender.com', options);
-//const json = response.json();
-//console.log(json.status);
+const response = fetch('http://localhost:10000/make-post', options);
+const json = response.json();
+console.log(json.status);
+*/
 
 
 
