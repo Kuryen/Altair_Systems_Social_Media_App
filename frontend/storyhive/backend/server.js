@@ -160,6 +160,8 @@ app.post("/register", (req, res) => {
     });
 });
 
+
+//USED TO GET POSTS RELATED TO A USER
 app.get("/posts", (req, res) => {
   try{
     ssh.connect({
@@ -196,8 +198,8 @@ app.get("/posts", (req, res) => {
 })
 
 
-//USED TO TEST THE /POSTS ROUTE. DELETE ONCE WE CAN SUCCESSFULLY CREATE POSTS
-fetch("http://localhost:10000/posts")
+//USED TO TEST THE /POSTS ROUTE AND ITERATE THROUGH ALL POSTS BY A USER. DELETE ONCE WE CAN SUCCESSFULLY CREATE POSTS
+fetch("https://storyhive-app.onrender.com/posts")
   .then((response) => response.json())
   .then((json) => {
     for(var key in json){
@@ -205,6 +207,63 @@ fetch("http://localhost:10000/posts")
       console.log(key + ": " + json[key].textContent)
     }
   });
+
+app.post("/make-post", (req, res) => {
+  //parsing the json we received
+  let useID = current_user;
+  let input = req.body;
+  let contents = input.textContent;
+  let media = "";
+  let likeCount = 0;
+  let commentCount = 0;
+  let sharesCount = 0;
+  ssh.connect({
+      //credentials stored in .env
+      host: process.env.SECRET_IP,
+      username: process.env.SECRET_USER,
+      privateKeyPath: process.env.SECRET_KEY,
+    }).then((status) => {
+      //searches the user collection to see if the given username and password match an entity in the collection
+      const postQuery = `db.posts.insertOne({
+            useID: "${useID}",
+            textContent: "${contents}",
+            media: "${media}",
+            likeCount: "${likeCount}",
+            commentCount: "${commentCount}",
+            sharesCount: "${sharesCount}",
+            createdAt: new Date()
+          })`;
+      ssh.execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(" + postQuery + ".toArray())'").then(function (result) {
+        const data = result.stdout;
+        let output = data.acknowledged;
+        res.json({
+          status: output,
+        });
+      });
+    });
+});
+
+
+//this code cannot run inside of server.js because 'await' is not allowed, however, this logic DOES work and I have already used 
+//it to create a post in the database that says "i LOVE mondays!". This logic can be used when creating the post request in profile.js
+//that will allow us to create posts!
+
+
+const post_data = {
+  textContent: "i LOVE mondays!"
+};
+const options = {
+  method: 'POST',
+  body: JSON.stringify(post_data),
+  headers: {
+      'Content-Type': 'application/json'
+  }
+};
+const response = fetch('https://storyhive-app.onrender.com', options);
+//const json = response.json();
+//console.log(json.status);
+
+
 
 //launches the frontend from server.js
 app.get("*", (req, res) => {
