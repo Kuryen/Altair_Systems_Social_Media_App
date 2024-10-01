@@ -115,8 +115,7 @@ app.post("/register", (req, res) => {
             password: "${passr}",
             email: "${email}",
             createdAt: new Date()
-          })
-        `;
+          })`;
             // Insert the user if the query returns no results (meaning no existing user with that data)
             ssh
               .execCommand(
@@ -155,6 +154,49 @@ app.post("/register", (req, res) => {
       });
     });
 });
+
+app.get("/posts", (req, res) => {
+  try{
+    ssh.connect({
+      //credentials stored in .env
+      host: process.env.SECRET_IP,
+      username: process.env.SECRET_USER,
+      privateKeyPath: process.env.SECRET_KEY,
+    })
+    .then((status) => {
+      //EJSON.stringify() is NECESSARY for converting to proper JSON format!!!
+      //TO-DO LIST:
+      // - adjust database to include username as a primary key so that we can search for posts by users through their username and not their id.
+      //   the Object id in the below query is for the user called flowerPower
+      // - we need to pass the username of the currently logged in user to this /posts route
+      // - COMPLETE: modify the query below to search for posts from the current user. it should return a JSON containing the text for each post a user has made
+      // - create a Post component in React. When users make a post, it should go to the database
+      // - on login, we must run a for loop(INSIDE THE POST COMPONENT AND NOT THIS SERVER.JS FILE) to render a post component for each post text returned by this /posts route
+
+      // ONCE WE HAVE MADE USERNAME A PRIMARY KEY, USE THE FOLLOWING QUERY INSTEAD:
+      // "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{userName: {$eq: "${current_user}"}, textContent: 1}).toArray())'"
+      ssh
+        .execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_id: ObjectId('66ec6fdc702d84b845964034'), textContent: 1}).toArray())'")
+        .then(function (result) {
+          const data = result.stdout;
+          res.send(data);
+        });
+    });
+  }catch(error){
+    res.status(500).json({message: error.message});
+  }
+})
+
+
+//USED TO TEST THE /POSTS ROUTE. DELETE ONCE WE CAN SUCCESSFULLY CREATE POSTS
+fetch("http://localhost:10000/posts")
+  .then((response) => response.json())
+  .then((json) => {
+    for(var key in json){
+      //key refers to the index of each post in the db's posts collection. Each post has a field called textContent
+      console.log(key + ": " + json[key].textContent)
+    }
+  });
 
 //launches the frontend from server.js
 app.get("*", (req, res) => {
