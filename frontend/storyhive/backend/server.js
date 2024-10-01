@@ -19,7 +19,7 @@ app.use(bodyParser.text());
 //create ssh object that will log into our ec2
 const ssh = new NodeSSH();
 
-let current_user = "";
+let current_user = "flowerPower";
 
 //created an endpoint `/fetch-data` that we can use to fetch data from any MongoDB collection by passing the collection name as a query parameter
 //the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)
@@ -49,6 +49,7 @@ app.get("/fetch-data", async (req, res) => {
           res.send(data);
         });
     });
+
 });
 
 //login endpoint
@@ -66,7 +67,7 @@ app.post("/check-form", (req, res) => {
     })
     .then((status) => {
       //searches the user collection to see if the given username and password match an entity in the collection
-      const userQuery = `db.user.find({ userName: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}}).pretty()`;
+      const userQuery = `db.user.find({ _id: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}}).pretty()`;
       ssh
         .execCommand("mongosh testDB --quiet --eval '" + userQuery + "'")
         .then(function (result) {
@@ -78,6 +79,7 @@ app.post("/check-form", (req, res) => {
           } else {
             output = "Login successful!";
             current_user = input.name;
+            console.log("After login, the current user is: " + current_user);
           }
           res.json({
             status: output,
@@ -104,7 +106,7 @@ app.post("/register", (req, res) => {
     })
     .then((status) => {
       //searches the user collection to see if the given username and password match an entity in the collection
-      const userQuery = `db.user.find({ userName: {$exists: true, $eq: "${userr}"}, password: {$exists: true, $eq: "${passr}"}, email: {$exists: true, $eq: "${email}"}}).pretty()`;
+      const userQuery = `db.user.find({ _id: {$exists: true, $eq: "${userr}"}, password: {$exists: true, $eq: "${passr}"}, email: {$exists: true, $eq: "${email}"}}).pretty()`;
       ssh
         .execCommand("mongosh testDB --quiet --eval '" + userQuery + "'")
         .then(function (result) {
@@ -114,7 +116,7 @@ app.post("/register", (req, res) => {
           if (data === "") {
             const insertUserQuery = `
           db.user.insertOne({
-            userName: "${userr}",
+            _id: "${userr}",
             password: "${passr}",
             email: "${email}",
             createdAt: new Date()
@@ -171,7 +173,7 @@ app.get("/posts", (req, res) => {
       //TO-DO LIST:
       // - adjust database to include username as a primary key so that we can search for posts by users through their username and not their id.
       //   the Object id in the below query is for the user called flowerPower
-      // - we need to pass the username of the currently logged in user to this /posts route
+      // - COMPLETE: we need to pass the username of the currently logged in user to this /posts route
       // - COMPLETE: modify the query below to search for posts from the current user. it should return a JSON containing the text for each post a user has made
       // - create a Post component in React. When users make a post, it should go to the database
       // - on login, we must run a for loop(INSIDE THE POST COMPONENT AND NOT THIS SERVER.JS FILE) to render a post component for each post text returned by this /posts route
@@ -179,10 +181,12 @@ app.get("/posts", (req, res) => {
       // ONCE WE HAVE MADE USERNAME A PRIMARY KEY, USE THE FOLLOWING QUERY INSTEAD:
       // "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{userName: {$eq: "${current_user}"}, textContent: 1}).toArray())'"
       //ObjectId('66ec6fdc702d84b845964034')
+      //db.user.find({ userName: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}})
       ssh
-        .execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_id: 0, textContent: 1}).toArray())'")
+        .execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_useID: " + `"${current_user}"` + ", textContent: 1}).toArray())'")
         .then(function (result) {
           const data = result.stdout;
+          console.log("The current user is: " + current_user);
           res.send(data);
         });
     });
