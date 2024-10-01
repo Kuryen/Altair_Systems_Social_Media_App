@@ -19,6 +19,8 @@ app.use(bodyParser.text());
 //create ssh object that will log into our ec2
 const ssh = new NodeSSH();
 
+let current_user = "";
+
 //created an endpoint `/fetch-data` that we can use to fetch data from any MongoDB collection by passing the collection name as a query parameter
 //the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)
 app.get("/fetch-data", async (req, res) => {
@@ -75,6 +77,7 @@ app.post("/check-form", (req, res) => {
             output = "Username or password do not match an existing user!";
           } else {
             output = "Login successful!";
+            current_user = input.name;
           }
           res.json({
             status: output,
