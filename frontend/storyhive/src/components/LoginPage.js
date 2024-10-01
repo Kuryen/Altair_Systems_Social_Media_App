@@ -53,7 +53,7 @@ export default function LoginPage({onSwitchLoginClick}) {
                         }
                     };
                     //send the json to the api and return the result!
-                    const response = await fetch('https://storyhive-app.onrender.com/check-form', options);
+                    const response = await fetch('http://localhost:10000/check-form', options);
                     const json = await response.json();
                     alert(json.status);
 
@@ -78,5 +78,8 @@ export default function LoginPage({onSwitchLoginClick}) {
 </div>
     );
 }
+
+//testing http://localhost:10000/register
+//deployment https://storyhive-app.onrender.com/register
 
 

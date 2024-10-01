@@ -175,8 +175,9 @@ app.get("/posts", (req, res) => {
 
       // ONCE WE HAVE MADE USERNAME A PRIMARY KEY, USE THE FOLLOWING QUERY INSTEAD:
       // "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{userName: {$eq: "${current_user}"}, textContent: 1}).toArray())'"
+      //ObjectId('66ec6fdc702d84b845964034')
       ssh
-        .execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_id: ObjectId('66ec6fdc702d84b845964034'), textContent: 1}).toArray())'")
+        .execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_id: 0, textContent: 1}).toArray())'")
         .then(function (result) {
           const data = result.stdout;
           res.send(data);
