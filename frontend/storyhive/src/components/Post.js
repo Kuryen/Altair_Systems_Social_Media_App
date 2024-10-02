@@ -3,22 +3,47 @@ import React from "react";
 
 export default function Post(){
 
-    /*
-    //WIP : returning the posts from current user
-    //fetch the posts from the current user
-    fetch("http://localhost:10000/posts")
-    .then((response) => response.json())
-    .then((json) => {
-    for(var key in json){
-      //key refers to the index of each post in the db's posts collection. Each post has a field called textContent
-      console.log(key + ": " + json[key].textContent)
-    }
-  });
-  */
-
-    return (
-    <div>
     
+    //function to get posts from the database and display them 
+    //just needs styling work
+    function getPosts() {
+        fetch("http://localhost:10000/posts", { method: "GET" })
+          .then((response) => response.json()) // Parse JSON response
+          .then((json) => {
+            const postsContainer = document.getElementById("posts-container"); // Get container to display posts
+            
+            // Clear container if needed 
+            postsContainer.innerHTML = '';
+      
+            // Loop through the json and create DOM elements for each post
+            Object.keys(json).map((key) => {
+              const post = json[key]; // Access each post
+      
+              // Create a new div for each post
+              const postElement = document.createElement("div");
+              postElement.className = "post"; // You can style this class
+      
+              // Add the text content of the post
+              const postContent = document.createElement("p");
+              postContent.textContent = post.textContent;
+      
+              // Append the content to the post div
+              postElement.appendChild(postContent);
+      
+              // Append each post div to the main container
+              postsContainer.appendChild(postElement);
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching posts:", error);
+          });
+      }
+
+      getPosts();
+    
+    
+    return (   
+    <div>
         {/*form input bubble */}
        <form id = "post-form">
         <div> 
@@ -49,6 +74,10 @@ export default function Post(){
             Post
         </button>
         </form>
+
+        {/*display fetched posts*/}
+        <div id = "posts-container" onload = "getPosts()">
+        </div>
        </div>
     )
 }
