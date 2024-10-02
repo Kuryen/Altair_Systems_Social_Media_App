@@ -20,8 +20,11 @@ export default function UserFeed() {
                         </button>
                     </div>
 
-                    <div className="w-[500px] h-[500px] bg-white border border-gray-300 shadow-lg flex items-center justify-center">
-                    <p className="text-black">Post</p>
+                    {/* "Feed" */}
+                    <div class="pt-7">
+                        <div class="self-center w-full h-auto bg-white border border-gray-300 shadow-lg flex items-center justify-center">
+                        <p class="break-normal text-black">Post</p>
+                        </div>
                     </div>
 
                 </div>
