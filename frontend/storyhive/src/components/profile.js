@@ -1,4 +1,5 @@
 import React from 'react';
+import Post from './Post';
 import beeLogo from './bee.png'; // Replace with your actual logo path
 
 export default function Profile() {
@@ -62,6 +63,7 @@ export default function Profile() {
       <div className="absolute bottom-10">
         <img className="w-[178px] h-[90px]" src={beeLogo} alt="Logo" />
       </div>
+      <Post />
     </div>
   );
 }
