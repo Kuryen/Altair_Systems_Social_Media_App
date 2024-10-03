@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import CreatePostButton from "./CreatePostButton";
 
 export default function Post() {
-  // State to store posts
-  const [posts, setPosts] = useState([]);
-
   //function to get posts from the database and display them
   //just needs styling work
   function getPosts() {
