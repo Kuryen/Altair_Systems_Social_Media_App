@@ -185,7 +185,7 @@ app.get("/posts", (req, res) => {
       //ObjectId('66ec6fdc702d84b845964034')
       //db.user.find({ userName: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}})
       ssh
-        .execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_useID: " + `"${current_user}"` + ", textContent: 1}).toArray())'")
+        .execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_userID: " + `"${current_user}"` + ", textContent: 1}).toArray())'")
         .then(function (result) {
           const data = result.stdout;
           console.log("The current user is: " + current_user);
@@ -212,7 +212,7 @@ fetch("http://localhost:10000/posts")
 //USED TO INSERT POSTS INTO THE DATABASE
 app.post("/make-post", (req, res) => {
   //parsing the json we received
-  let useID = current_user;
+  let userID = current_user;
   let input = req.body;
   let contents = input.textContent;
   let media = "";
@@ -227,7 +227,7 @@ app.post("/make-post", (req, res) => {
     }).then((status) => {
       //searches the user collection to see if the given username and password match an entity in the collection
       const postQuery = `db.posts.insertOne({
-            useID: "${useID}",
+            userID: "${userID}",
             textContent: "${contents}",
             media: "${media}",
             likeCount: "${likeCount}",

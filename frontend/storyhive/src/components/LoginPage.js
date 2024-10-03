@@ -80,6 +80,6 @@ export default function LoginPage({onSwitchLoginClick}) {
 }
 
 //testing http://localhost:10000/check-form
-//deployment https://storyhive-app.onrender.com/check-form
+//deployment https://storyhive-app.onrender.com/register
 
 
