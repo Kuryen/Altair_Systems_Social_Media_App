@@ -1,5 +1,4 @@
 import React from 'react';
-import Post from './Post';
 import beeLogo from './bee.png'; // Replace with your actual logo path
 import UserTabs from './UserTabs';
 
