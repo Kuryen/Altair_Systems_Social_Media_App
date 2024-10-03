@@ -1,6 +1,7 @@
 import React from 'react';
 import Post from './Post';
 import beeLogo from './bee.png'; // Replace with your actual logo path
+import UserTabs from './UserTabs';
 
 export default function Profile() {
   return (
@@ -57,13 +58,16 @@ export default function Profile() {
             </div>
           </div>
         </div>
+
+        <div class="pt-4">
+          <UserTabs />
+        </div>
       </div>
 
       {/* Bottom Logo */}
       <div className="absolute bottom-10">
         <img className="w-[178px] h-[90px]" src={beeLogo} alt="Logo" />
       </div>
-      <Post />
     </div>
   );
 }
