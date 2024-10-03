@@ -19,7 +19,7 @@ app.use(bodyParser.text());
 //create ssh object that will log into our ec2
 const ssh = new NodeSSH();
 
-let current_user = "flowerPower";
+let current_user = "";
 
 //created an endpoint `/fetch-data` that we can use to fetch data from any MongoDB collection by passing the collection name as a query parameter
 //the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)
@@ -49,7 +49,6 @@ app.get("/fetch-data", async (req, res) => {
           res.send(data);
         });
     });
-
 });
 
 //login endpoint
@@ -160,54 +159,55 @@ app.post("/register", (req, res) => {
     });
 });
 
-
 //USED TO GET POSTS RELATED TO A USER
 app.get("/posts", (req, res) => {
-  try{
-    ssh.connect({
-      //credentials stored in .env
-      host: process.env.SECRET_IP,
-      username: process.env.SECRET_USER,
-      privateKeyPath: process.env.SECRET_KEY,
-    })
-    .then((status) => {
-      //EJSON.stringify() is NECESSARY for converting to proper JSON format!!!
-      //TO-DO LIST:
-      // - adjust database to include username as a primary key so that we can search for posts by users through their username and not their id.
-      //   the Object id in the below query is for the user called flowerPower
-      // - COMPLETE: we need to pass the username of the currently logged in user to this /posts route
-      // - COMPLETE: modify the query below to search for posts from the current user. it should return a JSON containing the text for each post a user has made
-      // - create a Post component in React. When users make a post, it should go to the database
-      // - on login, we must run a for loop(INSIDE THE POST COMPONENT AND NOT THIS SERVER.JS FILE) to render a post component for each post text returned by this /posts route
+  try {
+    ssh
+      .connect({
+        //credentials stored in .env
+        host: process.env.SECRET_IP,
+        username: process.env.SECRET_USER,
+        privateKeyPath: process.env.SECRET_KEY,
+      })
+      .then((status) => {
+        //EJSON.stringify() is NECESSARY for converting to proper JSON format!!!
+        //TO-DO LIST:
+        // - adjust database to include username as a primary key so that we can search for posts by users through their username and not their id.
+        //   the Object id in the below query is for the user called flowerPower
+        // - COMPLETE: we need to pass the username of the currently logged in user to this /posts route
+        // - COMPLETE: modify the query below to search for posts from the current user. it should return a JSON containing the text for each post a user has made
+        // - create a Post component in React. When users make a post, it should go to the database
+        // - on login, we must run a for loop(INSIDE THE POST COMPONENT AND NOT THIS SERVER.JS FILE) to render a post component for each post text returned by this /posts route
 
-      // ONCE WE HAVE MADE USERNAME A PRIMARY KEY, USE THE FOLLOWING QUERY INSTEAD:
-      // "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{userName: {$eq: "${current_user}"}, textContent: 1}).toArray())'"
-      //ObjectId('66ec6fdc702d84b845964034')
-      //db.user.find({ userName: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}})
-      ssh
-        .execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_userID: " + `"${current_user}"` + ", textContent: 1}).toArray())'")
-        .then(function (result) {
-          const data = result.stdout;
-          console.log("The current user is: " + current_user);
-          res.send(data);
-        });
-    });
-  }catch(error){
-    res.status(500).json({message: error.message});
+        // ONCE WE HAVE MADE USERNAME A PRIMARY KEY, USE THE FOLLOWING QUERY INSTEAD:
+        // "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{userName: {$eq: "${current_user}"}, textContent: 1}).toArray())'"
+        //ObjectId('66ec6fdc702d84b845964034')
+        //db.user.find({ userName: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}})
+        ssh
+          .execCommand(
+            "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_userID: " +
+              `"${current_user}"` +
+              ", textContent: 1}).toArray())'"
+          )
+          .then(function (result) {
+            const data = result.stdout;
+            res.send(data);
+          });
+      });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-})
-
+});
 
 //USED TO TEST THE /POSTS ROUTE AND ITERATE THROUGH ALL POSTS BY A USER. DELETE ONCE WE CAN SUCCESSFULLY CREATE POSTS
 fetch("http://localhost:10000/posts")
   .then((response) => response.json())
   .then((json) => {
-    for(var key in json){
+    for (var key in json) {
       //key refers to the index of each post in the db's posts collection. Each post has a field called textContent
-      console.log(key + ": " + json[key].textContent)
+      console.log(key + ": " + json[key].textContent);
     }
   });
-
 
 //USED TO INSERT POSTS INTO THE DATABASE
 app.post("/make-post", (req, res) => {
@@ -219,12 +219,14 @@ app.post("/make-post", (req, res) => {
   let likeCount = 0;
   let commentCount = 0;
   let sharesCount = 0;
-  ssh.connect({
+  ssh
+    .connect({
       //credentials stored in .env
       host: process.env.SECRET_IP,
       username: process.env.SECRET_USER,
       privateKeyPath: process.env.SECRET_KEY,
-    }).then((status) => {
+    })
+    .then((status) => {
       //searches the user collection to see if the given username and password match an entity in the collection
       const postQuery = `db.posts.insertOne({
             userID: "${userID}",
@@ -235,21 +237,32 @@ app.post("/make-post", (req, res) => {
             sharesCount: "${sharesCount}",
             createdAt: new Date()
           })`;
-      ssh.execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(" + postQuery + ".toArray())'").then(function (result) {
-        const data = result.stdout;
-        let output = data.acknowledged;
-        res.json({
-          status: output,
+      ssh
+        .execCommand(
+          "mongosh testDB --quiet --eval 'EJSON.stringify(" +
+            postQuery +
+            ".toArray())'"
+        )
+        .then(function (result) {
+          const data = result.stdout;
+          let output = data.acknowledged;
+          output = "Post created successfully!";
+          res.json({
+            status: output,
+          });
+        })
+        .catch((error) => {
+          output = "Post creation failed." + error.message;
+          res.json({
+            status: output,
+          });
         });
-      });
     });
 });
 
-
-//this code cannot run inside of server.js because 'await' is not allowed, however, this logic DOES work and I have already used 
+//this code cannot run inside of server.js because 'await' is not allowed, however, this logic DOES work and I have already used
 //it to create a post in the database that says "i LOVE mondays!". This logic can be used when creating the post request in profile.js
 //that will allow us to create posts!
-
 
 //FRONTEND CODE TO INSERT POST INTO DATABASE. ATTACH TO A BUTTON EVENT LISTENER
 /*
@@ -267,8 +280,6 @@ const response = fetch('http://localhost:10000/make-post', options);
 const json = response.json();
 console.log(json.status);
 */
-
-
 
 //launches the frontend from server.js
 app.get("*", (req, res) => {
