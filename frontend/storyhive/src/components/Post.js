@@ -11,13 +11,34 @@ export default function Post() {
     fetch("http://localhost:10000/posts", { method: "GET" })
       .then((response) => response.json()) // Parse JSON response
       .then((json) => {
-        setPosts(json); // Store posts in state
+        const postsContainer = document.getElementById("posts-container"); // Get container to display posts
+
+        // Clear container if needed
+        postsContainer.innerHTML = "";
+
+        // Loop through the json and create DOM elements for each post
+        Object.keys(json).map((key) => {
+          const post = json[key]; // Access each post
+
+          // Create a new div for each post
+          const postElement = document.createElement("div");
+          postElement.className = "post"; // You can style this class
+
+          // Add the text content of the post
+          const postContent = document.createElement("p");
+          postContent.textContent = post.textContent;
+
+          // Append the content to the post div
+          postElement.appendChild(postContent);
+
+          // Append each post div to the main container
+          postsContainer.appendChild(postElement);
+        });
       })
       .catch((error) => {
         console.error("Error fetching posts:", error);
       });
   }
-
   // useEffect to run getPosts when the component mounts
   useEffect(() => {
     getPosts();
@@ -25,21 +46,11 @@ export default function Post() {
 
   return (
     <div>
-      {/* Render CreatePostButton and pass getPosts as a callback */}
+      {/* Render the CreatePostButton and pass the getPosts function as a callback */}
       <CreatePostButton onPostCreated={getPosts} />
 
-      {/*display fetched posts*/}
-      <div id="posts-container">
-        {posts.length > 0 ? (
-          posts.map((post, index) => (
-            <div key={index} className="post">
-              <p>{post.textContent}</p>
-            </div>
-          ))
-        ) : (
-          <p>No posts available</p>
-        )}
-      </div>
+      {/* Display fetched posts */}
+      <div id="posts-container"></div>
     </div>
   );
 }

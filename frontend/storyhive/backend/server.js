@@ -251,12 +251,6 @@ app.post("/make-post", (req, res) => {
             status: output,
           });
         })
-        .catch((error) => {
-          output = "Post creation failed." + error.message;
-          res.json({
-            status: output,
-          });
-        });
     });
 });
 
