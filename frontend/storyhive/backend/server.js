@@ -187,7 +187,7 @@ app.get("/posts", (req, res) => {
           .execCommand(
             "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_userID: " +
               `"${current_user}"` +
-              ", textContent: 1}).toArray())'"
+              ", textContent: 1, userID: 1, createdAt: 1, likeCount: 1, commentCount: 1, sharesCount: 1}).toArray())'"
           )
           .then(function (result) {
             const data = result.stdout;
@@ -250,7 +250,7 @@ app.post("/make-post", (req, res) => {
           res.json({
             status: output,
           });
-        })
+        });
     });
 });
 
