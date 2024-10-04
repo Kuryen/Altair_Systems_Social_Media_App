@@ -200,14 +200,14 @@ app.get("/posts", (req, res) => {
 });
 
 //USED TO TEST THE /POSTS ROUTE AND ITERATE THROUGH ALL POSTS BY A USER. DELETE ONCE WE CAN SUCCESSFULLY CREATE POSTS
-fetch("http://localhost:10000/posts")
+/*fetch("http://localhost:10000/posts")
   .then((response) => response.json())
   .then((json) => {
     for (var key in json) {
       //key refers to the index of each post in the db's posts collection. Each post has a field called textContent
       console.log(key + ": " + json[key].textContent);
     }
-  });
+  });*/
 
 //USED TO INSERT POSTS INTO THE DATABASE
 app.post("/make-post", (req, res) => {

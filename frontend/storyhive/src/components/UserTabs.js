@@ -1,5 +1,6 @@
 import { useState } from "react";
-import Post from "./Post";
+//import Post from "./Post";
+import Postv3 from "./Postv3.js";
 import CreatePostButton from "./CreatePostButton";
 
 export default function UserTabs() {
@@ -52,7 +53,7 @@ export default function UserTabs() {
       {activeSection === "posts" && (
         <div className="content">
           <CreatePostButton onPostCreated={refreshPosts} />
-          <Post />
+          <Postv3 />
         </div>
       )}
 

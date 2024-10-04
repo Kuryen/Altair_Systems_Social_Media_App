@@ -4,7 +4,7 @@ import CreatePostButton from "./CreatePostButton";
 export default function Post() {
   // Function to get posts from the database and manually update the DOM
   function getPosts() {
-    fetch("http://localhost:10000/posts", { method: "GET" })
+    fetch("https://storyhive-app.onrender.com/posts", { method: "GET" })
       .then((response) => response.json())
       .then((json) => {
         const postsContainer = document.getElementById("posts-container"); // Get container to display posts
@@ -45,8 +45,8 @@ export default function Post() {
               createdAt = date.toLocaleString(); // If valid, convert to readable format
             }
           }
-          userInfo.innerHTML = `<span class="font-bold text-gray-800">${userName}</span>
-                              <span class="text-gray-500 text-sm ml-2">${createdAt}</span>`;
+          userInfo.innerHTML = `<span class="font-bold text-gray-800">${userName}</span>`;
+                              //<span class="text-gray-500 text-sm ml-2">${createdAt}</span>`;
           postElement.appendChild(userInfo);
 
           // Post content

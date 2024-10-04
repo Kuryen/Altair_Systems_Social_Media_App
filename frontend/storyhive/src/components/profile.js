@@ -6,7 +6,7 @@ export default function Profile() {
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen bg-[#373638]">
       {/* Profile container */}
-      <div className="relative w-[80%] h-auto bg-[#d9d9d9] rounded-[55px] p-10">
+      <div className="relative w-[80%] h-screen bg-[#d9d9d9] rounded-[55px] p-10">
         
         {/* Top Navbar */}
         <div className="relative flex items-center justify-between w-full h-[65px] bg-black rounded-lg mb-10">
@@ -63,10 +63,10 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Bottom Logo */}
+      {/* Bottom Logo 
       <div className="absolute bottom-10">
         <img className="w-[178px] h-[90px]" src={beeLogo} alt="Logo" />
-      </div>
+      </div>*/}
     </div>
   );
 }
