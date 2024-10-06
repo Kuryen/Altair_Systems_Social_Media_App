@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';  // Import the useNavigate hook
 export default function LoginPage({onSwitchLoginClick}) {
 
   const navigate = useNavigate();  // Initialize useNavigate
+  
   return (
   <div class="w-[1920px] h-[1239px] relative bg-[#bf6a02] border border-white">
   <div class="w-[1920px] h-[1239px] left-0 top-0 absolute border border-black">

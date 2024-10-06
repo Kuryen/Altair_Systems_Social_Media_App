@@ -1,8 +1,10 @@
 import React from 'react';
 import beeLogo from './bee.png'; // Replace with your actual logo path
 import UserTabs from './UserTabs';
+import { useNavigate, useLocation } from 'react-router-dom';  // Import the useNavigate hook
 
-export default function Profile() {
+export default function Profile(){
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen bg-[#373638]">
       {/* Profile container */}
@@ -53,6 +55,13 @@ export default function Profile() {
               <div className="text-white text-base">
                 <div className="font-bold">200</div>
                 <div className="text-sm">Following</div>
+              </div>
+              <div className="text-white text-base">
+                <button type="button" onClick = {(event) => {
+                  navigate('/Chat');
+                }}>
+                  Chat with me!
+                </button>
               </div>
             </div>
           </div>

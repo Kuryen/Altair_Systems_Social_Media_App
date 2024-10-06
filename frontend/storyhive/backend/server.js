@@ -170,19 +170,6 @@ app.get("/posts", (req, res) => {
         privateKeyPath: process.env.SECRET_KEY,
       })
       .then((status) => {
-        //EJSON.stringify() is NECESSARY for converting to proper JSON format!!!
-        //TO-DO LIST:
-        // - adjust database to include username as a primary key so that we can search for posts by users through their username and not their id.
-        //   the Object id in the below query is for the user called flowerPower
-        // - COMPLETE: we need to pass the username of the currently logged in user to this /posts route
-        // - COMPLETE: modify the query below to search for posts from the current user. it should return a JSON containing the text for each post a user has made
-        // - create a Post component in React. When users make a post, it should go to the database
-        // - on login, we must run a for loop(INSIDE THE POST COMPONENT AND NOT THIS SERVER.JS FILE) to render a post component for each post text returned by this /posts route
-
-        // ONCE WE HAVE MADE USERNAME A PRIMARY KEY, USE THE FOLLOWING QUERY INSTEAD:
-        // "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{userName: {$eq: "${current_user}"}, textContent: 1}).toArray())'"
-        //ObjectId('66ec6fdc702d84b845964034')
-        //db.user.find({ userName: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}})
         ssh
           .execCommand(
             "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({},{_userID: " +
@@ -198,16 +185,6 @@ app.get("/posts", (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-//USED TO TEST THE /POSTS ROUTE AND ITERATE THROUGH ALL POSTS BY A USER. DELETE ONCE WE CAN SUCCESSFULLY CREATE POSTS
-/*fetch("http://localhost:10000/posts")
-  .then((response) => response.json())
-  .then((json) => {
-    for (var key in json) {
-      //key refers to the index of each post in the db's posts collection. Each post has a field called textContent
-      console.log(key + ": " + json[key].textContent);
-    }
-  });*/
 
 //USED TO INSERT POSTS INTO THE DATABASE
 app.post("/make-post", (req, res) => {
@@ -254,33 +231,12 @@ app.post("/make-post", (req, res) => {
     });
 });
 
-//this code cannot run inside of server.js because 'await' is not allowed, however, this logic DOES work and I have already used
-//it to create a post in the database that says "i LOVE mondays!". This logic can be used when creating the post request in profile.js
-//that will allow us to create posts!
-
-//FRONTEND CODE TO INSERT POST INTO DATABASE. ATTACH TO A BUTTON EVENT LISTENER
-/*
-const post_data = {
-  textContent: "i LOVE mondays!"
-};
-const options = {
-  method: 'POST',
-  body: JSON.stringify(post_data),
-  headers: {
-      'Content-Type': 'application/json'
-  }
-};
-const response = fetch('http://localhost:10000/make-post', options);
-const json = response.json();
-console.log(json.status);
-*/
-
 //launches the frontend from server.js
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
 });
 
-app.listen(PORT, (error) => {
+const httpServer = app.listen(PORT, (error) => {
   if (!error) {
     console.log(
       "Server is Successfully Running, and App is listening on port " + PORT
@@ -289,3 +245,31 @@ app.listen(PORT, (error) => {
     console.log("Error occurred, server can't start", error);
   }
 });
+
+
+//starting our web socket server
+//web sockets allow two way connection between client and server. this is helpful for sending and displaying messages in real time
+const { Server } = require("socket.io");
+
+const io = new Server(httpServer);
+
+//whenever the connection event is fired, print that a user has connected
+io.on("connection", (socket) => {
+  console.log("User connected");
+
+  //print that a user has disconnected whenever the disconnect event is fired
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+})
+
+//when a connected user fires the chat message event, send the msg from the server to all connected clients.
+io.on('connection', (socket) => {
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
+});
+
+
+
+
