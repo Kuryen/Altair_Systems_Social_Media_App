@@ -15,7 +15,6 @@ function Chat(){
 
             //sends input.value from the client to the server whenever the event called chat message is fired.
             socket.emit("chat message", chatUsername + ": " + input.value);
-            //socket.emit("chat message", input.value);
             input.value = "";
         }
     }
@@ -25,18 +24,16 @@ function Chat(){
         var item = document.createElement('li');
         
         //display chatUsername from chatUsername const via profile
-        //item.textContent = `${chatUsername}: ` + msg;
-        item.textContent = msg;
+        item.textContent = msg ; //`${chatUsername}: ` 
         var messages = document.getElementById('messages');
         if(msg.split(":")[0] === localStorage.getItem("profileUsername"))
         {
             addMessage(item.textContent, 'outgoing');
         } else {
             addMessage(item.textContent, 'incoming');
-            console.log("incoming!")
         }
-        //console.log(msg + localStorage.getItem("profileUsername"));
-        messages.appendChild(item);
+        console.log(msg + localStorage.getItem("profileUsername"));
+        //messages.appendChild(item);
         //window.scrollTo(0, document.body.scrollHeight);
     });
 
