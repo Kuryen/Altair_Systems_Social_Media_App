@@ -54,12 +54,14 @@ export default function LoginPage({onSwitchLoginClick}) {
                         }
                     };
                     //send the json to the api and return the result!
-                    const response = await fetch('https://storyhive-app.onrender.com/check-form', options);
+                    const response = await fetch('http://localhost:10000/check-form', options);
                     const json = await response.json();
                     alert(json.status);
 
                     if (json.status === "Login successful!") {
                       navigate('/profile');  // Redirect to profile page on successful login
+                      const passUsername = document.querySelector("#uname").value; //create constant to pass the username via local storage
+                      localStorage.setItem("elementData", passUsername);
                     } else {
                       alert(json.status);  // Display error message
                     }

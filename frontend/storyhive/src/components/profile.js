@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';  // Import the useN
 
 export default function Profile(){
   const navigate = useNavigate();
+  const profileUsername = localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen bg-[#373638]">
       {/* Profile container */}
@@ -34,7 +35,7 @@ export default function Profile(){
               />
               <div className="absolute bottom-0 right-0 w-[40px] h-[40px] bg-gradient-to-b from-[#6c49f8] via-[#ff0064] to-[#ff6c02] rounded-full flex items-center justify-center text-white text-[24px] font-bold">+</div>
             </div>
-            <div className="mt-4 text-white text-4xl font-semibold">Jenna Tolls</div>
+            <div className="mt-4 text-white text-4xl font-semibold">{profileUsername}</div> {/*display username*/}
             <div className="text-[#e1dcdc] text-sm">@username</div>
             <div className="flex space-x-4 mt-4">
               <button className="text-white text-[10px] bg-black px-4 py-2 rounded">Edit Profile</button>
@@ -58,7 +59,8 @@ export default function Profile(){
               </div>
               <div className="text-white text-base">
                 <button type="button" onClick = {(event) => {
-                  navigate('/Chat');
+                  localStorage.setItem("profileUsername", profileUsername); //when chat is clicked store profileUsername in localstorage for reference in chat.js
+                  navigate('/Chat');             
                 }}>
                   Chat with me!
                 </button>

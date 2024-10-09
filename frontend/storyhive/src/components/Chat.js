@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import { io } from "socket.io-client";
 
 function Chat(){
-    var socket = io("https://storyhive-app.onrender.com");
+    const chatUsername = localStorage.getItem("profileUsername") || "No content found!";
+    var socket = io("https://storyhive-app.onrender.com/");
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -21,8 +22,8 @@ function Chat(){
     socket.on('chat message', function(msg) {
         var item = document.createElement('li');
         
-        //FIGURE OUT A WAY TO PASS THE USERNAME TO CHAT.JS. REPLACE "USER: " WITH THE ACTUAL USERNAME!
-        item.textContent = "user: " + msg;
+        //display chatUsername from chatUsername const via profile
+        item.textContent = `${chatUsername}: ${msg}`;
         var messages = document.getElementById('messages');
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
