@@ -8,9 +8,9 @@ export default function Profile() {
   const profileUsername =
     localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen bg-[#373638]">
+    <div className="flex flex-col items-center justify-center w-screen h-screen">
       {/* Profile container */}
-      <div className="relative w-[80%] h-screen bg-[#d9d9d9] rounded-[55px] p-10">
+      <div className="relative w-[80%] h-screen bg-[#eec33d] rounded-[55px] p-10">
         {/* Top Navbar */}
         <div className="relative flex items-center justify-between w-full h-[65px] bg-black rounded-lg mb-10">
           <div className="text-white text-2xl font-['Catamaran'] pl-5">
