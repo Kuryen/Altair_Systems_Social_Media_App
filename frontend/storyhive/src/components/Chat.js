@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { io } from "socket.io-client";
 
 function Chat(){
-    const chatUsername = localStorage.getItem("profileUsername") || "No content found!";
+    const chatUsername = localStorage.getItem("profileUsername") || "No content found!"; //const to retrieve username from profile
     var socket = io("https://storyhive-app.onrender.com/");
 
     const handleSubmit = async (event) => {
@@ -23,7 +23,7 @@ function Chat(){
         var item = document.createElement('li');
         
         //display chatUsername from chatUsername const via profile
-        item.textContent = `${chatUsername}: ${msg}`;
+        item.textContent = `${chatUsername}: ` + msg ;
         var messages = document.getElementById('messages');
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
