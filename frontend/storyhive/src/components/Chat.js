@@ -36,7 +36,7 @@ function Chat(){
             console.log("incoming!")
         }
         //console.log(msg + localStorage.getItem("profileUsername"));
-        //messages.appendChild(item);
+        messages.appendChild(item);
         //window.scrollTo(0, document.body.scrollHeight);
     });
 
