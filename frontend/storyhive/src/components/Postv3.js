@@ -4,7 +4,7 @@ import CreatePostButton from "./CreatePostButton";
 export default function Post() {
   // Function to get posts from the database and manually update the DOM
   function getPosts() {
-    fetch("https://storyhive-app.onrender.com/posts", { method: "GET" })
+    fetch("http://localhost:10000/posts", { method: "GET" })
       .then((response) => response.json())
       .then((json) => {
         const postsContainer = document.getElementById("posts-container"); // Get container to display posts

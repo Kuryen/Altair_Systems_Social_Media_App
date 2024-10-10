@@ -186,6 +186,8 @@ app.get("/posts", (req, res) => {
   }
 });
 
+
+
 //USED TO INSERT POSTS INTO THE DATABASE
 app.post("/make-post", (req, res) => {
   //parsing the json we received
@@ -230,6 +232,65 @@ app.post("/make-post", (req, res) => {
         });
     });
 });
+
+// gets chat conversation between two people
+// the other user need to be specified. 
+app.get("/chat", (req, res) => {
+  try {
+    ssh
+      .connect({
+        host: process.env.SECRET_IP,
+        username: process.env.SECRET_USER,
+        privateKeyPath: process.env.SECRET_KEY,
+      })
+      .then((status) => {
+        ssh
+          .execCommand(
+           "mongosh testDB --quiet --eval 'EJSON.stringify(db.messages.find({ senderID: " +  `"${current_user}"` + ", receiverID: matt }, { textContent: 1, media: 1, createdAt: 1, isRead: 1 }).sort({ createdAt: 1 }).toArray())'" )
+      .then(function(result) {
+        const data1 = result.stdout;
+        res.send(data1);
+      });
+    });
+  }catch(error){
+    res.status(500).json({message : error.message});
+  }
+});
+
+app.post("/postChat", (req, res) => {
+  let senderID = current_user;
+  let receiverID= "matt";
+  let contents = input.textContent;
+  let media = "";
+  ssh
+    .connect({
+      host: process.env.SECRET_IP,
+      username: process.env.SECRET_USER,
+      privateKeyPath: process.env.SECRET_KEY,
+    })
+    .then((status) => { //reciever needs to be specified
+      const messageQuery = `db.messages.insertOne({
+            senderID: "${senderID}",
+            recieverID: "matt", 
+            textContent: "${contents}",
+            media: "${media}",
+            createdAt: new Date()
+          })`;
+      ssh
+        .execCommand(
+          "mongosh testDB --quiet --eval 'EJSON.stringify("+ messageQuery +".toArray())'"
+        )
+        .then(function (result) {
+          const data = result.stdout;
+          let output = data.acknowledged;
+          output = "Message sent successfully!";
+          res.json({
+            status: output,
+          });
+        });
+    });
+});
+
 
 //launches the frontend from server.js
 app.get("*", (req, res) => {
