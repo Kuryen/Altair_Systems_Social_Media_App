@@ -6,7 +6,7 @@ function Chat() {
   const chatUsername =
     localStorage.getItem("profileUsername") || "No content found!"; // Retrieve username from profile
   const [messages, setMessages] = useState([]); // State to manage chat messages
-  const socket = io("http://localhost:10000");
+  const socket = io("https://storyhive-app.onrender.com");
 
   // Handle new message submission
   const handleSubmit = async (event) => {
