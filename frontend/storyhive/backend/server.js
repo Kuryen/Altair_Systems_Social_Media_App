@@ -10,6 +10,8 @@ const path = require("path");
 const buildPath = path.join(__dirname, "../build");
 const bodyParser = require("body-parser");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+const { Server } = require("socket.io");
+
 
 app.use(express.static(buildPath));
 app.use(express.json());
@@ -51,6 +53,7 @@ app.get("/fetch-data", async (req, res) => {
     });
 });
 
+
 //login endpoint
 app.post("/check-form", (req, res) => {
   //parsing the json we received
@@ -66,7 +69,7 @@ app.post("/check-form", (req, res) => {
     })
     .then((status) => {
       //searches the user collection to see if the given username and password match an entity in the collection
-      const userQuery = `db.user.find({ _id: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}}).pretty()`;
+      const userQuery = `db.user.findOneAndUpdate({ _id: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}},{ $set: { status: "online" } },{ returnNewDocument: true })`;
       ssh
         .execCommand("mongosh testDB --quiet --eval '" + userQuery + "'")
         .then(function (result) {
@@ -74,6 +77,7 @@ app.post("/check-form", (req, res) => {
           let output = "";
           //mongodb returns an empty string if there are no matches. if data is empty, the wrong credentials were entered
           if (data === "") {
+            console.log(data);
             output = "Username or password do not match an existing user!";
           } else {
             output = "Login successful!";
@@ -236,6 +240,11 @@ app.post("/make-post", (req, res) => {
 // gets chat conversation between two people
 // the other user need to be specified. 
 app.get("/chat", (req, res) => {
+  const receiverID = req.query.receiverID; // Get receiver ID from query parameters
+  
+  if (!receiverID) {
+    return res.status(400).json({ message: "Receiver ID is required." }); // Check if receiver ID is provided
+  }
   try {
     ssh
       .connect({
@@ -246,50 +255,100 @@ app.get("/chat", (req, res) => {
       .then((status) => {
         ssh
           .execCommand(
-           "mongosh testDB --quiet --eval 'EJSON.stringify(db.messages.find({ senderID: " +  `"${current_user}"` + ", receiverID: matt }, { textContent: 1, media: 1, createdAt: 1, isRead: 1 }).sort({ createdAt: 1 }).toArray())'" )
+           "mongosh testDB --quiet --eval 'EJSON.stringify(db.messages.find({ senderID: " +  `"${current_user}"` + ", receiverID:" + `"${receiverID}"`+ ", { textContent: 1, media: 1, createdAt: 1, isRead: 1 }).sort({ createdAt: 1 }).toArray())'" )
       .then(function(result) {
-        const data1 = result.stdout;
-        res.send(data1);
+        const data = result.stdout;
+        res.send(data); // Send chat data back to the client
+      })
+      .catch((err) => {
+        console.error("Error executing command:", err);
+        res.status(500).json({ message: "Error retrieving chat messages." });
       });
-    });
-  }catch(error){
-    res.status(500).json({message : error.message});
-  }
+  })
+  .catch((err) => {
+    console.error("SSH connection error:", err);
+    res.status(500).json({ message: "Error connecting to server." });
+  });
+} catch (error) {
+res.status(500).json({ message: error.message });
+}
 });
 
 app.post("/postChat", (req, res) => {
-  let senderID = current_user;
-  let receiverID= "matt";
-  let contents = input.textContent;
-  let media = "";
+  const { senderID, receiverID, contents, media } = req.body; // Use req.body for the message content
+  
+  // Ensure that required fields are provided
+  if (!senderID || !receiverID || !contents) {
+    return res.status(400).json({ status: "Sender, receiver, and contents are required." });
+  }
+
   ssh
     .connect({
       host: process.env.SECRET_IP,
       username: process.env.SECRET_USER,
       privateKeyPath: process.env.SECRET_KEY,
     })
-    .then((status) => { //reciever needs to be specified
-      const messageQuery = `db.messages.insertOne({
-            senderID: "${senderID}",
-            recieverID: "matt", 
-            textContent: "${contents}",
-            media: "${media}",
-            createdAt: new Date()
-          })`;
+    .then(() => {
+      const messageQuery = `
+        db.messages.insertOne({
+          senderID: "${senderID}",
+          receiverID: "${receiverID}", 
+          textContent: "${contents}",
+          media: "${media || ''}", 
+          createdAt: new Date()
+        })
+      `;
+
       ssh
-        .execCommand(
-          "mongosh testDB --quiet --eval 'EJSON.stringify("+ messageQuery +".toArray())'"
-        )
-        .then(function (result) {
-          const data = result.stdout;
-          let output = data.acknowledged;
-          output = "Message sent successfully!";
-          res.json({
-            status: output,
+        .execCommand(`mongosh testDB --quiet --eval 'EJSON.stringify(${messageQuery})'`)
+        .then((result) => {
+          const output = result.stdout ? "Message sent successfully!" : "Failed to send message.";
+          // Emit a socket event for the new message
+          socket.emit("chat message", {
+            senderID,
+            receiverID,
+            textContent: contents,
+            media,
+            createdAt: new Date(),
           });
+          res.json({ status: output });
+        })
+        .catch((err) => {
+          console.error("Error executing command:", err);
+          res.status(500).json({ status: "Error sending message." });
         });
+    })
+    .catch((err) => {
+      console.error("SSH connection error:", err);
+      res.status(500).json({ status: "Error connecting to server." });
     });
 });
+
+
+app.get("/online-users", (req, res) => {
+  try {
+    ssh
+      .connect({
+        host: process.env.SECRET_IP,
+        username: process.env.SECRET_USER,
+        privateKeyPath: process.env.SECRET_KEY,
+      })
+      .then(() => {
+       ssh
+        .execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(db.user.find({ status: \"online\" }).toArray())'")
+      .then(function(result) {
+        const data = JSON.parse(result.stdout);
+        const userOnline = data.map(user => user._id);
+        console.log(userOnline)
+        res.json(userOnline);
+       });
+      });
+    } catch (error){
+      console.error("Error fetching online users:", error); // Log the error
+      res.status(500).json({message: error.message});
+    }
+  });
+      
 
 
 //launches the frontend from server.js
@@ -307,27 +366,27 @@ const httpServer = app.listen(PORT, (error) => {
   }
 });
 
-
-//starting our web socket server
-//web sockets allow two way connection between client and server. this is helpful for sending and displaying messages in real time
-const { Server } = require("socket.io");
-
 const io = new Server(httpServer);
 
-//whenever the connection event is fired, print that a user has connected
+// Whenever the connection event is fired, print that a user has connected
 io.on("connection", (socket) => {
   console.log("User connected");
 
-  //print that a user has disconnected whenever the disconnect event is fired
+  // Handle receiving a message from a user
+  socket.on('sendMessage', (message) => {
+    // Broadcast message to specific recipient
+    socket.to(message.recipientId).emit('receiveMessage', message);
+  });
+
+  // Handle chat messages from clients
+  socket.on('chat message', (msg) => {
+    // Send the message from the server to all connected clients
+    io.emit('chat message', msg);
+  });
+
+  // Print that a user has disconnected whenever the disconnect event is fired
   socket.on("disconnect", () => {
     console.log("User disconnected");
-  });
-})
-
-//when a connected user fires the chat message event, send the msg from the server to all connected clients.
-io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
   });
 });
 
