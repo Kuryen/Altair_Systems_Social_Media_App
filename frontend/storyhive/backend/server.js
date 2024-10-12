@@ -239,45 +239,49 @@ app.post("/make-post", (req, res) => {
 
 // gets chat conversation between two people
 // the other user need to be specified. 
-app.get("/chat", (req, res) => {
-  const receiverID = req.query.receiverID; // Get receiver ID from query parameters
-  
-  if (!receiverID) {
-    return res.status(400).json({ message: "Receiver ID is required." }); // Check if receiver ID is provided
+app.get("/getChat", (req, res) => {
+  const receiverID = req.query.receiver; // Get receiver ID from query parameters
+  const current_user = req.query.sender; // Get sender ID from query parameters
+
+  if (!receiverID || !current_user) {
+      return res.status(400).json({ message: "Sender and receiver IDs are required." }); // Check if both sender and receiver IDs are provided
   }
+   
   try {
-    ssh
-      .connect({
-        host: process.env.SECRET_IP,
-        username: process.env.SECRET_USER,
-        privateKeyPath: process.env.SECRET_KEY,
-      })
-      .then((status) => {
-        ssh
-          .execCommand(
-           "mongosh testDB --quiet --eval 'EJSON.stringify(db.messages.find({ senderID: " +  `"${current_user}"` + ", receiverID:" + `"${receiverID}"`+ ", { textContent: 1, media: 1, createdAt: 1, isRead: 1 }).sort({ createdAt: 1 }).toArray())'" )
-      .then(function(result) {
-        const data = result.stdout;
-        res.send(data); // Send chat data back to the client
-      })
-      .catch((err) => {
-        console.error("Error executing command:", err);
-        res.status(500).json({ message: "Error retrieving chat messages." });
-      });
-  })
-  .catch((err) => {
-    console.error("SSH connection error:", err);
-    res.status(500).json({ message: "Error connecting to server." });
-  });
-} catch (error) {
-res.status(500).json({ message: error.message });
-}
+      ssh
+          .connect({
+              host: process.env.SECRET_IP,
+              username: process.env.SECRET_USER,
+              privateKeyPath: process.env.SECRET_KEY,
+          })
+          .then(() => {
+              ssh
+              .execCommand(
+                `mongosh testDB --quiet --eval 'EJSON.stringify(db.messages.find({ $or: [{ senderID: "${current_user}", receiverID: "${receiverID}" }, { senderID: "${receiverID}", receiverID: "${current_user}" }] }, { textContent: 1, media: 1, createdAt: 1, isRead: 1 }).sort({ createdAt: 1 }).toArray())'`
+            )
+            
+                  .then(function(result) {
+                      const data = JSON.parse(result.stdout);
+                      res.json(data); // Send chat data back to the client
+                  })
+                  .catch((err) => {
+                      console.error("Error executing command:", err);
+                      res.status(500).json({ message: "Error retrieving chat messages." });
+                  });
+          })
+          .catch((err) => {
+              console.error("SSH connection error:", err);
+              res.status(500).json({ message: "Error connecting to server." });
+          });
+  } catch (error) {
+      console.error("Unexpected error:", error); // Log unexpected errors
+      res.status(500).json({ message: error.message });
+  }
 });
 
 app.post("/postChat", (req, res) => {
-  const { senderID, receiverID, contents, media } = req.body; // Use req.body for the message content
-  
-  // Ensure that required fields are provided
+  const { senderID, receiverID, contents, media } = req.body;
+
   if (!senderID || !receiverID || !contents) {
     return res.status(400).json({ status: "Sender, receiver, and contents are required." });
   }
@@ -303,15 +307,9 @@ app.post("/postChat", (req, res) => {
         .execCommand(`mongosh testDB --quiet --eval 'EJSON.stringify(${messageQuery})'`)
         .then((result) => {
           const output = result.stdout ? "Message sent successfully!" : "Failed to send message.";
-          // Emit a socket event for the new message
-          socket.emit("chat message", {
-            senderID,
-            receiverID,
-            textContent: contents,
-            media,
-            createdAt: new Date(),
-          });
-          res.json({ status: output });
+
+          // Return the inserted message (you might need to adjust the query here)
+          res.json({ status: output, message: { senderID, receiverID, textContent: contents, media, createdAt: new Date() } });
         })
         .catch((err) => {
           console.error("Error executing command:", err);
@@ -324,7 +322,7 @@ app.post("/postChat", (req, res) => {
     });
 });
 
-
+//fetches all online users and returns them as an array, query chechks who is online
 app.get("/online-users", (req, res) => {
   try {
     ssh
@@ -366,6 +364,11 @@ const httpServer = app.listen(PORT, (error) => {
   }
 });
 
+
+
+
+// not using this for now 
+/*
 const io = new Server(httpServer);
 
 // Whenever the connection event is fired, print that a user has connected
@@ -390,6 +393,6 @@ io.on("connection", (socket) => {
   });
 });
 
-
+*/
 
 
