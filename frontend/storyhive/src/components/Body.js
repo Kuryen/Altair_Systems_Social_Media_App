@@ -1,6 +1,5 @@
 import React from "react";
 import TableDisplay from "./TableDisplay";
-import LoginForm from "./LoginForm";
 import RegisterPage from "./RegisterPage";
 import LoginPage from "./LoginPage";
 
@@ -14,7 +13,6 @@ function Body(){
             <TableDisplay collection_name={"userProfile"}/>
             <br/>
             <br/>
-            <LoginForm />
             <RegisterPage />
             <LoginPage />
             <Profile />

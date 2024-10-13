@@ -2,42 +2,61 @@ import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import beeLogo from "./bee.png";
 
-function Chat() {
+function Chat(props) {
   const chatUsername =
     localStorage.getItem("profileUsername") || "No content found!"; // Retrieve username from profile
   const [messages, setMessages] = useState([]); // State to manage chat messages
-  const socket = io("https://storyhive-app.onrender.com");
+  const [messageContent, setMessageContent] = useState(""); // For input field value
+  const socket = io("https://localhost:10000");
+
+  let selectedUser = {
+    ...props.selectedUser,
+    messages: [],
+  };
+
+  // Get message content from input field
+  const getContent = (e) => {
+    setMessageContent(e.target.value);
+  };
 
   // Handle new message submission
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    var input = document.getElementById("input");
-    if (input.value) {
-      const message = `${chatUsername}: ${input.value}`;
-      socket.emit("chat message", message); // Send message to WebSocket server
-      input.value = ""; // Clear input field
+    const message = `${chatUsername}: ${messageContent}`;
+    if (messageContent) {
+      socket.emit("private message", {
+        content: messageContent,
+        to: props.selectedUser.userID,
+      });
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          toUser: props.selectedUser.username,
+          content: messageContent,
+          fromSelf: true,
+        },
+      ]);
+      setMessageContent(""); // Clear input field
     }
   };
 
   // Listen for new chat messages from the WebSocket
   useEffect(() => {
-    socket.on("chat message", (msg) => {
-      // Determine if the message is incoming or outgoing
-      const messageType =
-        msg.split(":")[0] === localStorage.getItem("profileUsername")
-          ? "outgoing"
-          : "incoming";
+    socket.on("private message", ({ content, from }) => {
+      const fromUser = props.connectedUsers.find(
+        (user) => user.userID === from
+      )?.username;
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: msg, type: messageType },
+        { fromUser, content, fromSelf: false },
       ]);
     });
 
     // Cleanup on component unmount
     return () => {
-      socket.off("chat message");
+      socket.off("private message");
     };
-  }, [socket]);
+  }, [socket, props.connectedUsers]);
 
   return (
     <div className="w-screen h-screen flex justify-center">
@@ -60,12 +79,12 @@ function Chat() {
             <div
               key={index}
               className={`w-full p-3 rounded-lg text-wrap ${
-                message.type === "outgoing"
+                message.fromSelf
                   ? "bg-[#E5AC3F] text-black text-right"
                   : "bg-black text-white text-left"
               }`}
             >
-              <p className="break-all">{message.text}</p>
+              <p className="break-all">{message.content}</p>
             </div>
           ))}
         </div>
@@ -81,6 +100,8 @@ function Chat() {
               className="rounded-md w-[460px] border-2 border-black outline-none"
               id="input"
               autoComplete="off"
+              value={messageContent}
+              onChange={getContent}
             />
             <button
               className="bg-blue-600 px-4 text-black hover:text-white rounded-md"

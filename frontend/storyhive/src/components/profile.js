@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import beeLogo from "./bee.png"; // Replace with your actual logo path
 import UserTabs from "./UserTabs";
-import { useNavigate, useLocation } from "react-router-dom"; // Import the useNavigate hook
+import Sidebar from "./Sidebar";
+import Chat from "./Chat";
 
-export default function Profile() {
-  const navigate = useNavigate();
+export default function Profile(props) {
   const profileUsername =
     localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
+  const [selectedUser, setSelectedUser] = useState({}); // For tracking the selected user
+  const [userSelected, setUserSelected] = useState(false); // To conditionally render chat window
+
+  const getSelectedUser = (user) => {
+    setSelectedUser(user);
+    setUserSelected(true);
+    console.log("In profile, selected user:", user);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen">
       {/* Profile container */}
@@ -73,19 +82,28 @@ export default function Profile() {
                 <div className="font-bold">200</div>
                 <div className="text-sm">Following</div>
               </div>
-              <div className="text-white text-base">
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    localStorage.setItem("profileUsername", profileUsername); //when chat is clicked store profileUsername in localstorage for reference in chat.js
-                    navigate("/Chat");
-                  }}
-                >
-                  Chat with me!
-                </button>
-              </div>
             </div>
           </div>
+        </div>
+
+        {/* Sidebar and Chat */}
+        <div className="flex mt-6">
+          <Sidebar
+            connectedUsers={props.connectedUsers}
+            selectUser={getSelectedUser}
+          />
+          {userSelected ? (
+            <div>
+              <Chat
+                selectedUser={selectedUser}
+                connectedUsers={props.connectedUsers}
+              />
+            </div>
+          ) : (
+            <div className="no-render-message">
+              Chat with me!
+            </div>
+          )}
         </div>
 
         <div class="pt-4">
