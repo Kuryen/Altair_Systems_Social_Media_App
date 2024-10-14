@@ -231,6 +231,84 @@ app.post("/make-post", (req, res) => {
     });
 });
 
+//POST ROUTE WILL ADD A FRIEND TO THE DATABASE
+app.post("/add-friend", (req, res) => {
+  //parsing information received
+  let input = req.body;
+  let user = input.user;
+  let friend = input.friend;
+  ssh.connect({
+      //credentials stored in .env
+      host: process.env.SECRET_IP,
+      username: process.env.SECRET_USER,
+      privateKeyPath: process.env.SECRET_KEY,
+  }).then((status) => {
+      //searches the user collection to see if the given username matches an entity in the collection
+      const friendQuery = `db.user.find({ _id: {$exists: true, $eq: "${friend}"}})`;
+      ssh.execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(" + friendQuery + ".toArray())'").then(function (result) {
+        const data = result.stdout;
+        let output = "";
+        //if data empty, friend does not exist
+        if (data === "") {
+          output = "Friend not found";
+          res.json({
+            status: output,
+          });
+        } else {
+          const insertFriend = `
+            db.friends.insertOne({
+              userID: "${user}",
+              friendID: "${friend}",
+              status: "friends",
+              createdAt: new Date()
+            })
+          `;
+          ssh.execCommand(
+          "mongosh testDB --quiet --eval 'EJSON.stringify(" + insertFriend + ".toArray())'").then(function (result) {
+            const data = result.stdout;
+            let output = data.acknowledged;
+            output = "Friend added successfully!";
+            res.json({
+              status: output,
+            });
+          });
+        }}).catch((error) => {
+          output = "Failed to query friend: " + error.message;
+          res.json({
+            status: output,
+          });
+        });
+    }).catch((error) => {
+      res.json({
+        status: "SSH connection failed: " + error.message,
+      });
+    });
+});
+
+/*
+//TESTING THE ADD-FRIEND ROUTE
+const friend_data = {
+  user: "matt",
+  friend: "sasha"
+};
+
+const friend_options = {
+  method: "POST",
+  body: JSON.stringify(friend_data),
+  headers: {
+    "Content-Type": "application/json",
+  },
+};
+
+try {
+  // Send the post data to the backend API
+  const response = await fetch("http:/localhost:10000/add-friend", friend_options);
+  const json = await response.json();
+  console.log(json.status);
+} catch (error) {
+  console.error("Error adding friend:", error);
+}*/
+
 //launches the frontend from server.js
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
