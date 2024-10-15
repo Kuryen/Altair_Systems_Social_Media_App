@@ -285,6 +285,36 @@ app.post("/add-friend", (req, res) => {
     });
 });
 
+
+
+//server gets all of followers user is following. 
+app.get("/users-friends", (req, res) => {
+  let user = req.query.user;  
+  console.log("Fetching friends for user:", user);
+
+  try {
+    ssh
+      .connect({
+        host: process.env.SECRET_IP,
+        username: process.env.SECRET_USER,
+        privateKeyPath: process.env.SECRET_KEY,
+      })
+      .then(() => {
+        ssh.execCommand(
+          `mongosh testDB --quiet --eval 'EJSON.stringify(db.friends.find({ userID: "${user}", status: "friends" }).toArray())'`
+        ).then(function (result) {
+          const data = JSON.parse(result.stdout);
+          const userFriends = data.map(friend => friend.friendID);
+          console.log(userFriends);
+          res.json(userFriends);
+        });
+      });
+  } catch (error) {
+    console.error("Error fetching friends:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 /*
 //TESTING THE ADD-FRIEND ROUTE
 const friend_data = {
