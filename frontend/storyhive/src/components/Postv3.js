@@ -4,6 +4,8 @@ import CreatePostButton from "./CreatePostButton";
 export default function Post() {
   // Function to get posts from the database and manually update the DOM
   function getPosts() {
+    const currentUser = localStorage.getItem("elementData"); // Get username from localStorage
+    
     fetch("https://storyhive-app.onrender.com/posts", { method: "GET" })
       .then((response) => response.json())
       .then((json) => {
@@ -14,7 +16,6 @@ export default function Post() {
 
         // Check if there are any posts to display
         if (Object.keys(json).length === 0) {
-          // If no posts are available, display a message
           const noPostsMessage = document.createElement("p");
           noPostsMessage.className = "text-gray-500";
           noPostsMessage.textContent = "No posts available.";
@@ -22,31 +23,39 @@ export default function Post() {
           return; // Stop further execution if there are no posts
         }
 
-        // Loop through the json and create DOM elements for each post
-        Object.keys(json).forEach((key) => {
-          const post = json[key]; // Access each post
+        // Filter posts by current user's username
+        const userPosts = Object.values(json).filter((post) => {
+          const userName = typeof post.userID === "object" ? post.userID.name : post.userID;
+          return userName === currentUser;
+        });
 
-          // Create a new div for each post
+        // Display a message if no posts are found for the current user
+        if (userPosts.length === 0) {
+          const noUserPostsMessage = document.createElement("p");
+          noUserPostsMessage.className = "text-gray-500";
+          noUserPostsMessage.textContent = "No posts available for this user. Begin creating by clicking the plus button in the bottom right!";
+          postsContainer.appendChild(noUserPostsMessage);
+          return;
+        }
+
+        // Loop through filtered userPosts and create DOM elements for each
+        //note : switch from mapping to forEach to complement username checking logic
+        userPosts.forEach((post) => {
           const postElement = document.createElement("div");
           postElement.className = "bg-gray-100 shadow-md rounded-lg mb-4";
 
           // User information
           const userInfo = document.createElement("div");
           userInfo.className = "flex items-center border-b border-gray-300 p-4";
-          const userName =
-            typeof post.userID === "object"
-              ? post.userID.name
-              : post.userID || "Unknown User";
-          // Check if createdAt is a valid date
+          const userName = typeof post.userID === "object" ? post.userID.name : post.userID || "Unknown User";
           let createdAt = "Date Unavailable";
           if (post.createdAt) {
             const date = new Date(post.createdAt);
             if (!isNaN(date.getTime())) {
-              createdAt = date.toLocaleString(); // If valid, convert to readable format
+              createdAt = date.toLocaleString();
             }
           }
           userInfo.innerHTML = `<span class="font-bold text-gray-800">${userName}</span>`;
-                              //<span class="text-gray-500 text-sm ml-2">${createdAt}</span>`;
           postElement.appendChild(userInfo);
 
           // Post content
@@ -62,7 +71,7 @@ export default function Post() {
             const postImage = document.createElement("img");
             postImage.src = post.media;
             postImage.alt = "Post Media";
-            postImage.className = "mt-2 rounded-md w-full h-auto"; // Ensuring the image is responsive
+            postImage.className = "mt-2 rounded-md w-full h-auto";
             postContent.appendChild(postImage);
           }
           postElement.appendChild(postContent);
@@ -99,10 +108,7 @@ export default function Post() {
 
   return (
     <div className="w-full mt-6">
-      {/* Render the CreatePostButton and pass the getPosts function as a callback */}
       <CreatePostButton onPostCreated={getPosts} />
-
-      {/* Display fetched posts */}
       <div
         id="posts-container"
         className="mt-4 max-h-80 overflow-auto bg-orange-100 p-4 rounded-lg"
@@ -110,6 +116,3 @@ export default function Post() {
     </div>
   );
 }
-
-// for deployment https://storyhive-app.onrender.com/make-post
-//for testing http://localhost:10000/make-post
