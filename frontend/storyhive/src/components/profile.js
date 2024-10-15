@@ -1,16 +1,41 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import beeLogo from "./bee.png"; // Replace with your actual logo path
 import UserTabs from "./UserTabs";
-import { useNavigate, useLocation } from "react-router-dom"; // Import the useNavigate hook
+import FriendsList from "./FriendsList";
+import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
 
 export default function Profile() {
   const navigate = useNavigate();
-  const profileUsername =
-    localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
+  const profileUsername = localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
+
+  const [friends, setFriends] = useState([]);
+
+  useEffect(() => {
+    // Fetch friends using your API
+    const fetchFriends = async () => {
+      try {
+        const response = await fetch(`/users-friends?user=${profileUsername}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch friends");
+        }
+        const data = await response.json();
+        setFriends(data);
+      } catch (error) {
+        console.error("Error fetching friends:", error);
+      }
+    };
+    fetchFriends();
+  }, [profileUsername]);
+
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen">
-      {/* Profile container */}
-      <div className="relative w-[80%] h-screen bg-[#eec33d] rounded-[55px] p-10">
+    <div className="w-screen h-screen flex">
+      {/* Friends List - Left Side */}
+      <div className="w-[250px] h-full bg-gray-200 overflow-y-auto ">
+        <FriendsList friends={friends} />
+      </div>
+
+      {/* Main Profile Section */}
+      <div className="relative w-full h-screen bg-[#eec33d] flex flex-col items-center p-10">
         {/* Top Navbar */}
         <div className="relative flex items-center justify-between w-full h-[65px] bg-black rounded-lg mb-10">
           <div className="text-white text-2xl font-['Catamaran'] pl-5">
@@ -27,7 +52,7 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Main Profile Section */}
+        {/* Profile Info */}
         <div className="flex items-start space-x-10">
           {/* Avatar & Info */}
           <div className="flex flex-col items-center w-[250px]">
@@ -44,7 +69,7 @@ export default function Profile() {
             <div className="mt-4 text-white text-4xl font-semibold">
               {profileUsername}
             </div>{" "}
-            {/*display username*/}
+            {/* Display username */}
             <div className="text-[#e1dcdc] text-sm">@username</div>
             <div className="flex space-x-4 mt-4">
               <button className="text-white text-[10px] bg-black px-4 py-2 rounded">
@@ -56,12 +81,11 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Stats and Bio */}
+          {/* Bio & Stats */}
           <div className="flex flex-col justify-between w-full h-full">
             <div>
               <p className="text-white text-lg">
-                Hello everyone! Welcome to my profile. I'm excited to connect
-                with you all.
+                Hello everyone! Welcome to my profile. Excited to connect with you all.
               </p>
             </div>
             <div className="flex justify-between mt-6">
@@ -77,7 +101,7 @@ export default function Profile() {
                 <button
                   type="button"
                   onClick={(event) => {
-                    localStorage.setItem("profileUsername", profileUsername); //when chat is clicked store profileUsername in localstorage for reference in chat.js
+                    localStorage.setItem("profileUsername", profileUsername); // When chat is clicked, store profileUsername in localStorage for reference in chat.js
                     navigate("/Chat");
                   }}
                 >
@@ -88,15 +112,18 @@ export default function Profile() {
           </div>
         </div>
 
-        <div class="pt-4">
+        {/* User Tabs */}
+        <div className="pt-4 w-full">
           <UserTabs />
         </div>
       </div>
 
-      {/* Bottom Logo 
-      <div className="absolute bottom-10">
-        <img className="w-[178px] h-[90px]" src={beeLogo} alt="Logo" />
-      </div>*/}
+      {/* Right Side Component */}
+      <div className="w-[250px] h-full bg-gray-200 overflow-y-auto">
+        {/* Placeholder for right side component */}
+        {/* Add the component you want here */}
+        <div className="p-4">you can add additional component here</div>
+      </div>
     </div>
   );
 }

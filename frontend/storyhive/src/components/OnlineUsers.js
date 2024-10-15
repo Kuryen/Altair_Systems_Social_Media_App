@@ -6,17 +6,17 @@ function OnlineUsers({ onlineUsers, onSelectUser }) {
       <h2 className="text-lg font-bold">Online Users</h2>
       <ul>
         {onlineUsers.length > 0 ? (
-          onlineUsers.map((username, index) => (
+          onlineUsers.map((user, index) => (
             <li
               key={index}
               className="cursor-pointer p-2 hover:bg-[#eec33d]"
-              onClick={() => onSelectUser(username)} // Pass the username directly
+              onClick={() => onSelectUser(user)}
             >
-              {username}
+              @{user.username} {/* Use user.username */}
             </li>
           ))
         ) : (
-          <li className="p-2">No users online</li> // Message when no users are online
+          <li className="p-2">No users online</li>
         )}
       </ul>
     </div>
@@ -24,3 +24,4 @@ function OnlineUsers({ onlineUsers, onSelectUser }) {
 }
 
 export default OnlineUsers;
+

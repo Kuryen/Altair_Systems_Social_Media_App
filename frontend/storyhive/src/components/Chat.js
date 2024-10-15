@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import OnlineUsers from "./OnlineUsers";
 import beeLogo from "./bee.png";
+import io from "socket.io-client"; 
+
+const socket = io();
 
 function Chat() {
     const chatUsername = localStorage.getItem("profileUsername") || "No content found!";
@@ -9,27 +12,38 @@ function Chat() {
     const [recipient, setRecipient] = useState("");
 
     useEffect(() => {
-        // Fetch online users
-        const fetchOnlineUsers = async () => {
-            try {
-                const response = await fetch("/online-users");
-                const users = await response.json();
-                setOnlineUsers(users);
-            } catch (error) {
-                console.error("Error fetching online users:", error);
-            }
+        socket.auth = { username: chatUsername };
+        socket.connect();
+    
+        socket.emit("fetch online users");
+    
+        socket.on("online users", (users) => {
+            setOnlineUsers(users); 
+        });
+    
+        socket.on("user connected", (newUser) => {
+            console.log("User connected:", newUser);
+            setOnlineUsers(prevUsers => [...prevUsers, newUser]);
+        });
+    
+        socket.on("user disconnected", (username) => {
+            setOnlineUsers(prevUsers => prevUsers.filter(user => user.username !== username));
+        });    
+        return () => {
+            socket.off("online users");
+            socket.off("user connected");
+            socket.off("user disconnected");
         };
-
-        fetchOnlineUsers();
-    }, []);
+    }, [chatUsername]);
+    
 
     const handleSelectUser = async (selectedRecipient) => {
-        setRecipient(selectedRecipient); // Update the recipient state
-        setMessages([]); // Clear previous messages when a new user is selected
+        setRecipient(selectedRecipient.username);
+        setMessages([]); 
 
-        // Fetch chat history between the current user and the selected recipient
+       
         try {
-            const response = await fetch(`/getChat?sender=${chatUsername}&receiver=${selectedRecipient}`);
+            const response = await fetch(`/getChat?sender=${chatUsername}&receiver=${selectedRecipient.username}`);
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }

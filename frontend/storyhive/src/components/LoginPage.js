@@ -62,9 +62,27 @@ export default function LoginPage({onSwitchLoginClick}) {
                       navigate('/profile');  // Redirect to profile page on successful login
                       const passUsername = document.querySelector("#uname").value; //create constant to pass the username via local storage
                       localStorage.setItem("elementData", passUsername);
+
+                     /* try {
+                        const friendsResponse = await fetch(`http://localhost:10000/users-friends?user=${passUsername}`, {
+                          method: 'GET',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          }
+                        });
+                      
+                        const friendsJson = await friendsResponse.json();
+                        console.log(friendsJson);  // Log the friends list to the console or handle it as needed
+                        alert("Friends fetched: " + JSON.stringify(friendsJson));  // Optional alert to show fetched friends
+                      
+                      } catch (error) {
+                        console.error("Error fetching friends:", error);
+                        alert("Failed to fetch friends1.");
+                      } */
                     } else {
                       alert(json.status);  // Display error message
-                    }
+                    } 
+                    
                     
                 }} class="w-[186px] h-[80px] top-[12px] relative bg-[#e5a000] text-black text-3xl font-semibold font-['Arial'] rounded-[100px] hover:text-white">
                     Submit

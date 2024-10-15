@@ -10,8 +10,16 @@ const path = require("path");
 const buildPath = path.join(__dirname, "../build");
 const bodyParser = require("body-parser");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-const { Server } = require("socket.io");
 
+// creating http server for express and socket. 
+const http = require("http");  
+const server = http.createServer(app); 
+const { Server } = require("socket.io");  
+const io = new Server(server, {  
+  cors: {
+    origin: "http://localhost:10000",  
+  },
+});
 
 app.use(express.static(buildPath));
 app.use(express.json());
@@ -20,38 +28,8 @@ app.use(bodyParser.text());
 
 //create ssh object that will log into our ec2
 const ssh = new NodeSSH();
-
 let current_user = "";
 
-//created an endpoint `/fetch-data` that we can use to fetch data from any MongoDB collection by passing the collection name as a query parameter
-//the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)
-app.get("/fetch-data", async (req, res) => {
-  const { collection } = req.query;
-  const query = `db.${collection}.find({},{_id:0}).pretty()`;
-  //const userQuery = `db.${collection}.find({ userName: {$exists: true, $eq: "flowerPower"}}).pretty()`;
-
-  if (!collection) {
-    return res.status(400).send("Collection not specified");
-  }
-
-  ssh
-    .connect({
-      //credentials stored in .env
-      host: process.env.SECRET_IP,
-      username: process.env.SECRET_USER,
-      privateKeyPath: process.env.SECRET_KEY,
-    })
-    .then((status) => {
-      //`mongo --quiet --eval '${query}'`
-      ssh
-        .execCommand("mongosh testDB --quiet --eval '" + query + "'")
-        .then(function (result) {
-          const data = result.stdout;
-          console.log("hi");
-          res.send(data);
-        });
-    });
-});
 
 
 //login endpoint
@@ -322,8 +300,11 @@ app.post("/postChat", (req, res) => {
     });
 });
 
-//fetches all online users and returns them as an array, query chechks who is online
-app.get("/online-users", (req, res) => {
+
+app.get("/users-friends", (req, res) => {
+  let user = req.query.user;  
+  console.log("Fetching friends for user:", user);
+
   try {
     ssh
       .connect({
@@ -332,67 +313,52 @@ app.get("/online-users", (req, res) => {
         privateKeyPath: process.env.SECRET_KEY,
       })
       .then(() => {
-       ssh
-        .execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(db.user.find({ status: \"online\" }).toArray())'")
-      .then(function(result) {
-        const data = JSON.parse(result.stdout);
-        const userOnline = data.map(user => user._id);
-        console.log(userOnline)
-        res.json(userOnline);
-       });
+        ssh.execCommand(
+          `mongosh testDB --quiet --eval 'EJSON.stringify(db.friends.find({ userID: "${user}", status: "friends" }).toArray())'`
+        ).then(function (result) {
+          const data = JSON.parse(result.stdout);
+          const userFriends = data.map(friend => friend.friendID);
+          console.log(userFriends);
+          res.json(userFriends);
+        });
       });
-    } catch (error){
-      console.error("Error fetching online users:", error); // Log the error
-      res.status(500).json({message: error.message});
-    }
-  });
+  } catch (error) {
+    console.error("Error fetching friends:", error);
+    res.status(500).json({ message: error.message });
+  }
+}); 
       
-
+  io.on("connection", (socket) => {
+    socket.on("fetch online users", async () => {
+      try {
+        await ssh.connect({
+          host: process.env.SECRET_IP,
+          username: process.env.SECRET_USER,
+          privateKeyPath: process.env.SECRET_KEY,
+        });
+        const result = await ssh.execCommand(
+          "mongosh testDB --quiet --eval 'EJSON.stringify(db.user.find({ status: \"online\" }).toArray())'"
+        );
+        const onlineUsers = JSON.parse(result.stdout).map(user => ({
+          username: user._id,
+      }));
+      io.emit("online users", onlineUsers);
+      } catch (err) {
+        console.error("Error fetching online users:", err);
+        socket.emit("error", { message: "Error fetching online users." });
+      }
+    });
+    socket.on("disconnect", async () => {
+          socket.broadcast.emit("user disconnected", socket.username);
+  });
+  });
 
 //launches the frontend from server.js
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
 });
 
-const httpServer = app.listen(PORT, (error) => {
-  if (!error) {
-    console.log(
-      "Server is Successfully Running, and App is listening on port " + PORT
-    );
-  } else {
-    console.log("Error occurred, server can't start", error);
-  }
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-
-
-
-
-// not using this for now 
-/*
-const io = new Server(httpServer);
-
-// Whenever the connection event is fired, print that a user has connected
-io.on("connection", (socket) => {
-  console.log("User connected");
-
-  // Handle receiving a message from a user
-  socket.on('sendMessage', (message) => {
-    // Broadcast message to specific recipient
-    socket.to(message.recipientId).emit('receiveMessage', message);
-  });
-
-  // Handle chat messages from clients
-  socket.on('chat message', (msg) => {
-    // Send the message from the server to all connected clients
-    io.emit('chat message', msg);
-  });
-
-  // Print that a user has disconnected whenever the disconnect event is fired
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
-});
-
-*/
-
 
