@@ -1,0 +1,44 @@
+.container{
+    width: 250px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.container .hexagonArea{
+    display: flex;
+    transform: translateX(-10px);
+}
+
+.container .hexagonArea .hexagon{
+    position: relative;
+    width: 50px;
+    height: 62.5px;
+    margin: -5px 5px;
+    clip-path: polygon(0 25%, 50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%);
+    background: #E5AC3F;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: .2s;
+
+}
+
+.container .hexagonArea .hexagon img{
+    width: 20px;
+}
+
+.container .hexagonArea .hexagon h3{
+    font-weight: 600;
+    margin-top: 25px;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.container .hexagonArea .hexagon:hover{
+    transform: scale(1.2);
+}
