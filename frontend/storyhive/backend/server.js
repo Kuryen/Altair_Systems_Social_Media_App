@@ -25,8 +25,7 @@ let current_user = "";
 //the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)
 app.get("/fetch-data", async (req, res) => {
   const { collection } = req.query;
-  const query = `db.${collection}.find({},{_id:0}).pretty()`;
-  //const userQuery = `db.${collection}.find({ userName: {$exists: true, $eq: "flowerPower"}}).pretty()`;
+  const query = `JSON.stringify(db.${collection}.find({}, { _id: 1, name: 1 }).toArray())`;
 
   if (!collection) {
     return res.status(400).send("Collection not specified");
@@ -34,22 +33,29 @@ app.get("/fetch-data", async (req, res) => {
 
   ssh
     .connect({
-      //credentials stored in .env
       host: process.env.SECRET_IP,
       username: process.env.SECRET_USER,
       privateKeyPath: process.env.SECRET_KEY,
     })
-    .then((status) => {
-      //`mongo --quiet --eval '${query}'`
+    .then(() => {
       ssh
         .execCommand("mongosh testDB --quiet --eval '" + query + "'")
-        .then(function (result) {
-          const data = result.stdout;
-          console.log("hi");
-          res.send(data);
+        .then((result) => {
+          try {
+            const data = JSON.parse(result.stdout);
+            res.json(data);
+          } catch (error) {
+            console.error("Error parsing JSON:", error);
+            res.status(500).json({ error: "Error parsing data from database" });
+          }
         });
+    })
+    .catch((error) => {
+      console.error("SSH connection error:", error);
+      res.status(500).json({ error: "Failed to connect to the database" });
     });
 });
+
 
 //login endpoint
 app.post("/check-form", (req, res) => {
@@ -231,58 +237,80 @@ app.post("/make-post", (req, res) => {
     });
 });
 
-//POST ROUTE WILL ADD A FRIEND TO THE DATABASE
+// POST ROUTE WILL ADD A FRIEND TO THE DATABASE
 app.post("/add-friend", (req, res) => {
-  //parsing information received
+  // Parsing information received
   let input = req.body;
   let user = input.user;
   let friend = input.friend;
+
   ssh.connect({
-      //credentials stored in .env
-      host: process.env.SECRET_IP,
-      username: process.env.SECRET_USER,
-      privateKeyPath: process.env.SECRET_KEY,
-  }).then((status) => {
-      //searches the user collection to see if the given username matches an entity in the collection
-      const friendQuery = `db.user.find({ _id: {$exists: true, $eq: "${friend}"}})`;
-      ssh.execCommand("mongosh testDB --quiet --eval 'EJSON.stringify(" + friendQuery + ".toArray())'").then(function (result) {
-        const data = result.stdout;
-        let output = "";
-        //if data empty, friend does not exist
-        if (data === "") {
-          output = "Friend not found";
-          res.json({
-            status: output,
-          });
-        } else {
-          const insertFriend = `
-            db.friends.insertOne({
-              userID: "${user}",
-              friendID: "${friend}",
-              status: "friends",
-              createdAt: new Date()
-            })
-          `;
-          ssh.execCommand(
-          "mongosh testDB --quiet --eval 'EJSON.stringify(" + insertFriend + ".toArray())'").then(function (result) {
-            const data = result.stdout;
-            let output = data.acknowledged;
-            output = "Friend added successfully!";
+    // Credentials stored in .env
+    host: process.env.SECRET_IP,
+    username: process.env.SECRET_USER,
+    privateKeyPath: process.env.SECRET_KEY,
+  })
+  .then(() => {
+    // Check if the friend relationship already exists
+    const checkFriendExistsQuery = `db.friends.findOne({ userID: "${user}", friendID: "${friend}" })`;
+    
+    ssh.execCommand(`mongosh testDB --quiet --eval 'EJSON.stringify(${checkFriendExistsQuery})'`)
+      .then((result) => {
+        if (result.stdout && result.stdout !== "null") {
+          // If the friend relationship already exists, respond with a message and skip the rest of the code
+          return res.json({ status: "Friend already added!" });
+        }
+
+        // If the friend relationship does not exist, proceed with the original code
+        ssh.execCommand(
+          "mongosh testDB --quiet --eval 'EJSON.stringify(db.user.find({ _id: {$exists: true, $eq: \"" + friend + "\"}}).toArray())'"
+        )
+        .then(function (result) {
+          const data = result.stdout;
+          let output = "";
+          // If data is empty, friend does not exist
+          if (data === "") {
+            output = "Friend not found";
             res.json({
               status: output,
             });
-          });
-        }}).catch((error) => {
-          output = "Failed to query friend: " + error.message;
+          } else {
+            const insertFriend = `
+              db.friends.insertOne({
+                userID: "${user}",
+                friendID: "${friend}",
+                status: "friends",
+                createdAt: new Date()
+              })
+            `;
+            ssh.execCommand(
+              "mongosh testDB --quiet --eval 'EJSON.stringify(" + insertFriend + ")'"
+            )
+            .then(function (result) {
+              const data = result.stdout;
+              let output = data.acknowledged;
+              output = "Friend added successfully!";
+              res.json({
+                status: output,
+              });
+            });
+          }
+        })
+        .catch((error) => {
           res.json({
-            status: output,
+            status: "Failed to query friend: " + error.message,
           });
         });
-    }).catch((error) => {
-      res.json({
-        status: "SSH connection failed: " + error.message,
+      })
+      .catch((error) => {
+        res.json({ status: "Failed to check if friend exists: " + error.message });
       });
+  })
+  .catch((error) => {
+    res.json({
+      status: "SSH connection failed: " + error.message,
     });
+  });
 });
 
 

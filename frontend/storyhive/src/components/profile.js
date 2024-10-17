@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import beeLogo from "./bee.png"; // Replace with your actual logo path
 import UserTabs from "./UserTabs";
 import FriendsList from "./FriendsList";
+import SearchBar from "./searchbar";
+import SearchResultsList from "./searchresultlist";
 import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
 
 export default function Profile() {
@@ -9,6 +11,8 @@ export default function Profile() {
   const profileUsername = localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
 
   const [friends, setFriends] = useState([]);
+  const [results, setResults] = useState([]);
+  const [newFriendAdded, setNewFriendAdded] = useState(false); // Track when a friend is added
 
   useEffect(() => {
     // Fetch friends using your API
@@ -25,7 +29,11 @@ export default function Profile() {
       }
     };
     fetchFriends();
-  }, [profileUsername]);
+  }, [profileUsername, newFriendAdded]); //refresh when a new friend is added
+
+  const handleAddFriend = () => {
+    setNewFriendAdded(!newFriendAdded); //toggle to refresh friend list
+  }
 
   return (
     <div className="w-screen h-screen flex">
@@ -117,12 +125,23 @@ export default function Profile() {
           <UserTabs />
         </div>
       </div>
-
-      {/* Right Side Component */}
+                    
+      {/* Search bar */}
       <div className="w-[250px] h-full bg-gray-200 overflow-y-auto">
         {/* Placeholder for right side component */}
         {/* Add the component you want here */}
-        <div className="p-4">you can add additional component here</div>
+        <div className="search-bar-container">
+        <SearchBar setResults={setResults} />
+      
+        {results && results.length > 0 && (
+            <SearchResultsList 
+            results={results} 
+            currentUserID={profileUsername} 
+            onFriendAdded={handleAddFriend} // Call handleAddFriend when a friend is added
+            existingFriends={friends.map(friend => friend.friendID)} // Pass existing friends' IDs
+          />
+          )}
+        </div>
       </div>
     </div>
   );
