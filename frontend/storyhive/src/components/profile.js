@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import beeLogo from "./bee.png"; // Replace with your actual logo path
+import beeLogo from "./pics/bee.png"; // Replace with your actual logo path
 import UserTabs from "./UserTabs";
 import FriendsList from "./FriendsList";
 import { useNavigate } from "react-router-dom"; // Import the useNavigate hook

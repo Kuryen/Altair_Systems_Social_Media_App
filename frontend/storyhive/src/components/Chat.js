@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import beeLogo from "./bee.png";
+import beeLogo from "./pics/bee.png";
 
 function Chat() {
   const chatUsername =

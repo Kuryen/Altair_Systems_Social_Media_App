@@ -1,5 +1,5 @@
 import { Button } from 'bootstrap';
-import beeLogo from './bee.png';
+import beeLogo from './pics/bee.png';
 import { useNavigate } from 'react-router-dom';  // Import the useNavigate hook
 
 export default function LoginPage({onSwitchLoginClick}) {

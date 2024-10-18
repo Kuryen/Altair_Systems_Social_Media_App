@@ -1,8 +1,10 @@
 //component FriendsList
 import React from "react";
 import "./hexagon.css";
-import beeLogo from "./bee.png";
-import flower from"./flower.png";
+import beeLogo from "./pics/bee.png";
+import flower from"./pics/flower.png";
+import guy from "./pics/guystockphoto.jpg";
+import pic from "./pics/profilepic.png";
 
 
 export default function FriendsList({ friends }) {
@@ -21,36 +23,33 @@ export default function FriendsList({ friends }) {
           <ul>
             <li className="text-gray-400">No friends to display.</li>
             <div class="container">
-            <img src={beeLogo} alt=""/>
               <div class="hexagonArea">
                 <div class="hexagon">
-                  <img src={beeLogo} alt="" class="w-auto h-auto"/>
+                  <img src={guy} alt="" class="w-full h-full"/>
                 </div>
                 
                 <div class="hexagon">
-                  <img src={flower} alt="" class="w-auto h-auto"/>
+                  <img src={guy} alt="" class="w-full h-full"/>
                 </div>
                 
                 <div class="hexagon">
-                  <img src={beeLogo} alt="" class="w-auto h-auto"/>
+                  <img src={pic} alt="" class="w-full h-full"/>
                 </div>
 
                 <div class="hexagon">
-                  <img src={flower} alt="" class="w-auto h-auto"/>
-                </div>
-
-              </div>
-              <div class="hexagonArea">
-                <div class="hexagon">
-                  <img src={beeLogo} alt="" class="w-auto h-auto"/>
+                  <img src={flower} alt="" class="w-full h-full"/>
                 </div>
 
                 <div class="hexagon">
-                  <img src={flower} alt="" class="w-auto h-auto"/>
+                  <img src={beeLogo} alt="" class="w-full h-full"/>
                 </div>
 
                 <div class="hexagon">
-                  <img src={beeLogo} alt="" class="w-auto h-auto"/>
+                  <img src={flower} alt="" class="w-full h-full"/>
+                </div>
+
+                <div class="hexagon">
+                  <img src={beeLogo} alt="" class="w-full h-full"/>
                 </div>
 
               </div>
