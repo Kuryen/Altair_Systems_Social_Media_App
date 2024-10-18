@@ -25,7 +25,8 @@ export default function FriendsList({ friends }) {
             <div class="container">
               <div class="hexagonArea">
                 <div class="hexagon">
-                  <img src={guy} alt="" class="w-full h-full"/>
+                  {/* <img src={guy} alt="" class="w-full h-full"/> */}
+                  <h6>Username</h6>
                 </div>
                 
                 <div class="hexagon">
