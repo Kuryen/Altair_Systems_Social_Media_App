@@ -1,5 +1,5 @@
 .container {
-    width: 250px;
+    width: 350px;
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* 4 columns in the first row */
     justify-content: center;
@@ -31,6 +31,14 @@
     width: 50px;
 }
 
+.container .hexagonArea .hexagon h6{
+    font-weight: 600;
+    margin-top: 0px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-wrap: wrap;
+}
+
 .container .hexagonArea .hexagon:hover{
     transform: scale(1.2);
 }
@@ -38,24 +46,24 @@
 /* Change rows to 3 hexagons after every 4 */
 /* have to do individually or else messes up hover scaling */
 .container .hexagonArea .hexagon:nth-child(7n+5) {
-    grid-column: 2 / span 1; /* Start from the 2nd column for offset */
+    grid-column: 2 / span 1;
     margin-left: -27px;
 }
 
 .container .hexagonArea .hexagon:nth-child(7n+6) {
-    grid-column: 3 / span 1; /* 2nd hexagon in the 3-column row */
+    grid-column: 3 / span 1;
     margin-left: -27px;
 }
 
 .container .hexagonArea .hexagon:nth-child(7n+7) {
-    grid-column: 4 / span 1; /* 3rd hexagon in the 3-column row */
+    grid-column: 4 / span 1;
     margin-left: -27px;
 }
 
-/* Default for other hexagons, stay in 4 columns */
+/* Default for other hexagons, 4 columns */
 .container .hexagon:nth-child(7n+1),
 .container .hexagon:nth-child(7n+2),
 .container .hexagon:nth-child(7n+3),
 .container .hexagon:nth-child(7n+4) {
-    grid-column: span 1; /* Stay in 4 columns */
+    grid-column: span 1;
 }
