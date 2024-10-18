@@ -29,15 +29,16 @@
 }
 
 .container .hexagonArea .hexagon img{
-    width: 20px;
+    margin-top: 20px;
+    width: 30px;
 }
 
-.container .hexagonArea .hexagon h3{
+/* .container .hexagonArea .hexagon h3{
     font-weight: 600;
-    margin-top: 25px;
+    margin-top: 0px;
     font-size: 10px;
     letter-spacing: 1px;
-}
+} */
 
 .container .hexagonArea .hexagon:hover{
     transform: scale(1.2);

@@ -2,7 +2,7 @@
 import React from "react";
 import "./hexagon.css";
 import beeLogo from "./bee.png";
-import "./flower.png";
+import flower from"./flower.png";
 
 
 export default function FriendsList({ friends }) {
@@ -21,42 +21,36 @@ export default function FriendsList({ friends }) {
           <ul>
             <li className="text-gray-400">No friends to display.</li>
             <div class="container">
+            <img src={beeLogo} alt=""/>
               <div class="hexagonArea">
                 <div class="hexagon">
-                  <img src="bee.png" alt=""/>
-                  <h3>hexagon1</h3>
+                  <img src={beeLogo} alt="" class="w-auto h-auto"/>
                 </div>
                 
                 <div class="hexagon">
-                  <img src="flower.png" alt=""/>
-                  <h3>hexagon2</h3>
+                  <img src={flower} alt="" class="w-auto h-auto"/>
                 </div>
                 
                 <div class="hexagon">
-                  <img src="bee.png" alt=""/>
-                  <h3>hexagon3</h3>
+                  <img src={beeLogo} alt="" class="w-auto h-auto"/>
                 </div>
 
                 <div class="hexagon">
-                  <img src="flower.png" alt=""/>
-                  <h3>hexagon4</h3>
+                  <img src={flower} alt="" class="w-auto h-auto"/>
                 </div>
 
               </div>
               <div class="hexagonArea">
                 <div class="hexagon">
-                  <img src="bee.png" alt=""/>
-                  <h3>hexagon5</h3>
+                  <img src={beeLogo} alt="" class="w-auto h-auto"/>
                 </div>
 
                 <div class="hexagon">
-                  <img src="flower.png" alt=""/>
-                  <h3>hexagon6</h3>
+                  <img src={flower} alt="" class="w-auto h-auto"/>
                 </div>
 
                 <div class="hexagon">
-                  <img src="bee.png" alt=""/>
-                  <h3>hexagon7</h3>
+                  <img src={beeLogo} alt="" class="w-auto h-auto"/>
                 </div>
 
               </div>
