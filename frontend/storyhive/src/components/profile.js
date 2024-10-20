@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import beeLogo from "./bee.png"; // Replace with your actual logo path
+import beeLogo from "./pics/bee.png"; // Replace with your actual logo path
 import UserTabs from "./UserTabs";
 import FriendsList from "./FriendsList";
 import SearchBar from "./searchbar";
@@ -36,9 +36,9 @@ export default function Profile() {
   }
 
   return (
-    <div className="w-screen h-screen flex">
+    <div className="w-screen h-screen relative flex">
       {/* Friends List - Left Side */}
-      <div className="w-[250px] h-full bg-gray-200 overflow-y-auto ">
+      <div className="w-[350px] h-full bg-gray-200 overflow-y-auto ">
         <FriendsList friends={friends} />
       </div>
 

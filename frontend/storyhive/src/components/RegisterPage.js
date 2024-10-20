@@ -1,5 +1,5 @@
 import React, { useState } from "react"; 
-import beeLogo from './bee.png'
+import beeLogo from './pics/bee.png'
 
 function RegisterPage({onSwitchLoginClick}) {
   
