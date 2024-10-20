@@ -7,7 +7,7 @@ export default function FriendsList({ friends }) {
   
   return (
     <div className="bg-black p-4 text-white w-full h-full">
-      <h3 className="text-xl font-bold mb-4">Friends List</h3>
+      <h3 className="text-xl font-bold mb-4">Follower List</h3>
       <div className="container">
         <div className="hexagonArea">
           {friends.length > 0 ? (

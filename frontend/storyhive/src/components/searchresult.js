@@ -4,7 +4,7 @@ export default function SearchResult({ result, currentUserID, onFriendAdded, exi
   
     const addFriend = () => {
       if (isAlreadyFriend) {
-        alert("This user is already your friend!");
+        alert("You're already following this user!");
         return; // Exit if friend already exists
       }
   
@@ -25,8 +25,8 @@ export default function SearchResult({ result, currentUserID, onFriendAdded, exi
           onFriendAdded(); // Call to refresh friends list
         })
         .catch((error) => {
-          console.error("Error adding friend:", error);
-          alert("Failed to add friend");
+          console.error("Error following!:", error);
+          alert("Failed to follow!");
         });
     };
   

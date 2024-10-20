@@ -32,7 +32,7 @@ export default function SearchBar({ setResults }) {
             <span className="text-royalblue"></span>
             <input
                 type="search"
-                placeholder="Add a friend..."
+                placeholder="Follow a user..."
                 value={input}
                 onChange={(e) => handleChange(e.target.value)}
                 className="w-full h-full ml-2 text-lg bg-transparent border-none focus:outline-none"
