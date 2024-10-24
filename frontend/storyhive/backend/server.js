@@ -21,153 +21,16 @@ const ssh = new NodeSSH();
 
 let current_user = "";
 
-//created an endpoint `/fetch-data` that we can use to fetch data from any MongoDB collection by passing the collection name as a query parameter
-//the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)
-app.get("/fetch-data", async (req, res) => {
-  const { collection } = req.query;
-  const query = `JSON.stringify(db.${collection}.find({}, { _id: 1, name: 1 }).toArray())`;
+const tableRoutes = require("./tables");
+app.use("/tables", tableRoutes);
 
-  if (!collection) {
-    return res.status(400).send("Collection not specified");
-  }
-
-  ssh
-    .connect({
-      host: process.env.SECRET_IP,
-      username: process.env.SECRET_USER,
-      privateKeyPath: process.env.SECRET_KEY,
-    })
-    .then(() => {
-      ssh
-        .execCommand("mongosh testDB --quiet --eval '" + query + "'")
-        .then((result) => {
-          try {
-            const data = JSON.parse(result.stdout);
-            res.json(data);
-          } catch (error) {
-            console.error("Error parsing JSON:", error);
-            res.status(500).json({ error: "Error parsing data from database" });
-          }
-        });
-    })
-    .catch((error) => {
-      console.error("SSH connection error:", error);
-      res.status(500).json({ error: "Failed to connect to the database" });
-    });
-});
-
-
-//login endpoint
-app.post("/check-form", (req, res) => {
-  //parsing the json we received
-  let input = req.body;
-  let user = input.name;
-  let pass = input.pass;
-  ssh
-    .connect({
-      //credentials stored in .env
-      host: process.env.SECRET_IP,
-      username: process.env.SECRET_USER,
-      privateKeyPath: process.env.SECRET_KEY,
-    })
-    .then((status) => {
-      //searches the user collection to see if the given username and password match an entity in the collection
-      const userQuery = `db.user.find({ _id: {$exists: true, $eq: "${user}"}, password: {$exists: true, $eq: "${pass}"}}).pretty()`;
-      ssh
-        .execCommand("mongosh testDB --quiet --eval '" + userQuery + "'")
-        .then(function (result) {
-          const data = result.stdout;
-          let output = "";
-          //mongodb returns an empty string if there are no matches. if data is empty, the wrong credentials were entered
-          if (data === "") {
-            output = "Username or password do not match an existing user!";
-          } else {
-            output = "Login successful!";
-            current_user = input.name;
-            console.log("After login, the current user is: " + current_user);
-          }
-          res.json({
-            status: output,
-          });
-        });
-    });
-});
-
-//created endpoint for our register function '/register' that will input a user's registration data into our MongoDB collection
-app.post("/register", (req, res) => {
-  //parsing information received
-
-  let input = req.body;
-  let userr = input.namer;
-  let passr = input.passr;
-  let email = input.emailr;
-
-  ssh
-    .connect({
-      //credentials stored in .env
-      host: process.env.SECRET_IP,
-      username: process.env.SECRET_USER,
-      privateKeyPath: process.env.SECRET_KEY,
-    })
-    .then((status) => {
-      //searches the user collection to see if the given username and password match an entity in the collection
-      const userQuery = `db.user.find({ _id: {$exists: true, $eq: "${userr}"}, password: {$exists: true, $eq: "${passr}"}, email: {$exists: true, $eq: "${email}"}}).pretty()`;
-      ssh
-        .execCommand("mongosh testDB --quiet --eval '" + userQuery + "'")
-        .then(function (result) {
-          const data = result.stdout;
-          let output = "";
-          //if data empty, allow user to create account
-          if (data === "") {
-            const insertUserQuery = `
-          db.user.insertOne({
-            _id: "${userr}",
-            password: "${passr}",
-            email: "${email}",
-            createdAt: new Date()
-          })`;
-            // Insert the user if the query returns no results (meaning no existing user with that data)
-            ssh
-              .execCommand(
-                "mongosh testDB --quiet --eval '" + insertUserQuery + "'"
-              )
-              .then(function (insertResult) {
-                output = "Registration successful!";
-                res.json({
-                  status: output,
-                });
-              })
-              .catch((error) => {
-                output = "Failed to insert user: " + error.message;
-                res.json({
-                  status: output,
-                });
-              });
-          } else {
-            // User already exists
-            output = "Registration not successful, user already exists.";
-            res.json({
-              status: output,
-            });
-          }
-        })
-        .catch((error) => {
-          output = "Failed to query user: " + error.message;
-          res.json({
-            status: output,
-          });
-        });
-    })
-    .catch((error) => {
-      res.json({
-        status: "SSH connection failed: " + error.message,
-      });
-    });
-});
+const authenticateRoutes = require("./authenticate");
+app.use("/authenticate", authenticateRoutes);
 
 //USED TO GET POSTS RELATED TO A USER
 app.get("/posts", (req, res) => {
   try {
+    console.log("The current user from the other file is: " + current_user);
     ssh
       .connect({
         //credentials stored in .env
@@ -342,30 +205,6 @@ app.get("/users-friends", (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
-/*
-//TESTING THE ADD-FRIEND ROUTE
-const friend_data = {
-  user: "matt",
-  friend: "sasha"
-};
-
-const friend_options = {
-  method: "POST",
-  body: JSON.stringify(friend_data),
-  headers: {
-    "Content-Type": "application/json",
-  },
-};
-
-try {
-  // Send the post data to the backend API
-  const response = await fetch("http:/localhost:10000/add-friend", friend_options);
-  const json = await response.json();
-  console.log(json.status);
-} catch (error) {
-  console.error("Error adding friend:", error);
-}*/
 
 //launches the frontend from server.js
 app.get("*", (req, res) => {
