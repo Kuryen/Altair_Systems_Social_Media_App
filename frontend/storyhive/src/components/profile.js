@@ -18,7 +18,7 @@ export default function Profile() {
     // Fetch friends using your API
     const fetchFriends = async () => {
       try {
-        const response = await fetch(`/users-friends?user=${profileUsername}`);
+        const response = await fetch(`/friending/users-friends?user=${profileUsername}`);
         if (!response.ok) {
           throw new Error("Failed to fetch friends");
         }

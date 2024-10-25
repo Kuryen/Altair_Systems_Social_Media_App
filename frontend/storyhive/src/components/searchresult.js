@@ -9,7 +9,7 @@ export default function SearchResult({ result, currentUserID, onFriendAdded, exi
       }
   
       // Proceed with adding friend if not already in list
-      fetch("https://storyhive-app.onrender.com/add-friend", {
+      fetch("http://localhost:10000/friending/add-friend", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

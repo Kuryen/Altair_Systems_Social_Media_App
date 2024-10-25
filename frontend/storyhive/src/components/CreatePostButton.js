@@ -9,6 +9,7 @@ export default function CreatePostButton({ onPostCreated }) {
 
     const data = {
       textContent: postContent,
+      current_user: localStorage.getItem("elementData")
     };
 
     const options = {
@@ -21,7 +22,7 @@ export default function CreatePostButton({ onPostCreated }) {
 
     try {
       // Send the post data to the backend API
-      const response = await fetch("https://storyhive-app.onrender.com/make-post", options);
+      const response = await fetch("http://localhost:10000/posting/make-post", options);
       const json = await response.json();
       alert(json.status);
 

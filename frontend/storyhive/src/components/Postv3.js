@@ -6,7 +6,7 @@ export default function Post() {
   function getPosts() {
     const currentUser = localStorage.getItem("elementData"); // Get username from localStorage
     
-    fetch("https://storyhive-app.onrender.com/posts", { method: "GET" })
+    fetch(`http://localhost:10000/posting/posts?user=${currentUser}`, { method: "GET" })
       .then((response) => response.json())
       .then((json) => {
         const postsContainer = document.getElementById("posts-container"); // Get container to display posts
