@@ -1,7 +1,10 @@
 const express = require("express");
-
 const router = express.Router();
+const { NodeSSH } = require("node-ssh");
+var cors = require("cors");
 
+router.use(cors());
+const ssh = new NodeSSH();
 //created an endpoint `/fetch-data` that we can use to fetch data from any MongoDB collection by passing the collection name as a query parameter
 //the frontend will call this endpoint and specify the collection name in the request (e.g., `collection=posts` or `collection=clicked`)
 router.get("/fetch-data", async (req, res) => {
