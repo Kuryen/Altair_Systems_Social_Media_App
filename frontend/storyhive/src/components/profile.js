@@ -32,9 +32,9 @@ export default function Profile() {
     fetchFriends();
   }, [profileUsername]);
 
-  // const handleProfileClick = () => {
-  //   navigate("/profile");
-  // };
+  const handleProfileClick = () => {
+    console.log("clicked");
+  };
 
   return (
     <div className="w-screen h-screen relative flex">
