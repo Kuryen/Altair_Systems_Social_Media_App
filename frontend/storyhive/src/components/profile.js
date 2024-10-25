@@ -8,8 +8,10 @@ import GradientPlus from "./parts/GradientPlus";
 
 export default function Profile() {
   const navigate = useNavigate();
+  
   const profileUsername = localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
 
+  //setCurrentUser(profileUsername === localStorage.getItem("elementData"));
   const [currentUser, setCurrentUser] = useState(true); //condition to change the profile view for users depending on if it is their profile or not
   const [friends, setFriends] = useState([]);
 
@@ -30,11 +32,15 @@ export default function Profile() {
     fetchFriends();
   }, [profileUsername]);
 
+  // const handleProfileClick = () => {
+  //   navigate("/profile");
+  // };
+
   return (
     <div className="w-screen h-screen relative flex">
       {/* Friends List - Left Side */}
       <div className="w-[350px] h-full bg-gray-200 overflow-y-auto ">
-        <FriendsList friends={friends} />
+        <FriendsList friends={friends} changeProfile={() => handleProfileClick} />
       </div>
 
       {/* Main Profile Section */}

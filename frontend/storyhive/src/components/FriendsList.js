@@ -1,9 +1,12 @@
 // component FriendsList
-import React from "react";
+import React, { useState } from "react";
 import "./hexagon.css";
 
 export default function FriendsList({ friends }) {
 
+  const handleClick = () => {
+    console.log("clicked");
+}
   
   return (
     <div className="bg-black p-4 text-white w-full h-full">
@@ -12,9 +15,9 @@ export default function FriendsList({ friends }) {
         <div className="hexagonArea">
           {friends.length > 0 ? (
             friends.map((friend, index) => (
-              <div key={index} className="hexagon">
+              <button key={index} className="hexagon" onClick={() => handleClick()}>
                 <h6>{friend}</h6> {/* Display each friend's name in hexagon */}
-              </div>
+              </button>
             ))
           ) : (
             <div className="text-gray-400">No friends to display.</div>
