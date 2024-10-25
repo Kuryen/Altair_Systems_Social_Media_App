@@ -1,4 +1,3 @@
-import React, { useState } from "react"; 
 import beeLogo from './pics/bee.png'
 
 function RegisterPage({onSwitchLoginClick}) {

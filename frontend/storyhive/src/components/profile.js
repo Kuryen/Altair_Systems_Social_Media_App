@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
-import beeLogo from "./pics/bee.png"; // Replace with your actual logo path
+//import beeLogo from "./pics/bee.png"; // Replace with your actual logo path
 import UserTabs from "./UserTabs";
 import FriendsList from "./FriendsList";
 import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
+import ProfileButton from "./parts/ProfileButton";
+import GradientPlus from "./parts/GradientPlus";
 
 export default function Profile() {
   const navigate = useNavigate();
   const profileUsername = localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
 
+  const [currentUser, setCurrentUser] = useState(true); //condition to change the profile view for users depending on if it is their profile or not
   const [friends, setFriends] = useState([]);
 
   useEffect(() => {
@@ -62,9 +65,7 @@ export default function Profile() {
                 src="https://via.placeholder.com/150"
                 alt="User Avatar"
               />
-              <div className="absolute bottom-0 right-0 w-[40px] h-[40px] bg-gradient-to-b from-[#6c49f8] via-[#ff0064] to-[#ff6c02] rounded-full flex items-center justify-center text-white text-[24px] font-bold">
-                +
-              </div>
+              {currentUser && <GradientPlus />}
             </div>
             <div className="mt-4 text-white text-4xl font-semibold">
               {profileUsername}
@@ -72,12 +73,8 @@ export default function Profile() {
             {/* Display username */}
             <div className="text-[#e1dcdc] text-sm">@username</div>
             <div className="flex space-x-4 mt-4">
-              <button className="text-white text-[10px] bg-black px-4 py-2 rounded">
-                Edit Profile
-              </button>
-              <button className="text-white text-[10px] bg-black px-4 py-2 rounded">
-                Share Profile
-              </button>
+                {currentUser && <ProfileButton buttonText="Edit Profile" />}
+                {currentUser && <ProfileButton buttonText="Share Profile" />}
             </div>
           </div>
 

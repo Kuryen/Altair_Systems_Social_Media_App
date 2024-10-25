@@ -1,4 +1,3 @@
-import { Button } from 'bootstrap';
 import beeLogo from './pics/bee.png';
 import { useNavigate } from 'react-router-dom';  // Import the useNavigate hook
 
