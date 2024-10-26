@@ -7,8 +7,8 @@ function RegisterPage({onSwitchLoginClick}) {
     <div className="LRContainer">
 
       <button onClick = {onSwitchLoginClick} class="switchTab">
-        <div class="selectedTab"></div>
         <div class="unselectedTab"></div>
+        <div class="selectedTab left-40 top-0"></div>
         <div class="textOfSelectedTab left-[215px] top-[29px]">SIGNUP</div>
         <div class="textOfUnselectedTab left-[60px] top-[35px]">LOGIN</div>
       </button>

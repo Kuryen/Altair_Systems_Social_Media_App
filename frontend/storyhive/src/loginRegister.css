@@ -6,7 +6,7 @@
     @apply w-[350px] h-[95px] left-[1366px] top-[100px] absolute;
 }
 
-.LRContainer .switchTab .selectedTab{
+.LRContainer .switchTab .unselectedTab{
     @apply w-[350px] h-[95px] left-0 top-[1px] absolute bg-[#a2845e] rounded-[100px];
 }
 
@@ -14,8 +14,8 @@
     @apply absolute text-black text-3xl font-bold font-['Poppins'] lowercase;
 }
 
-.LRContainer .switchTab .unselectedTab{
-    @apply w-[198px] h-[95px] left-40 top-0 absolute bg-[#fff1c2] rounded-[100px];
+.LRContainer .switchTab .selectedTab{
+    @apply w-[198px] h-[95px] absolute bg-[#fff1c2] rounded-[100px];
 }
 
 .LRContainer .switchTab .textOfUnselectedTab{
@@ -52,4 +52,8 @@
 
 .LRContainer .submitButton{
     @apply w-[186px] h-[80px] relative bg-[#e5a000] text-black text-3xl font-semibold font-['Arial'] rounded-[100px] hover:text-white;
+}
+
+.LRContainer .forgotPassword{
+    @apply w-[269px] h-[59px] left-[1005px] top-[385px] relative text-black text-[25px] font-normal font-['Poppins'] underline lowercase;
 }
