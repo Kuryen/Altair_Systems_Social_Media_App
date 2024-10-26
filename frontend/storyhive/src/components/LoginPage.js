@@ -1,4 +1,4 @@
-import { Button } from 'bootstrap';
+import "../loginRegister.css";
 import beeLogo from './pics/bee.png';
 import { useNavigate } from 'react-router-dom';  // Import the useNavigate hook
 
@@ -7,14 +7,13 @@ export default function LoginPage({onSwitchLoginClick}) {
   const navigate = useNavigate();  // Initialize useNavigate
   
   return (
-  <div class="w-[1920px] h-[1239px] relative bg-[#bf6a02] border border-white">
-  <div class="w-[1920px] h-[1239px] left-0 top-0 absolute border border-black">
+  <div class="LRContainer">
 
-  <button onClick = {onSwitchLoginClick} class="w-[350px] h-[95px] left-[1366px] top-[100px] absolute">
-      <div class="w-[350px] h-[95px] left-0 top-[1px] absolute bg-[#a2845e] rounded-[100px]"></div>
-      <div class="left-[215px] top-[33px] absolute text-[#111111] text-xl font-bold font-['Poppins'] lowercase">SIGNUP</div>
+  <button onClick = {onSwitchLoginClick} class="switchTab">
+      <div class="selectedTab"></div>
+      <div class="left-[215px] top-[33px] textOfUnselectedTab">SIGNUP</div>
       <div class="w-[198px] h-[95px] left-0 top-0 absolute bg-[#fff1c2] rounded-[100px]"></div>
-      <div class="left-[60px] top-[25px] absolute text-[#222222] text-3xl font-bold font-['Poppins'] lowercase">LOGIN</div>
+      <div class="left-[60px] top-[25px] textOfSelectedTab">LOGIN</div>
     </button>
     
     <div class="w-[771px] h-[820px] left-[575px] top-[244px] absolute rounded-[100px] bg-white shadow-xl"></div>
@@ -77,7 +76,6 @@ export default function LoginPage({onSwitchLoginClick}) {
     {/* bee image */}
     <img class="w-[126px] h-[138px] left-[898px] top-[271px] absolute" src={beeLogo} alt="site bee logo"/>
 
-  </div>
 </div>
     );
 }

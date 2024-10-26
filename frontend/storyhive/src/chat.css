@@ -38,7 +38,3 @@
 .chatContainer .chatBg .chatMessageSpace .recieved {
   @apply bg-black text-white text-left
 }
-
-.chatContainer .chatBg .chatMessageSpace .chatBubble {
-  @apply w-full p-3 rounded-lg text-wrap
-}

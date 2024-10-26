@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import beeLogo from "./pics/bee.png";
-import "./chat.css";
+import "../chat.css";
 
 function Chat() {
   const chatUsername =

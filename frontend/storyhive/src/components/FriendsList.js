@@ -1,7 +1,7 @@
 // component FriendsList
 import React, { useState } from "react";
-import "./hexagon.css";
-import "./friendsList.css";
+import "../friendsList.css";
+import "../hexagon.css";
 
 export default function FriendsList({ friends }, {changeProfile}) {
   
