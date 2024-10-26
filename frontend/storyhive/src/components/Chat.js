@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import beeLogo from "./pics/bee.png";
+import "./chat.css";
 
 function Chat() {
   const chatUsername =
@@ -40,10 +41,10 @@ function Chat() {
   }, [socket]);
 
   return (
-    <div className="w-screen h-screen flex justify-center">
-      <div className="relative w-[500px] h-full bg-[#eec33d]">
+    <div className="chatContainer">
+      <div className="chatBg">
         {/* Chat info space */}
-        <div className="flex justify-items-start relative w-full h-[100px] items-center">
+        <div className="chatHeaderSpace">
           <div>
             <img
               className="w-[100px] h-[100px] object-contain"
@@ -55,14 +56,14 @@ function Chat() {
         </div>
 
         {/* Chat message space */}
-        <div className="bg-white w-full h-[700px] flex-grow overflow-y-auto space-y-1">
+        <div className="chatMessageSpace">
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`w-full p-3 rounded-lg text-wrap ${
+              className={`chatBubble ${
                 message.type === "outgoing"
-                  ? "bg-[#E5AC3F] text-black text-right"
-                  : "bg-black text-white text-left"
+                  ? "sent"
+                  : "recieved"
               }`}
             >
               <p className="break-all">{message.text}</p>
@@ -71,19 +72,19 @@ function Chat() {
         </div>
 
         {/* Chat input */}
-        <div className="absolute bottom-0 w-full h-[120px]">
+        <div className="chatInputContainer">
           <form
-            className="flex justify-between absolute w-full pb-10 bottom-0 right-0"
+            className="chatSendBar"
             id="form"
             onSubmit={handleSubmit}
           >
             <input
-              className="rounded-md w-[460px] border-2 border-black outline-none"
+              className="chatInputField"
               id="input"
               autoComplete="off"
             />
             <button
-              className="bg-blue-600 px-4 text-black hover:text-white rounded-md"
+              className="chatSendButton"
               type="submit"
             >
               Send

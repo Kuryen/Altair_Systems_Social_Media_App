@@ -1,0 +1,44 @@
+.chatContainer {
+  @apply w-screen h-screen flex justify-center;
+}
+
+.chatContainer .chatBg {
+  @apply relative w-[500px] h-full bg-[#eec33d];
+}
+
+
+.chatContainer .chatBg .chatMessageSpace {
+  @apply bg-white w-full h-[700px] flex-grow overflow-y-auto space-y-1;
+}
+
+.chatContainer .chatBg .chatHeaderSpace {
+  @apply flex justify-items-start relative w-full h-[100px] items-center;
+}
+
+.chatInputContainer {
+  @apply absolute bottom-0 w-full h-[120px];
+}
+
+.chatInputContainer .chatSendBar {
+  @apply flex justify-between absolute w-full pb-10 bottom-0 right-0;
+}
+
+.chatInputContainer .chatSendBar .chatInputField {
+  @apply rounded-md w-[460px] border-2 border-black outline-none;
+}
+
+.chatInputContainer .chatSendBar .chatSendButton {
+  @apply bg-blue-600 px-4 text-black hover:text-white rounded-md;
+}
+
+.chatContainer .chatBg .chatMessageSpace .sent {
+  @apply bg-[#E5AC3F] text-black text-right
+}
+
+.chatContainer .chatBg .chatMessageSpace .recieved {
+  @apply bg-black text-white text-left
+}
+
+.chatContainer .chatBg .chatMessageSpace .chatBubble {
+  @apply w-full p-3 rounded-lg text-wrap
+}
