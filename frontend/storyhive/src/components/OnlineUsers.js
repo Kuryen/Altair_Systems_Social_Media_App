@@ -1,27 +1,25 @@
 import React from "react";
 
 function OnlineUsers({ onlineUsers, onSelectUser }) {
+  console.log("Rendering online users:", onlineUsers); // Log the received online users
   return (
-    <div className="w-[200px] h-full bg-[#f4f4f4] p-4">
-      <h2 className="text-lg font-bold">Online Users</h2>
-      <ul>
-        {onlineUsers.length > 0 ? (
-          onlineUsers.map((user, index) => (
-            <li
-              key={index}
-              className="cursor-pointer p-2 hover:bg-[#eec33d]"
-              onClick={() => onSelectUser(user)}
-            >
-              @{user.username} {/* Use user.username */}
-            </li>
-          ))
-        ) : (
-          <li className="p-2">No users online</li>
-        )}
-      </ul>
+    <div className="w-[200px] h-full bg-gray-200 p-4 overflow-y-auto">
+      <h2 className="font-bold text-lg">Online Users</h2>
+      {onlineUsers.length === 0 ? (
+        <p>No users online</p>
+      ) : (
+        onlineUsers.map((user, index) => (
+          <div
+            key={index}
+            className="p-2 cursor-pointer hover:bg-gray-300"
+            onClick={() => onSelectUser(user)}
+          >
+            @{user} {/* Display the username directly since onlineUsers is an array of strings */}
+          </div>
+        ))
+      )}
     </div>
   );
 }
 
 export default OnlineUsers;
-

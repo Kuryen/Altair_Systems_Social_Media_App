@@ -3,12 +3,33 @@ import beeLogo from "./bee.png"; // Replace with your actual logo path
 import UserTabs from "./UserTabs";
 import FriendsList from "./FriendsList";
 import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
+import socket from './socket';
 
 export default function Profile() {
   const navigate = useNavigate();
   const profileUsername = localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
-
+  const [onlineUsers, setOnlineUsers] = useState([])
   const [friends, setFriends] = useState([]);
+
+
+  //SOMETHING IS WRONG WITH THIS CODE 
+  // First useEffect for socket connection
+  useEffect(() => {
+    socket.connect();
+    // Emit username when the component mounts
+    socket.emit("registerUser", profileUsername); // Use actual username passed as prop
+
+    // Listen for online users update
+    socket.on("updateOnlineUsers", (users) => {
+    setOnlineUsers(users);
+    });
+
+ // Cleanup on unmount
+  return () => {
+   socket.off("updateOnlineUsers");
+    // Do not disconnect here unless you want to close the socket when leaving this component
+  };
+}, []); // Empty dependency array ensures this runs only once on mount
 
   useEffect(() => {
     // Fetch friends using your API

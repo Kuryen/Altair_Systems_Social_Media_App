@@ -301,7 +301,7 @@ app.post("/postChat", (req, res) => {
 });
 
 
-app.get("/users-friends", (req, res) => {
+/*app.get("/users-friends", (req, res) => {
   let user = req.query.user;  
   console.log("Fetching friends for user:", user);
 
@@ -326,32 +326,38 @@ app.get("/users-friends", (req, res) => {
     console.error("Error fetching friends:", error);
     res.status(500).json({ message: error.message });
   }
-}); 
+}); */ 
       
-  io.on("connection", (socket) => {
-    socket.on("fetch online users", async () => {
-      try {
-        await ssh.connect({
-          host: process.env.SECRET_IP,
-          username: process.env.SECRET_USER,
-          privateKeyPath: process.env.SECRET_KEY,
-        });
-        const result = await ssh.execCommand(
-          "mongosh testDB --quiet --eval 'EJSON.stringify(db.user.find({ status: \"online\" }).toArray())'"
-        );
-        const onlineUsers = JSON.parse(result.stdout).map(user => ({
-          username: user._id,
-      }));
-      io.emit("online users", onlineUsers);
-      } catch (err) {
-        console.error("Error fetching online users:", err);
-        socket.emit("error", { message: "Error fetching online users." });
-      }
-    });
-    socket.on("disconnect", async () => {
-          socket.broadcast.emit("user disconnected", socket.username);
+
+
+let onlineUsers = [];
+
+io.on("connection", (socket) => {
+  console.log("User connected");
+
+  socket.on("registerUser", (username) => {
+    if (username && !onlineUsers.includes(username)) {
+      onlineUsers.push(username);
+      socket.username = username;
+      io.emit("updateOnlineUsers", onlineUsers);
+    } else {
+      // Handle case where username is already taken
+      console.log(`Username ${username} is already taken.`);
+      socket.emit("usernameError", "Username is already taken.");
+    }
+    console.log("Online Users: ", onlineUsers);
   });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+    const username = socket.username;
+    if (username) {
+      onlineUsers = onlineUsers.filter(user => user !== username);
+      console.log(`User removed: ${username}`);
+      io.emit("updateOnlineUsers", onlineUsers);
+    }
   });
+});
 
 //launches the frontend from server.js
 app.get("*", (req, res) => {
