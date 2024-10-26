@@ -1,0 +1,91 @@
+.profilePageContainer{
+    @apply w-screen h-screen relative flex;
+}
+
+.profilePageContainer .friendsTab{
+    @apply w-[350px] h-full bg-gray-200 overflow-y-auto;
+}
+
+.profilePageContainer .profile{
+    @apply relative w-full h-screen bg-[#eec33d] flex flex-col items-center p-10;
+}
+
+.profilePageContainer .navBarContainer{
+    @apply relative flex items-center justify-between w-full h-[65px] bg-black rounded-lg mb-10;
+}
+
+.profilePageContainer h3{
+    @apply text-white text-2xl font-['Catamaran'] pl-5;
+}
+
+.profilePageContainer .navBar{
+    @apply flex items-center pr-5 space-x-8;
+}
+
+.profilePageContainer .navBar p{
+    @apply text-white text-[11px] font-light;
+}
+
+.profilePageContainer .profile .profileInfoContainer{
+    @apply flex items-start space-x-10;
+}
+
+/* profileInfo */
+.profilePageContainer .profile .profileInfoContainer .profileInfo{
+    @apply flex flex-col items-center w-[250px];
+}
+
+.profilePageContainer .profile .profileInfoContainer .profileInfo .profilePic{
+    @apply relative;
+}
+
+.profilePageContainer .profile .profileInfoContainer .profileInfo .profilePic img{
+    @apply w-[150px] h-[150px] rounded-full;
+}
+
+.profilePageContainer .profile .profileInfoContainer .profileInfo .displayName{
+    @apply mt-4 text-white text-4xl font-semibold;
+}
+
+.profilePageContainer .profile .profileInfoContainer .profileInfo .username{
+    @apply text-[#e1dcdc] text-sm;
+}
+
+.profilePageContainer .profile .profileInfoContainer .profileInfo .profileInteractContainer{
+    @apply flex space-x-4 mt-4;
+}
+
+.profilePageContainer .profile .profileInfoContainer .profileInfo .profileInteractContainer button{
+    @apply text-white text-[10px] bg-black px-4 py-2 rounded;
+}
+
+/* profile stats */
+.profilePageContainer .profile .profileInfoContainer .profileStatsContainer{
+    @apply flex flex-col justify-between w-full h-full;
+}
+
+.profilePageContainer .profile .profileInfoContainer .profileStatsContainer p{
+    @apply text-white text-lg;
+}
+
+.profilePageContainer .profile .profileInfoContainer .profileStatsContainer .stats{
+    @apply flex justify-between mt-6;
+}
+
+.profilePageContainer .profile .profileInfoContainer .profileStatsContainer .statDisplay{
+    @apply text-white text-base;
+}
+
+.profilePageContainer .profile .profileInfoContainer .profileStatsContainer .statDisplay p{
+    @apply font-bold;
+}
+
+/* profile tabs*/
+.profilePageContainer .profileTabs{
+    @apply pt-4 w-full;
+}
+
+/* search bar */
+.profilePageContainer .searchBar{
+    @apply w-[250px] h-full bg-gray-200 overflow-y-auto;
+}
