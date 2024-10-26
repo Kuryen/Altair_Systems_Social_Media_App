@@ -341,11 +341,20 @@ io.on("connection", (socket) => {
       socket.username = username;
       io.emit("updateOnlineUsers", onlineUsers);
     } else {
-      // Handle case where username is already taken
       console.log(`Username ${username} is already taken.`);
       socket.emit("usernameError", "Username is already taken.");
     }
     console.log("Online Users: ", onlineUsers);
+  });
+
+  socket.on("chat message", ({ message, room }) => {
+    io.to(room).emit("chat message", message); // Send message within the room
+  });
+
+  socket.on("startChat", ({ from, to }) => {
+    const roomName = [from, to].sort().join("_");
+    socket.join(roomName);
+    io.to(roomName).emit("system message", `${from} has joined the chat with ${to}`);
   });
 
   socket.on("disconnect", () => {
@@ -353,11 +362,11 @@ io.on("connection", (socket) => {
     const username = socket.username;
     if (username) {
       onlineUsers = onlineUsers.filter(user => user !== username);
-      console.log(`User removed: ${username}`);
       io.emit("updateOnlineUsers", onlineUsers);
     }
   });
 });
+
 
 //launches the frontend from server.js
 app.get("*", (req, res) => {

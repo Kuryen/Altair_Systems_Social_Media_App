@@ -1,23 +1,26 @@
 import React from "react";
+import socket from './socket'; // Ensure socket is imported here
 
 function OnlineUsers({ onlineUsers, onSelectUser }) {
-  console.log("Rendering online users:", onlineUsers); // Log the received online users
+  const handleSelectUser = (user) => {
+    socket.emit("startChat", { from: localStorage.getItem("profileUsername"), to: user });
+    onSelectUser(user); // Notify parent component to set selected user
+  };
+
   return (
-    <div className="w-[200px] h-full bg-gray-200 p-4 overflow-y-auto">
-      <h2 className="font-bold text-lg">Online Users</h2>
-      {onlineUsers.length === 0 ? (
-        <p>No users online</p>
-      ) : (
-        onlineUsers.map((user, index) => (
-          <div
-            key={index}
-            className="p-2 cursor-pointer hover:bg-gray-300"
-            onClick={() => onSelectUser(user)}
+    <div className="w-1/4 bg-gray-100 p-4">
+      <h2 className="text-xl font-bold mb-2">Online Users</h2>
+      <ul>
+        {onlineUsers.map((user, index) => (
+          <li 
+            key={index} 
+            onClick={() => handleSelectUser(user)} 
+            className="cursor-pointer hover:bg-blue-200 p-2 rounded"
           >
-            @{user} {/* Display the username directly since onlineUsers is an array of strings */}
-          </div>
-        ))
-      )}
+            {user}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

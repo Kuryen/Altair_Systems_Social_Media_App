@@ -1,37 +1,36 @@
 import React, { useEffect, useState } from "react";
 import beeLogo from "./bee.png";
-import OnlineUsers from './OnlineUsers'; // Import the OnlineUsers component
+import OnlineUsers from './OnlineUsers';
 import socket from './socket';
 
 function Chat() {
   const chatUsername =
-    localStorage.getItem("profileUsername") || "No content found!"; // Retrieve username from profile
-  const [messages, setMessages] = useState([]); // State to manage chat messages
-  const [onlineUsers, setOnlineUsers] = useState([]); // State for online users
+    localStorage.getItem("profileUsername") || "No content found!";
+  const [messages, setMessages] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [currentChatUser, setCurrentChatUser] = useState(""); // New state for current chat user
 
-  // Handle new message submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-    var input = document.getElementById("input");
-    if (input.value) {
+    const input = document.getElementById("input");
+    if (input.value && selectedUser) {
       const message = `${chatUsername}: ${input.value}`;
-      socket.emit("chat message", message); // Send message to WebSocket server
-      input.value = ""; // Clear input field
+      const roomName = [chatUsername, selectedUser].sort().join("_");
+      socket.emit("chat message", { message, room: roomName });
+      input.value = "";
     }
   };
 
-  //this code works!!!
   useEffect(() => {
-      // Ensure socket is connected
-  if (!socket.connected) {
-    socket.connect();
-  }
-
+    if (!socket.connected) {
+      socket.connect();
+    }
 
     socket.emit("registerUser", chatUsername);
-  
+
     socket.on("chat message", (msg) => {
-      console.log("Received message:", msg); // Log received messages
+      console.log("Received message:", msg);
       const messageType =
         msg.split(":")[0] === localStorage.getItem("profileUsername")
           ? "outgoing"
@@ -41,24 +40,32 @@ function Chat() {
         { text: msg, type: messageType },
       ]);
     });
-  
-      // Listen for online users updates
+
     socket.on("updateOnlineUsers", (users) => {
       setOnlineUsers(users);
     });
-  
+
     return () => {
       socket.off("chat message");
       socket.off("updateOnlineUsers");
     };
   }, [chatUsername]);
-  
+
+  // New function to handle user selection
+  const handleUserSelect = (user) => {
+    console.log('Selected user:', user);
+    setSelectedUser(user);
+    setCurrentChatUser(user); // Set the current chat user
+  };
 
   return (
     <div className="w-screen h-screen flex justify-center">
       <div className="relative w-[500px] h-full bg-[#eec33d] flex">
         {/* Online Users Component */}
-        <OnlineUsers onlineUsers={onlineUsers} onSelectUser={(user) => console.log('Selected user:', user)} />
+        <OnlineUsers 
+          onlineUsers={onlineUsers} 
+          onSelectUser={handleUserSelect} // Updated to use new function
+        />
 
         {/* Chat message space */}
         <div className="bg-white w-full h-full flex-grow overflow-y-auto space-y-1">
@@ -73,6 +80,13 @@ function Chat() {
             </div>
             <div className="text-[#e1dcdc] text-2xl ml-4">@{chatUsername}</div>
           </div>
+
+          {/* Display current chat user confirmation */}
+          {currentChatUser && (
+            <div className="text-center text-xl font-bold">
+              @{chatUsername} is now chatting with @{currentChatUser}
+            </div>
+          )}
 
           {/* Messages */}
           {messages.map((message, index) => (

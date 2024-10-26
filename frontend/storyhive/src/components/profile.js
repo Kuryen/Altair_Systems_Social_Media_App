@@ -12,7 +12,7 @@ export default function Profile() {
   const [friends, setFriends] = useState([]);
 
 
-  //SOMETHING IS WRONG WITH THIS CODE 
+  /*/SOMETHING IS WRONG WITH THIS CODE 
   // First useEffect for socket connection
   useEffect(() => {
     socket.connect();
@@ -29,7 +29,7 @@ export default function Profile() {
    socket.off("updateOnlineUsers");
     // Do not disconnect here unless you want to close the socket when leaving this component
   };
-}, []); // Empty dependency array ensures this runs only once on mount
+}, []); // Empty dependency array ensures this runs only once on mount */
 
   useEffect(() => {
     // Fetch friends using your API
