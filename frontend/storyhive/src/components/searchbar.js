@@ -6,7 +6,7 @@ export default function SearchBar({ setResults }) {
   //call /fetch-data from backend to retrieve userid from user collection
   const fetchData = (value) => {
     fetch(
-      "https://storyhive-app.onrender.com//tables/fetch-data?collection=user"
+      "https://storyhive-app.onrender.com/tables/fetch-data?collection=user"
     )
       .then((response) => response.json())
       .then((json) => {
