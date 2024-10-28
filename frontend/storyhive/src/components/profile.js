@@ -4,15 +4,18 @@ import UserTabs from "./UserTabs";
 import FriendsList from "./FriendsList";
 import SearchBar from "./searchbar";
 import SearchResultsList from "./searchresultlist";
+import ProfilePictureUploader from "./ProfilePictureUP";
 import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
 
-export default function Profile() {
+const Profile = ({ profilePicture }) => {
   const navigate = useNavigate();
   const profileUsername = localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
 
   const [friends, setFriends] = useState([]);
   const [results, setResults] = useState([]);
   const [newFriendAdded, setNewFriendAdded] = useState(false); // Track when a friend is added
+
+  const [uploadedProfilePicture, setUploadedProfilePicture] = useState(profilePicture || "https://via.placeholder.com/150");  // Initialize with the default or passed prop
 
   useEffect(() => {
     // Fetch friends using your API
@@ -34,6 +37,11 @@ export default function Profile() {
   const handleAddFriend = () => {
     setNewFriendAdded(!newFriendAdded); //toggle to refresh friend list
   }
+  
+  // Callback function to handle profile picture update
+  const handleUploadSuccess = (newProfilePictureUrl) => {
+    setUploadedProfilePicture(newProfilePictureUrl);  // Update the picture in the state
+  };
 
   return (
     <div className="w-screen h-screen relative flex">
@@ -67,11 +75,12 @@ export default function Profile() {
             <div className="relative">
               <img
                 className="w-[150px] h-[150px] rounded-full"
-                src="https://via.placeholder.com/150"
+                src={uploadedProfilePicture}
                 alt="User Avatar"
               />
-              <div className="absolute bottom-0 right-0 w-[40px] h-[40px] bg-gradient-to-b from-[#6c49f8] via-[#ff0064] to-[#ff6c02] rounded-full flex items-center justify-center text-white text-[24px] font-bold">
-                +
+              { /* profile picture upload */}
+              <div className="relative">
+              <ProfilePictureUploader username={profileUsername} onUploadSuccess={handleUploadSuccess} />
               </div>
             </div>
             <div className="mt-4 text-white text-4xl font-semibold">
@@ -147,6 +156,7 @@ export default function Profile() {
   );
 }
 
+export default Profile;
 
 {/* Bottom Logo 
       <div className="absolute bottom-10">
