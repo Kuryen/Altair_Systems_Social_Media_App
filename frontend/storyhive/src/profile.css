@@ -3,7 +3,7 @@
 }
 
 .profilePageContainer .friendsTab{
-    @apply w-[350px] h-full bg-gray-200 overflow-y-auto;
+    @apply w-[10px] h-full bg-gray-200 overflow-y-auto;
 }
 
 .profilePageContainer .profile{
