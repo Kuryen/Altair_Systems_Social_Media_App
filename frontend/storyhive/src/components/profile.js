@@ -9,6 +9,8 @@ import "../profile.css";
 
 export default function Profile() {
   const navigate = useNavigate();
+  //setCurrentUser(profileUsername === localStorage.getItem("elementData"));
+  const [currentUser, setCurrentUser] = useState(true); //condition to change the profile view for users depending on if it is their profile or not
   const profileUsername = localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
 
   const [friends, setFriends] = useState([]);
@@ -36,11 +38,15 @@ export default function Profile() {
     setNewFriendAdded(!newFriendAdded); //toggle to refresh friend list
   }
 
+  const handleProfileClick = () => {
+    console.log("clicked");
+  };
+
   return (
     <div className="profilePageContainer">
       {/* Friends List - Left Side */}
       <div className="friendTab">
-        <FriendsList friends={friends} />
+        <FriendsList friends={friends} changeProfile={() => handleProfileClick} />
       </div>
 
       {/* Main Profile Section */}
