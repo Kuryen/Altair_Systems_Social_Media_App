@@ -1,0 +1,11 @@
+.userTabsContainer {
+  @apply bg-[#bf6a02] rounded-lg h-[300px];
+}
+
+.userTabsContainer .userTabs {
+  @apply grid grid-flow-col justify-stretch w-full py-4 bg-[#e5a000];
+}
+
+.userTabsContainer .userTabs button {
+  @apply text-white focus:underline;
+}

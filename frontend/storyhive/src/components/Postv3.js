@@ -5,8 +5,11 @@ export default function Post() {
   // Function to get posts from the database and manually update the DOM
   function getPosts() {
     const currentUser = localStorage.getItem("elementData"); // Get username from localStorage
-    
-    fetch(`http://localhost:10000/posting/posts?user=${currentUser}`, { method: "GET" })
+
+    fetch(
+      `https://storyhive-app.onrender.com/posting/posts?user=${currentUser}`,
+      { method: "GET" }
+    )
       .then((response) => response.json())
       .then((json) => {
         const postsContainer = document.getElementById("posts-container"); // Get container to display posts
@@ -25,7 +28,8 @@ export default function Post() {
 
         // Filter posts by current user's username
         const userPosts = Object.values(json).filter((post) => {
-          const userName = typeof post.userID === "object" ? post.userID.name : post.userID;
+          const userName =
+            typeof post.userID === "object" ? post.userID.name : post.userID;
           return userName === currentUser;
         });
 
@@ -33,7 +37,8 @@ export default function Post() {
         if (userPosts.length === 0) {
           const noUserPostsMessage = document.createElement("p");
           noUserPostsMessage.className = "text-gray-500";
-          noUserPostsMessage.textContent = "No posts available for this user. Begin creating by clicking the plus button in the bottom right!";
+          noUserPostsMessage.textContent =
+            "No posts available for this user. Begin creating by clicking the plus button in the bottom right!";
           postsContainer.appendChild(noUserPostsMessage);
           return;
         }
@@ -47,7 +52,10 @@ export default function Post() {
           // User information
           const userInfo = document.createElement("div");
           userInfo.className = "flex items-center border-b border-gray-300 p-4";
-          const userName = typeof post.userID === "object" ? post.userID.name : post.userID || "Unknown User";
+          const userName =
+            typeof post.userID === "object"
+              ? post.userID.name
+              : post.userID || "Unknown User";
           let createdAt = "Date Unavailable";
           if (post.createdAt) {
             const date = new Date(post.createdAt);

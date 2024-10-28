@@ -31,45 +31,62 @@ app.use("/posting", postRoutes);
 const friendRoutes = require("./friending");
 app.use("/friending", friendRoutes);
 
+//starting our web socket server
+//web sockets allow two way connection between client and server. this is helpful for sending and displaying messages in real time
+const http = require("http");
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server, {
+  cors: {
+    origin: "https://storyhive-app.onrender.com",
+  },
+});
+
+let onlineUsers = [];
+
+io.on("connection", (socket) => {
+  console.log("User connected");
+
+  socket.on("registerUser", (username) => {
+    if (username && !onlineUsers.includes(username)) {
+      onlineUsers.push(username);
+      socket.username = username;
+      io.emit("updateOnlineUsers", onlineUsers);
+    } else {
+      console.log(`Username ${username} is already taken.`);
+      socket.emit("usernameError", "Username is already taken.");
+    }
+    console.log("Online Users: ", onlineUsers);
+  });
+
+  socket.on("chat message", ({ message, room }) => {
+    io.to(room).emit("chat message", message); // Send message within the room
+  });
+
+  socket.on("startChat", ({ from, to }) => {
+    const roomName = [from, to].sort().join("_");
+    socket.join(roomName);
+    io.to(roomName).emit(
+      "system message",
+      `${from} has joined the chat with ${to}`
+    );
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+    const username = socket.username;
+    if (username) {
+      onlineUsers = onlineUsers.filter((user) => user !== username);
+      io.emit("updateOnlineUsers", onlineUsers);
+    }
+  });
+});
+
 //launches the frontend from server.js
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
 });
 
-const httpServer = app.listen(PORT, (error) => {
-  if (!error) {
-    console.log(
-      "Server is Successfully Running, and App is listening on port " + PORT
-    );
-  } else {
-    console.log("Error occurred, server can't start", error);
-  }
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-
-
-//starting our web socket server
-//web sockets allow two way connection between client and server. this is helpful for sending and displaying messages in real time
-const { Server } = require("socket.io");
-
-const io = new Server(httpServer);
-
-//whenever the connection event is fired, print that a user has connected
-io.on("connection", (socket) => {
-  console.log("User connected");
-
-  //print that a user has disconnected whenever the disconnect event is fired
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
-})
-
-//when a connected user fires the chat message event, send the msg from the server to all connected clients.
-io.on('connection', (socket) => {
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
-  });
-});
-
-
-
-

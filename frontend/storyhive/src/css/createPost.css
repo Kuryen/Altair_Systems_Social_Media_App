@@ -1,0 +1,19 @@
+.postButtonContainer {
+  @apply fixed bottom-3 right-3;
+}
+
+.postButtonContainer button {
+  @apply sticky rounded-full bg-black py-3 px-5 text-white;
+}
+
+.formContainer {
+  @apply fixed bottom-16 right-3 bg-white p-5 rounded shadow-md;
+}
+
+.formContainer .submitPostButton {
+  @apply mt-3;
+}
+
+.formContainer .submitPostButton button {
+  @apply bg-blue-500 text-white px-4 py-2 rounded;
+}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../css/createPost.css";
 
 export default function CreatePostButton({ onPostCreated }) {
   const [showForm, setShowForm] = useState(false);
@@ -9,7 +10,7 @@ export default function CreatePostButton({ onPostCreated }) {
 
     const data = {
       textContent: postContent,
-      current_user: localStorage.getItem("elementData")
+      current_user: localStorage.getItem("elementData"),
     };
 
     const options = {
@@ -22,7 +23,10 @@ export default function CreatePostButton({ onPostCreated }) {
 
     try {
       // Send the post data to the backend API
-      const response = await fetch("http://localhost:10000/posting/make-post", options);
+      const response = await fetch(
+        "https://storyhive-app.onrender.com/posting/make-post",
+        options
+      );
       const json = await response.json();
       alert(json.status);
 
@@ -40,17 +44,12 @@ export default function CreatePostButton({ onPostCreated }) {
 
   return (
     <div>
-      <div className="fixed bottom-3 right-3">
-        <button
-          className="sticky rounded-full text bg-black py-3 px-5 text-white"
-          onClick={() => setShowForm(!showForm)}
-        >
-          +
-        </button>
+      <div className="postButtonContainer">
+        <button onClick={() => setShowForm(!showForm)}>+</button>
       </div>
 
       {showForm && (
-        <div className="fixed bottom-16 right-3 bg-white p-5 rounded shadow-md">
+        <div className="formContainer">
           <form onSubmit={handleSubmit}>
             <div>
               <textarea
@@ -62,12 +61,7 @@ export default function CreatePostButton({ onPostCreated }) {
               />
             </div>
             <div className="mt-3">
-              <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-              >
-                Post
-              </button>
+              <button type="submit">Post</button>
             </div>
           </form>
         </div>

@@ -1,27 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import OnlineUsers from "./OnlineUsers";
+import "../css/chat.css";
+import socket from "../socket";
 import beeLogo from "./pics/bee.png";
+import { useNavigate } from "react-router-dom";
 
 function Chat() {
+  const navigate = useNavigate();
   const chatUsername =
     localStorage.getItem("profileUsername") || "No content found!"; // Retrieve username from profile
   const [messages, setMessages] = useState([]); // State to manage chat messages
-  const socket = io("http://localhost:10000");
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [currentChatUser, setCurrentChatUser] = useState(""); // New state for current chat user
 
   // Handle new message submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-    var input = document.getElementById("input");
+    const input = document.getElementById("input");
     if (input.value) {
       const message = `${chatUsername}: ${input.value}`;
-      socket.emit("chat message", message); // Send message to WebSocket server
+      const roomName = [chatUsername, selectedUser].sort().join("_");
+      socket.emit("chat message", { message, room: roomName }); // Send message to WebSocket server
       input.value = ""; // Clear input field
     }
   };
 
   // Listen for new chat messages from the WebSocket
   useEffect(() => {
+    if (!socket.connected) {
+      socket.connect();
+    }
+    socket.emit("registerUser", chatUsername);
+
     socket.on("chat message", (msg) => {
+      console.log("Received message:", msg);
       // Determine if the message is incoming or outgoing
       const messageType =
         msg.split(":")[0] === localStorage.getItem("profileUsername")
@@ -33,62 +46,80 @@ function Chat() {
       ]);
     });
 
+    socket.on("updateOnlineUsers", (users) => {
+      setOnlineUsers(users);
+    });
+
     // Cleanup on component unmount
     return () => {
       socket.off("chat message");
+      socket.off("updateOnlineUsers");
     };
-  }, [socket]);
+  }, [chatUsername]);
+
+  // New function to handle user selection
+  const handleUserSelect = (user) => {
+    console.log("Selected user:", user);
+    setSelectedUser(user);
+    setCurrentChatUser(user); // Set the current chat user
+  };
 
   return (
-    <div className="w-screen h-screen flex justify-center">
-      <div className="relative w-[500px] h-full bg-[#eec33d]">
-        {/* Chat info space */}
-        <div className="flex justify-items-start relative w-full h-[100px] items-center">
-          <div>
-            <img
-              className="w-[100px] h-[100px] object-contain"
-              src={beeLogo}
-              alt="Logo"
-            />
-          </div>
-          <div className="text-[#e1dcdc] text-2xl ml-4">@{chatUsername}</div>
-        </div>
+    <div className="chatContainer">
+      <div className="chatBg">
+        {/* Online Users Component */}
+        <OnlineUsers
+          className="onlineUsers"
+          onlineUsers={onlineUsers}
+          onSelectUser={handleUserSelect}
+        />
 
-        {/* Chat message space */}
-        <div className="bg-white w-full h-[700px] flex-grow overflow-y-auto space-y-1">
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`w-full p-3 rounded-lg text-wrap ${
-                message.type === "outgoing"
-                  ? "bg-[#E5AC3F] text-black text-right"
-                  : "bg-black text-white text-left"
-              }`}
-            >
-              <p className="break-all">{message.text}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Chat input */}
-        <div className="absolute bottom-0 w-full h-[120px]">
-          <form
-            className="flex justify-between absolute w-full pb-10 bottom-0 right-0"
-            id="form"
-            onSubmit={handleSubmit}
-          >
-            <input
-              className="rounded-md w-[460px] border-2 border-black outline-none"
-              id="input"
-              autoComplete="off"
-            />
-            <button
-              className="bg-blue-600 px-4 text-black hover:text-white rounded-md"
-              type="submit"
-            >
-              Send
+        {/* Chat Space */}
+        <div className="chatSpace">
+          {/* Chat Header */}
+          <div className="chatHeaderSpace">
+            <img src={beeLogo} alt="Logo" />
+            <div className="username">@{chatUsername}</div>
+            <button className="exitButton" onClick={() => navigate("/profile")}>
+              Exit Chatroom
             </button>
-          </form>
+          </div>
+
+          {/* Current Chat User Confirmation */}
+          {currentChatUser && (
+            <div className="chatUserConfirmation">
+              @{chatUsername} is now chatting with @{currentChatUser}
+            </div>
+          )}
+
+          {/* Chat Messages */}
+          <div className="chatMessageSpace">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`chatBubble ${
+                  message.type === "outgoing" ? "sent" : "recieved"
+                }`}
+              >
+                <p className="break-all">{message.text}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Chat Input */}
+          <div className="chatInputContainer">
+            <form className="chatSendBar" id="form" onSubmit={handleSubmit}>
+              <input
+                className="chatInputField"
+                id="input"
+                autoComplete="off"
+                placeholder="Type your message..."
+              />
+              <button className="chatSendButton" type="submit">
+                Send
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

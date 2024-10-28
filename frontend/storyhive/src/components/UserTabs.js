@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Postv3 from "./Postv3.js";
 import CreatePostButton from "./CreatePostButton";
+import "../css/userTabs.css";
 
 export default function UserTabs() {
   const [activeSection, setActiveSection] = useState("posts");
@@ -12,32 +13,17 @@ export default function UserTabs() {
   };
 
   return (
-    <div className="bg-[#bf6a02] rounded-lg h-[300px]">
+    <div className="userTabsContainer">
       {/* Buttons tab */}
-      <div className="grid grid-flow-col justify-stretch w-full py-4 bg-[#e5a000]">
+      <div className="userTabs">
         {/* Likes button */}
-        <button
-          className={`text-white focus:underline`}
-          onClick={() => setActiveSection("likes")}
-        >
-          Likes
-        </button>
+        <button onClick={() => setActiveSection("likes")}>Likes</button>
 
         {/* Posts button */}
-        <button
-          className={`text-white focus:underline`}
-          onClick={() => setActiveSection("posts")}
-        >
-          Posts
-        </button>
+        <button onClick={() => setActiveSection("posts")}>Posts</button>
 
         {/* Replies button */}
-        <button
-          className={`text-white focus:underline`}
-          onClick={() => setActiveSection("replies")}
-        >
-          Replies
-        </button>
+        <button onClick={() => setActiveSection("replies")}>Replies</button>
       </div>
 
       {/* Content that shows up when you click on "Likes" */}

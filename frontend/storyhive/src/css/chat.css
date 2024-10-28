@@ -1,0 +1,67 @@
+.chatContainer {
+  @apply w-screen h-screen flex justify-center;
+}
+
+.chatBg {
+  @apply relative w-[500px] h-full bg-[#eec33d] flex;
+}
+
+.onlineUsers {
+  @apply w-[150px] h-full bg-gray-100 p-4 space-y-2 overflow-y-auto;
+}
+
+.chatSpace {
+  @apply bg-white w-full h-full flex flex-col;
+}
+
+.chatHeaderSpace {
+  @apply flex justify-start items-center h-[100px] p-4;
+}
+
+.chatHeaderSpace img {
+  @apply w-[100px] h-[100px] object-contain;
+}
+
+.chatHeaderSpace .username {
+  @apply text-[#e1dcdc] text-2xl ml-4;
+}
+
+.exitButton {
+  @apply text-gray-500 hover:text-red-600 text-sm underline ml-4;
+}
+
+.chatUserConfirmation {
+  @apply text-center text-xl font-bold p-2 bg-gray-200;
+}
+
+.chatMessageSpace {
+  @apply flex-grow overflow-y-auto p-2 space-y-1;
+}
+
+.chatMessageSpace .chatBubble {
+  @apply w-full p-3 rounded-lg text-wrap;
+}
+
+.chatMessageSpace .sent {
+  @apply bg-[#E5AC3F] text-black text-right self-end;
+}
+
+.chatMessageSpace .recieved {
+  @apply bg-black text-white text-left self-start;
+}
+
+.chatInputContainer {
+  @apply w-full p-2 bg-gray-100;
+}
+
+.chatSendBar {
+  @apply flex items-center w-full space-x-2;
+}
+
+.chatInputField {
+  @apply flex-grow rounded-md border-2 border-black outline-none p-2;
+}
+
+.chatSendButton {
+  @apply bg-blue-600 text-black hover:text-white px-4 py-2 rounded-md;
+}
