@@ -52,7 +52,8 @@ function Chat() {
               alt="Logo"
             />
           </div>
-          <div className="text-[#e1dcdc] text-2xl ml-4">@{chatUsername}</div>
+          <div className="username">@{chatUsername}</div>
+          <button>Exit Chatroom</button>
         </div>
 
         {/* Chat message space */}

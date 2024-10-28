@@ -15,6 +15,14 @@
   @apply flex justify-items-start relative w-full h-[100px] items-center;
 }
 
+.chatContainer .chatBg .chatHeaderSpace .username{
+  @apply text-white text-2xl ml-4;
+}
+
+.chatContainer .chatBg .chatHeaderSpace button{
+  @apply self-end bg-blue-600;
+}
+
 .chatInputContainer {
   @apply absolute bottom-0 w-full h-[120px];
 }
@@ -37,4 +45,8 @@
 
 .chatContainer .chatBg .chatMessageSpace .recieved {
   @apply bg-black text-white text-left
+}
+
+.chatContainer .chatBg .chatMessageSpace .chatBubble {
+  @apply w-full p-3 rounded-lg text-wrap
 }
