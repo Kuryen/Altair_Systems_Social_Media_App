@@ -1,30 +1,29 @@
 import React, { useState, useEffect } from "react";
-import beeLogo from "./pics/bee.png"; // Replace with your actual logo path
+import beeLogo from "./pics/bee.png";
 import UserTabs from "./UserTabs";
 import FriendsList from "./FriendsList";
 import SearchBar from "./searchbar";
 import SearchResultsList from "./searchresultlist";
 import ProfilePictureUploader from "./ProfilePictureUP";
-import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const Profile = ({ profilePicture }) => {
+const Profile = () => {
   const navigate = useNavigate();
-  const profileUsername = localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
-
+  const profileUsername = localStorage.getItem("elementData") || "No content found!";
   const [friends, setFriends] = useState([]);
   const [results, setResults] = useState([]);
-  const [newFriendAdded, setNewFriendAdded] = useState(false); // Track when a friend is added
-
-  const [uploadedProfilePicture, setUploadedProfilePicture] = useState(profilePicture || "https://via.placeholder.com/150");  // Initialize with the default or passed prop
+  const [newFriendAdded, setNewFriendAdded] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(
+    localStorage.getItem("profilePic") || "https://via.placeholder.com/150"
+  );
 
   useEffect(() => {
-    // Fetch friends using your API
+    // Fetch friends
     const fetchFriends = async () => {
       try {
         const response = await fetch(`/friending/users-friends?user=${profileUsername}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch friends");
-        }
+        if (!response.ok) throw new Error("Failed to fetch friends");
         const data = await response.json();
         setFriends(data);
       } catch (error) {
@@ -32,22 +31,42 @@ const Profile = ({ profilePicture }) => {
       }
     };
     fetchFriends();
-  }, [profileUsername, newFriendAdded]); //refresh when a new friend is added
+  }, [profileUsername, newFriendAdded]);
+
+  useEffect(() => {
+    const fetchProfilePicture = async () => {
+      try {
+        const response = await axios.get(`http://localhost:10000/profilepicture/get-profile-picture/${profileUsername}`);
+        if (response.data.profilePicture) {
+          setProfilePicture(response.data.profilePicture);
+          localStorage.setItem("profilePic", response.data.profilePicture); // Update localStorage
+        }
+      } catch (error) {
+        console.error("Error fetching profile picture:", error);
+      }
+    };
+
+    fetchProfilePicture();
+  }, [profileUsername]);
 
   const handleAddFriend = () => {
-    setNewFriendAdded(!newFriendAdded); //toggle to refresh friend list
-  }
-  
-  // Callback function to handle profile picture update
+    setNewFriendAdded(!newFriendAdded);
+  };
+
   const handleUploadSuccess = (newProfilePictureUrl) => {
-    setUploadedProfilePicture(newProfilePictureUrl);  // Update the picture in the state
+    setProfilePicture(newProfilePictureUrl);
+  };
+
+  const handleProfileClick = (friendUsername) => {
+    localStorage.setItem("chatWith", friendUsername);
+    navigate("/Chat");
   };
 
   return (
     <div className="w-screen h-screen relative flex">
       {/* Friends List - Left Side */}
       <div className="w-[350px] h-full bg-gray-200 overflow-y-auto ">
-        <FriendsList friends={friends} />
+        <FriendsList friends={friends} onProfileClick={handleProfileClick} />
       </div>
 
       {/* Main Profile Section */}
@@ -75,18 +94,16 @@ const Profile = ({ profilePicture }) => {
             <div className="relative">
               <img
                 className="w-[150px] h-[150px] rounded-full"
-                src={uploadedProfilePicture}
+                src={profilePicture}
                 alt="User Avatar"
               />
-              { /* profile picture upload */}
               <div className="relative">
-              <ProfilePictureUploader username={profileUsername} onUploadSuccess={handleUploadSuccess} />
+                <ProfilePictureUploader username={profileUsername} onUploadSuccess={handleUploadSuccess} />
               </div>
             </div>
             <div className="mt-4 text-white text-4xl font-semibold">
               {profileUsername}
-            </div>{" "}
-            {/* Display username */}
+            </div>
             <div className="text-[#e1dcdc] text-sm">@username</div>
             <div className="flex space-x-4 mt-4">
               <button className="text-white text-[10px] bg-black px-4 py-2 rounded">
@@ -118,7 +135,7 @@ const Profile = ({ profilePicture }) => {
                 <button
                   type="button"
                   onClick={(event) => {
-                    localStorage.setItem("profileUsername", profileUsername); // When chat is clicked, store profileUsername in localStorage for reference in chat.js
+                    localStorage.setItem("profileUsername", profileUsername);
                     navigate("/Chat");
                   }}
                 >
@@ -134,31 +151,23 @@ const Profile = ({ profilePicture }) => {
           <UserTabs />
         </div>
       </div>
-                    
+
       {/* Search bar */}
       <div className="w-[250px] h-full bg-gray-200 overflow-y-auto">
-        {/* Placeholder for right side component */}
-        {/* Add the component you want here */}
         <div className="search-bar-container">
-        <SearchBar setResults={setResults} />
-      
-        {results && results.length > 0 && (
+          <SearchBar setResults={setResults} />
+          {results && results.length > 0 && (
             <SearchResultsList 
-            results={results} 
-            currentUserID={profileUsername} 
-            onFriendAdded={handleAddFriend} // Call handleAddFriend when a friend is added
-            existingFriends={friends.map(friend => friend.friendID)} // Pass existing friends' IDs
-          />
+              results={results} 
+              currentUserID={profileUsername} 
+              onFriendAdded={handleAddFriend}
+              existingFriends={friends.map(friend => friend.friendID)}
+            />
           )}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Profile;
-
-{/* Bottom Logo 
-      <div className="absolute bottom-10">
-        <img className="w-[178px] h-[90px]" src={beeLogo} alt="Logo" />
-      </div>*/}

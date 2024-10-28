@@ -19,7 +19,7 @@ const ProfilePictureUploader = ({ username, onUploadSuccess }) => {
     formData.append('username', username);
 
     try {
-      const response = await axios.post('/upload-profile-picture', formData, {
+      const response = await axios.post('https://storyhive-app.onrender.com/profilepicture/upload-profile-picture', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -72,3 +72,6 @@ export default ProfilePictureUploader;
 
 
 //   frontend\storyhive\backend\uploads\profile_pictures\1729834988953-505370798.png
+
+//http://localhost:10000/profilepicture/upload-profile-picture testing
+//https://storyhive-app.onrender.com/profilepicture/upload-profile-picture deployment

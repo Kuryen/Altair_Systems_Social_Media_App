@@ -31,6 +31,10 @@ app.use("/posting", postRoutes);
 const friendRoutes = require("./friending");
 app.use("/friending", friendRoutes);
 
+const pfpRoutes = require("./profilepicture");
+app.use("/profilepicture", pfpRoutes)
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //launches the frontend from server.js
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));

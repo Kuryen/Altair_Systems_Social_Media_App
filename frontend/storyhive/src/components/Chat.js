@@ -3,9 +3,8 @@ import { io } from "socket.io-client";
 import beeLogo from "./pics/bee.png";
 
 function Chat() {
-  const chatUsername =
-    localStorage.getItem("profileUsername") || "No content found!"; // Retrieve username from profile
-  const [messages, setMessages] = useState([]); // State to manage chat messages
+  const chatUsername = localStorage.getItem("chatWith") || "No user selected";
+  const [messages, setMessages] = useState([]);
   const socket = io("http://localhost:10000");
 
   // Handle new message submission
@@ -24,9 +23,7 @@ function Chat() {
     socket.on("chat message", (msg) => {
       // Determine if the message is incoming or outgoing
       const messageType =
-        msg.split(":")[0] === localStorage.getItem("profileUsername")
-          ? "outgoing"
-          : "incoming";
+        msg.split(":")[0] === chatUsername ? "outgoing" : "incoming";
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: msg, type: messageType },
@@ -37,7 +34,7 @@ function Chat() {
     return () => {
       socket.off("chat message");
     };
-  }, [socket]);
+  }, [socket, chatUsername]);
 
   return (
     <div className="w-screen h-screen flex justify-center">

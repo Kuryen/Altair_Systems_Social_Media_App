@@ -2,80 +2,82 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
 const router = express.Router();
+const path = require("path");
 const { NodeSSH } = require("node-ssh");
-var cors = require("cors");
+const cors = require('cors');
 
-
-router.use(cors());
 const ssh = new NodeSSH();
+router.use(cors());
 
-
-//upload directory for pfps
+// Ensure uploads directory exists
 const uploadDir = './uploads/profile_pictures';
-
-// ensure directory exists
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true});
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-//set up multer storage config
+// Configure multer storage
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './uploads/profile_pictures');
-  },
+  destination: (req, file, cb) => cb(null, './uploads/profile_pictures'),
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const userId = req.user ? req.user.id : uniqueSuffix;  // Fallback to uniqueSuffix if req.user is undefined
-    cb(null, userId + path.extname(file.originalname));  // Set file name
-  }
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
 });
 
-// Multer middleware to handle file uploads
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 2 * 1024 * 1024 },  // Limit the size to 2MB
-  fileFilter: (req, file, cb) => {
-      // Allow only images (jpeg, png)
-      const filetypes = /jpeg|jpg|png/;
-      const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-      const mimetype = filetypes.test(file.mimetype);
-      
-      if (mimetype && extname) {
-          return cb(null, true);
-      } else {
-          cb(new Error('Images Only!'));
-      }
-  }
-});
+const upload = multer({ storage, limits: { fileSize: 2 * 1024 * 1024 } });
 
-router.post('/upload-profile-picture', upload.single('profile_picture'), (req, res) => {
-  const username = req.body.username;  // Extract the username from the request
-
-  if (!username) {
-    return res.status(400).json({ error: 'Username not provided.' });
-  }
+// Get profile picture path
+router.get('/get-profile-picture/:username', async (req, res) => {
+  const { username } = req.params;
 
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded.' });
+    await ssh.connect({
+      host: process.env.SECRET_IP,
+      username: process.env.SECRET_USER,
+      privateKeyPath: process.env.SECRET_KEY,
+    });
+
+    const findQuery = `EJSON.stringify(db.userProfile.findOne({ userID: "${username}" }, { profilePic: 1, _id: 0 }))`;
+    const result = await ssh.execCommand(`mongosh testDB --quiet --eval '${findQuery}'`);
+
+    if (result && result.stdout) {
+      const data = JSON.parse(result.stdout);
+      res.status(200).json({ profilePicture: data.profilePic });
+    } else {
+      res.status(404).json({ error: 'User profile picture not found.' });
     }
-
-    // Assuming you store the profile picture by username
-    const filePath = `/uploads/profile_pictures/${req.file.filename}`;
-
-    // Code to save profile picture path by username (e.g., save to a database or JSON file)
-    // Example:
-    const profileData = { username, profilePicture: filePath };
-    
-    res.status(200).json({ message: 'Profile picture uploaded successfully!', profilePicture: filePath });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred during the upload process.' });
+  } catch (error) {
+    console.error("Error fetching profile picture:", error);
+    res.status(500).json({ error: 'Failed to retrieve profile picture.' });
   }
 });
 
+//post pfp
+router.post('/upload-profile-picture', upload.single('profile_picture'), async (req, res) => {
+  const username = req.body.username;
+  if (!username || !req.file) return res.status(400).json({ error: 'Invalid request' });
 
-// Serve static files (so profile pictures can be accessed by the front-end)
-router.use('/uploads', express.static('uploads'));
+  const filePath = `/uploads/profile_pictures/${req.file.filename}`;
+
+  try {
+    await ssh.connect({
+      host: process.env.SECRET_IP,
+      username: process.env.SECRET_USER,
+      privateKeyPath: process.env.SECRET_KEY,
+    });
+    
+    const updateQuery = `db.userProfile.updateOne(
+      { userID: "${username}" },
+      { $set: { profilePic: "${filePath}" } },
+      { upsert: true }
+    )`;
+    
+    const result = await ssh.execCommand(`mongosh testDB --quiet --eval '${updateQuery}'`);
+    res.status(200).json({ message: 'Profile picture uploaded successfully!', profilePicture: filePath });
+  } catch (error) {
+    console.error("Error updating profile picture:", error);
+    res.status(500).json({ error: 'Failed to upload profile picture' });
+  }
+});
 
 module.exports = router;

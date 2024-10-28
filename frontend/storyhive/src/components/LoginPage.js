@@ -59,11 +59,13 @@ export default function LoginPage({onSwitchLoginClick}) {
                     alert(json.status);
 
                     if (json.status === "Login successful!") {
+                      localStorage.setItem("elementData", data.name);
+                      if (json.profilePic) {
+                        localStorage.setItem("profilePic", json.profilePic); // Save profile picture
+                      }
                       navigate('/profile');  // Redirect to profile page on successful login
-                      const passUsername = document.querySelector("#uname").value; //create constant to pass the username via local storage
-                      localStorage.setItem("elementData", passUsername);
                     } else {
-                      alert(json.status);  // Display error message
+                      alert(json.status);
                     }
                     
                 }} class="w-[186px] h-[80px] top-[12px] relative bg-[#e5a000] text-black text-3xl font-semibold font-['Arial'] rounded-[100px] hover:text-white">

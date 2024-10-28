@@ -2,7 +2,7 @@
 import React from "react";
 import "./hexagon.css";
 
-export default function FriendsList({ friends }) {
+export default function FriendsList({ friends, onProfileClick}) {
 
   
   return (
@@ -12,7 +12,7 @@ export default function FriendsList({ friends }) {
         <div className="hexagonArea">
           {friends.length > 0 ? (
             friends.map((friend, index) => (
-              <div key={index} className="hexagon">
+              <div key={index} className="hexagon" onClick={() => onProfileClick(friend)}>
                 <h6>{friend}</h6> {/* Display each friend's name in hexagon */}
               </div>
             ))
