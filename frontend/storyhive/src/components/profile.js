@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import beeLogo from "./pics/bee.png"; // Replace with your actual logo path
-import Post from "./Postv3"; // Import the Post component
 import UserTabs from "./UserTabs";
 import FriendsList from "./FriendsList";
 import SearchBar from "./searchbar";
@@ -11,50 +10,43 @@ import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
 
 export default function Profile() {
   const navigate = useNavigate();
-
-  // Store which profile is currently being viewed (either the user's or a friend's)
-  const [activeProfile, setActiveProfile] = useState(
-    localStorage.getItem("elementData") || "No content found!"
-  );
-
-  const loggedInUser = localStorage.getItem("elementData"); // Logged-in user
-  const [currentUser, setCurrentUser] = useState(true); // Track if it's the user's own profile
-
+  const profileUsername =
+    localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
+  const [currentUser, setCurrentUser] = useState(true); //condition to change the profile view for users depending on if it is their profile or not
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const [friends, setFriends] = useState([]);
   const [results, setResults] = useState([]);
-  const [newFriendAdded, setNewFriendAdded] = useState(false); // Track friend additions
+  const [newFriendAdded, setNewFriendAdded] = useState(false); // Track when a friend is added
 
-  // Update the view to reflect if it is the current user's profile or not
   useEffect(() => {
-    setCurrentUser(activeProfile === loggedInUser);
-  }, [activeProfile, loggedInUser]);
+    const loggedInUser = localStorage.getItem("elementData");
+    setCurrentUser(profileUsername === loggedInUser);
+  }, [profileUsername]);
 
-  // First useEffect for socket connection (Optional: Uncomment if needed)
-  /*
+  // First useEffect for socket connection
+  // useEffect(() => {
+  //   socket.connect();
+  //   // Emit username when the component mounts
+  //   socket.emit("registerUser", profileUsername); // Use actual username passed as prop
+
+  //   // Listen for online users update
+  //   socket.on("updateOnlineUsers", (users) => {
+  //     setOnlineUsers(users);
+  //   });
+
+  //   // Cleanup on unmount
+  //   return () => {
+  //     socket.off("updateOnlineUsers");
+  //     // Do not disconnect here unless you want to close the socket when leaving this component
+  //   };
+  // }, []); // Empty dependency array ensures this runs only once on mount
+
   useEffect(() => {
-    socket.connect();
-    // Emit username when the component mounts
-    socket.emit("registerUser", activeProfile); // Use actual username passed as prop
-
-    // Listen for online users update
-    socket.on("updateOnlineUsers", (users) => {
-      console.log("Online Users:", users);
-    });
-
-    // Cleanup on unmount
-    return () => {
-      socket.off("updateOnlineUsers");
-      // Do not disconnect unless you want to close the socket when leaving this component
-    };
-  }, [activeProfile]);
-  */
-
-  // Fetch friends from the backend API
-  useEffect(() => {
+    // Fetch friends using your API
     const fetchFriends = async () => {
       try {
         const response = await fetch(
-          `/friending/users-friends?user=${loggedInUser}`
+          `/friending/users-friends?user=${profileUsername}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch friends");
@@ -66,20 +58,15 @@ export default function Profile() {
       }
     };
     fetchFriends();
-  }, [loggedInUser, newFriendAdded]);
+  }, [profileUsername, newFriendAdded]); //refresh when a new friend is added
 
   const handleAddFriend = () => {
-    setNewFriendAdded((prev) => !prev); // Toggle to refresh friends list
+    setNewFriendAdded(!newFriendAdded); //toggle to refresh friend list
   };
 
-  // Handle clicking a friend's hexagon to view their profile
   const handleProfileClick = (friendUsername) => {
-    setActiveProfile(friendUsername); // Switch to the friend's profile
-  };
-
-  // Handle navigating back to the logged-in user's profile
-  const handleBackToOwnProfile = () => {
-    setActiveProfile(loggedInUser); // Switch back to the user's own profile
+    localStorage.setItem("chatWith", friendUsername);
+    navigate("/Chat");
   };
 
   return (
@@ -95,7 +82,7 @@ export default function Profile() {
         <div className="navBarContainer">
           <h3>Storyhive</h3>
           <div className="navBar">
-            <p>Hello, {activeProfile}</p>
+            <p>Hello, {profileUsername}</p>
             <p>HIVE</p>
             <p>BUZZ</p>
             <p>BLOOM</p>
@@ -105,11 +92,12 @@ export default function Profile() {
 
         {/* Profile Info */}
         <div className="profileInfoContainer">
+          {/* User Info */}
           <div className="profileInfo">
-            <div className="displayName">{activeProfile}</div>
-            <div className="username">@{activeProfile}</div>
+            <div className="displayName">{profileUsername}</div>
+            <div className="username">@{profileUsername}</div>
 
-            {/* Profile Actions */}
+            {/* Conditional Profile Actions */}
             <div className="profileInteractContainer">
               {currentUser ? (
                 <>
@@ -119,22 +107,14 @@ export default function Profile() {
               ) : (
                 <button onClick={() => navigate("/Chat")}>Message</button>
               )}
-
-              {/* Back to Own Profile Button */}
-              {!currentUser && (
-                <button onClick={handleBackToOwnProfile}>
-                  Back to My Profile
-                </button>
-              )}
             </div>
           </div>
 
           {/* Bio & Stats */}
           <div className="profileStatsContainer">
             <p>
-              {currentUser
-                ? "Hello everyone! Welcome to my profile. Excited to connect with you all."
-                : `Welcome to ${activeProfile}'s profile!`}
+              Hello everyone! Welcome to my profile. Excited to connect with you
+              all.
             </p>
             <div className="stats">
               <div className="statDisplay">
@@ -147,19 +127,17 @@ export default function Profile() {
               </div>
               {!currentUser && (
                 <div className="statDisplay">
-                  <button onClick={() => navigate("/Chat")}>
+                  <button
+                    onClick={() => {
+                      localStorage.setItem("profileUsername", profileUsername);
+                      navigate("/Chat");
+                    }}
+                  >
                     Chat with me!
                   </button>
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Posts Section */}
-          <div className="profilePostsContainer">
-            <h3 className="text-xl font-bold mb-4">Posts</h3>
-            <Post username={activeProfile} />{" "}
-            {/* Display posts for active profile */}
           </div>
         </div>
 
@@ -169,20 +147,30 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Search Bar */}
+      {/* Search bar */}
       <div className="searchBar">
+        {/* Placeholder for right side component */}
+        {/* Add the component you want here */}
         <div className="search-bar-container">
           <SearchBar setResults={setResults} />
-          {results.length > 0 && (
+
+          {results && results.length > 0 && (
             <SearchResultsList
               results={results}
-              currentUserID={activeProfile}
-              onFriendAdded={handleAddFriend}
-              existingFriends={friends.map((friend) => friend.friendID)}
+              currentUserID={profileUsername}
+              onFriendAdded={handleAddFriend} // Call handleAddFriend when a friend is added
+              existingFriends={friends.map((friend) => friend.friendID)} // Pass existing friends' IDs
             />
           )}
         </div>
       </div>
     </div>
   );
+}
+
+{
+  /* Bottom Logo 
+      <div className="absolute bottom-10">
+        <img className="w-[178px] h-[90px]" src={beeLogo} alt="Logo" />
+      </div>*/
 }
