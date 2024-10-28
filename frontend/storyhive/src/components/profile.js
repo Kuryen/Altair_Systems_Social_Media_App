@@ -66,9 +66,7 @@ export default function Profile() {
                 src="https://via.placeholder.com/150"
                 alt="User Avatar"
               />
-              <div className="addProfilePic">
-                +
-              </div>
+              {currentUser && <div className="addProfilePic">+</div>}
             </div>
             <div className="displayName">
               {profileUsername}
@@ -76,8 +74,8 @@ export default function Profile() {
             {/* Display username */}
             <div className="username">@username</div>
             <div className="profileInteractContainer">
-              <button>Edit Profile</button>
-              <button>Share Profile</button>
+            {currentUser && <button>Edit Profile</button>}
+            {currentUser && <button>Share Profile</button>}
             </div>
           </div>
 
