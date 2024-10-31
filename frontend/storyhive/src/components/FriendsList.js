@@ -14,7 +14,7 @@ export default function FriendsList({ friends, onProfileClick }) {
                 className="hexagon"
                 onClick={() => onProfileClick(friend)}
               >
-                <h6>{friend.name}</h6> {/* Display friend name */}
+                <h6>{friend}</h6> {/* Display friend name */}
               </div>
             ))
           ) : (

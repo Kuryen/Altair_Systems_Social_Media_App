@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io("https://storyhive-app.onrender.com", {
+const socket = io("http://localhost:10000", {
   autoConnect: false,
 }); // Replace with your actual server URL
 export default socket;

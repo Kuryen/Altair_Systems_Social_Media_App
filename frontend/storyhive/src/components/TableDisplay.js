@@ -14,11 +14,9 @@ function TableDisplay({ collection_name }) {
           text.textContent = "waiting...";
 
           // Make a GET request to the '/posts' endpoint
-          fetch(
-            "https://storyhive-app.onrender.com/fetch-data?collection=" +
-              placeholder,
-            { method: "GET" }
-          )
+          fetch("http://localhost:10000/fetch-data?collection=" + placeholder, {
+            method: "GET",
+          })
             .then((response) => response.text())
             .then((data) => {
               //pretty printing the data

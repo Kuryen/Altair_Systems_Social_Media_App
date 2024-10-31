@@ -38,7 +38,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: "https://storyhive-app.onrender.com",
+    origin: "http://localhost:10000",
   },
 });
 

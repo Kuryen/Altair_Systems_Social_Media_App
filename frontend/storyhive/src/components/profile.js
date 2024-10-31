@@ -64,10 +64,9 @@ export default function Profile() {
     setNewFriendAdded(!newFriendAdded); //toggle to refresh friend list
   };
 
-  const handleProfileClick = (friendUsername) => {
-    localStorage.setItem("chatWith", friendUsername);
-    navigate("/Chat");
-  };
+  const handleProfileClick = (friendUsername) => setCurrentUser(friendUsername);
+
+  const handleBackToOwnProfile = () => setCurrentUser(profileUsername);
 
   return (
     <div className="profilePageContainer">
@@ -94,6 +93,9 @@ export default function Profile() {
         <div className="profileInfoContainer">
           {/* User Info */}
           <div className="profileInfo">
+            <div className="profilePic">
+              <img src="https://via.placeholder.com/150" alt="User Avatar" />
+            </div>
             <div className="displayName">{profileUsername}</div>
             <div className="username">@{profileUsername}</div>
 
@@ -105,7 +107,9 @@ export default function Profile() {
                   <button>Share Profile</button>
                 </>
               ) : (
-                <button onClick={() => navigate("/Chat")}>Message</button>
+                <button onClick={handleBackToOwnProfile}>
+                  Back to My Profile
+                </button>
               )}
             </div>
           </div>
@@ -113,8 +117,9 @@ export default function Profile() {
           {/* Bio & Stats */}
           <div className="profileStatsContainer">
             <p>
-              Hello everyone! Welcome to my profile. Excited to connect with you
-              all.
+              {currentUser
+                ? "Hello everyone! Welcome to my profile. Excited to connect with you all."
+                : `Welcome to ${profileUsername}'s profile!`}
             </p>
             <div className="stats">
               <div className="statDisplay">
@@ -125,9 +130,10 @@ export default function Profile() {
                 <p>200</p>
                 <h1>Following</h1>
               </div>
-              {!currentUser && (
+              {currentUser && (
                 <div className="statDisplay">
                   <button
+                    className="chatButton"
                     onClick={() => {
                       localStorage.setItem("profileUsername", profileUsername);
                       navigate("/Chat");
