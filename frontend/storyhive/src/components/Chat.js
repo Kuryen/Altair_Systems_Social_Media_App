@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import beeLogo from "./bee.png";
 import OnlineUsers from './OnlineUsers';
 import socket from './socket';
 
 function Chat() {
+  const navigate = useNavigate();
   const chatUsername =
     localStorage.getItem("profileUsername") || "No content found!";
   const [messages, setMessages] = useState([]);
@@ -46,6 +48,7 @@ function Chat() {
     });
 
     return () => {
+      socket.disconnect();
       socket.off("chat message");
       socket.off("updateOnlineUsers");
     };
@@ -58,6 +61,11 @@ function Chat() {
     setCurrentChatUser(user); // Set the current chat user
   };
 
+  const handleNavigateToProfile = () => {
+    //navigate back to profile.js
+    navigate("/profile");
+  };
+
   return (
     <div className="w-screen h-screen flex justify-center">
       <div className="relative w-[500px] h-full bg-[#eec33d] flex">
@@ -68,7 +76,14 @@ function Chat() {
         />
 
         {/* Chat message space */}
-        <div className="bg-white w-full h-full flex-grow overflow-y-auto space-y-1">
+        <div className="bg-white w-full h-full flex-grow overflow-y-auto space-y-1 relative">
+          <button //button to navigate back, cna change color to black. 
+            onClick={handleNavigateToProfile}
+            className="absolute top-4 right-4 z-10 bg-blue-600 text-white py-1 px-3 rounded-md hover:bg-blue-700 transition"
+          >
+            Back to Profile
+          </button>
+
           {/* Chat info space */}
           <div className="flex justify-items-start relative w-full h-[100px] items-center">
             <div>
