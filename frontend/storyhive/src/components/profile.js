@@ -10,8 +10,9 @@ import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
 
 export default function Profile() {
   const navigate = useNavigate();
-  const profileUsername =
-    localStorage.getItem("elementData") || "No content found!"; // Retrieve the username from localStorage
+  const loggedInUser =
+    localStorage.getItem("elementData") || "No content found!"; // Retrieve the loggedInUser from localStorage
+  const [profileUsername, setProfileUsername] = useState(loggedInUser);
   const [currentUser, setCurrentUser] = useState(true); //condition to change the profile view for users depending on if it is their profile or not
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [friends, setFriends] = useState([]);
@@ -19,9 +20,8 @@ export default function Profile() {
   const [newFriendAdded, setNewFriendAdded] = useState(false); // Track when a friend is added
 
   useEffect(() => {
-    const loggedInUser = localStorage.getItem("elementData");
     setCurrentUser(profileUsername === loggedInUser);
-  }, [profileUsername]);
+  }, [profileUsername, loggedInUser]);
 
   // First useEffect for socket connection
   // useEffect(() => {
@@ -46,7 +46,7 @@ export default function Profile() {
     const fetchFriends = async () => {
       try {
         const response = await fetch(
-          `/friending/users-friends?user=${profileUsername}`
+          `/friending/users-friends?user=${loggedInUser}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch friends");
@@ -58,15 +58,21 @@ export default function Profile() {
       }
     };
     fetchFriends();
-  }, [profileUsername, newFriendAdded]); //refresh when a new friend is added
+  }, [loggedInUser, newFriendAdded]); //refresh when a new friend is added
 
   const handleAddFriend = () => {
     setNewFriendAdded(!newFriendAdded); //toggle to refresh friend list
   };
 
-  const handleProfileClick = (friendUsername) => setCurrentUser(friendUsername);
+  // Update the profileUsername to the friend's username when clicking on a friend's profile
+  const handleProfileClick = (friendUsername) => {
+    setProfileUsername(friendUsername);
+  };
 
-  const handleBackToOwnProfile = () => setCurrentUser(profileUsername);
+  // Return to the logged-in user's profile
+  const handleBackToOwnProfile = () => {
+    setProfileUsername(loggedInUser);
+  };
 
   return (
     <div className="profilePageContainer">

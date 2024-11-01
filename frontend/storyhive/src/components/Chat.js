@@ -52,6 +52,7 @@ function Chat() {
 
     // Cleanup on component unmount
     return () => {
+      socket.disconnect();
       socket.off("chat message");
       socket.off("updateOnlineUsers");
     };
@@ -62,6 +63,11 @@ function Chat() {
     console.log("Selected user:", user);
     setSelectedUser(user);
     setCurrentChatUser(user); // Set the current chat user
+  };
+
+  const handleNavigateToProfile = () => {
+    //navigate back to profile.js
+    navigate("/profile");
   };
 
   return (
@@ -80,7 +86,7 @@ function Chat() {
           <div className="chatHeaderSpace">
             <img src={beeLogo} alt="Logo" />
             <div className="username">@{chatUsername}</div>
-            <button className="exitButton" onClick={() => navigate("/profile")}>
+            <button className="exitButton" onClick={handleNavigateToProfile}>
               Exit Chatroom
             </button>
           </div>
