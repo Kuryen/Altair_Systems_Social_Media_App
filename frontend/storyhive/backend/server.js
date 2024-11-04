@@ -31,6 +31,15 @@ app.use("/posting", postRoutes);
 const friendRoutes = require("./friending");
 app.use("/friending", friendRoutes);
 
+const pfpRoutes = require("./profilepicture");
+app.use("/profilepicture", pfpRoutes)
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+//launches the frontend from server.js
+app.get("*", (req, res) => {
+  res.sendFile(path.join(buildPath, "index.html"));
+});
+
 //starting our web socket server
 //web sockets allow two way connection between client and server. this is helpful for sending and displaying messages in real time
 const http = require("http");

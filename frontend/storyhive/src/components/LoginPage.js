@@ -90,6 +90,9 @@ export default function LoginPage({ onSwitchLoginClick }) {
                 navigate("/profile"); // Redirect to profile page on successful login
                 const passUsername = document.querySelector("#uname").value; //create constant to pass the username via local storage
                 localStorage.setItem("elementData", passUsername);
+                if (json.profilePic) {
+                  localStorage.setItem("profilePic", json.profilePic); // Save profile picture
+                }
               } else {
                 alert(json.status); // Display error message
               }

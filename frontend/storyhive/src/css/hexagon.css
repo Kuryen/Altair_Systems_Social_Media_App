@@ -67,3 +67,10 @@
 .container .hexagon:nth-child(7n + 4) {
   grid-column: span 1;
 }
+
+.container .hexagonArea .hexagon img.friendProfilePicture {
+  width: 40px; /* Adjust size to fit within hexagon */
+  height: 40px;
+  border-radius: 50%; /* Make it circular */
+  object-fit: cover;
+}

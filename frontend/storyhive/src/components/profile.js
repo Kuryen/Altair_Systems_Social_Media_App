@@ -7,6 +7,8 @@ import SearchResultsList from "./searchresultlist";
 import "../css/profile.css";
 import socket from "../socket";
 import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
+import axios from "axios";
+import ProfilePictureUploader from "./ProfilePictureUP"; // Import the uploader component
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -18,6 +20,10 @@ export default function Profile() {
   const [friends, setFriends] = useState([]);
   const [results, setResults] = useState([]);
   const [newFriendAdded, setNewFriendAdded] = useState(false); // Track when a friend is added
+  const [profilePicture, setProfilePicture] = useState(
+    localStorage.getItem("profilePic") || "https://via.placeholder.com/150"
+  );
+  const [profilePictureCache, setProfilePictureCache] = useState({});
 
   useEffect(() => {
     setCurrentUser(profileUsername === loggedInUser);
@@ -60,6 +66,82 @@ export default function Profile() {
     fetchFriends();
   }, [loggedInUser, newFriendAdded]); //refresh when a new friend is added
 
+
+  //NOTE: MAKE SURE TO KEEP "/${profileUsername}" AT THE END OF GET REQUEST
+  //*********************************************************************
+  //http://localhost:10000/profilepicture/get-profile-picture for testing
+  //https://storyhive-app.onrender.com/profilepicture/get-profile-picture for deployment
+  
+  // Fetch profile picture for profileUsername, with caching
+  useEffect(() => {
+    const fetchProfilePicture = async () => {
+      // Check if profile picture is in cache
+      if (profilePictureCache[profileUsername]) {
+        setProfilePicture(profilePictureCache[profileUsername]);
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:10000/profilepicture/get-profile-picture/${profileUsername}`);
+        const fetchedProfilePicture = response.data?.profilePicture || "https://via.placeholder.com/150";
+        
+        // Update the profile picture state and add to cache
+        setProfilePicture(fetchedProfilePicture);
+        setProfilePictureCache((prevCache) => ({
+          ...prevCache,
+          [profileUsername]: fetchedProfilePicture,
+        }));
+      } catch (error) {
+        console.error("Error fetching profile picture:", error);
+        setProfilePicture("https://via.placeholder.com/150"); // Fallback on error
+      }
+    };
+
+    fetchProfilePicture();
+  }, [profileUsername, profilePictureCache]); // Re-fetch profile picture when profileUsername changes
+
+  //SAME HERE
+  //********************************************************************
+  useEffect(() => {
+    const fetchFriendsProfilePictures = async () => {
+      const updatedFriends = await Promise.all(
+        friends.map(async (friend) => {
+          // Log the friend to inspect its structure
+          console.log("Inspecting friend:", friend);
+  
+          // Determine the username based on the structure of friend
+          const username = typeof friend === "string" ? friend : friend?.username;
+  
+          // Ensure username is a valid string before proceeding
+          if (typeof username === "string" && username) {
+            try {
+              const profileResponse = await axios.get(`http://localhost:10000/profilepicture/get-profile-picture/${username}`);
+              console.log(`Profile picture for ${username}:`, profileResponse.data);
+  
+              // Return an object with username and profilePicture
+              return {
+                username,
+                profilePicture: profileResponse.data?.profilePicture || null,
+              };
+            } catch (error) {
+              console.error(`Error fetching profile picture for ${username}:`, error);
+              return { username }; // Return the username without a profile picture if there's an error
+            }
+          } else {
+            // Log an error if username is invalid and skip the API call
+            console.error("Invalid friend format or missing username:", friend);
+            return { username: "unknown" }; // Fallback to a default structure
+          }
+        })
+      );
+      setFriends(updatedFriends);
+    };
+  
+    if (friends.length > 0) {
+      fetchFriendsProfilePictures();
+    }
+  }, [friends]);
+
   const handleAddFriend = () => {
     setNewFriendAdded(!newFriendAdded); //toggle to refresh friend list
   };
@@ -72,6 +154,10 @@ export default function Profile() {
   // Return to the logged-in user's profile
   const handleBackToOwnProfile = () => {
     setProfileUsername(loggedInUser);
+  };
+
+  const handleUploadSuccess = (newProfilePictureUrl) => {
+    setProfilePicture(newProfilePictureUrl);
   };
 
   return (
@@ -97,10 +183,18 @@ export default function Profile() {
 
         {/* Profile Info */}
         <div className="profileInfoContainer">
-          {/* User Info */}
           <div className="profileInfo">
-            <div className="profilePic">
-              <img src="https://via.placeholder.com/150" alt="User Avatar" />
+            <div className="profilePic relative">
+              <img src={profilePicture} alt="User Avatar" />
+              {currentUser && (
+                <div className="relative">
+                  {/* ProfilePictureUploader component for uploading profile picture */}
+                  <ProfilePictureUploader
+                    username={profileUsername}
+                    onUploadSuccess={handleUploadSuccess}
+                  />
+                </div>
+              )}
             </div>
             <div className="displayName">{profileUsername}</div>
             <div className="username">@{profileUsername}</div>
