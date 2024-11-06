@@ -82,7 +82,7 @@ export default function Profile() {
       }
 
       try {
-        const response = await axios.get(`http://localhost:10000/profilepicture/get-profile-picture/${profileUsername}`);
+        const response = await axios.get(`https://storyhive-app.onrender.com/profilepicture/get-profile-picture/${profileUsername}`);
         const fetchedProfilePicture = response.data?.profilePicture || "https://via.placeholder.com/150";
         
         // Update the profile picture state and add to cache
@@ -115,7 +115,7 @@ export default function Profile() {
           // Ensure username is a valid string before proceeding
           if (typeof username === "string" && username) {
             try {
-              const profileResponse = await axios.get(`http://localhost:10000/profilepicture/get-profile-picture/${username}`);
+              const profileResponse = await axios.get(`https://storyhive-app.onrender.com/profilepicture/get-profile-picture/${username}`);
               console.log(`Profile picture for ${username}:`, profileResponse.data);
   
               // Return an object with username and profilePicture
