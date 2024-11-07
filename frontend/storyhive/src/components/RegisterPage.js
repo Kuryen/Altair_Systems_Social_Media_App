@@ -103,13 +103,7 @@ function RegisterPage({ onSwitchLoginClick }) {
               type="submit"
               onClick={async (event) => {
                 event.preventDefault();
-                const validationErrors = validate(document.querySelector("#reg-form").elements.unamer.value, document.querySelector("#reg-form").elements.pwordr.value, document.querySelector("#reg-form").elements.emlr.value);
-                console.log("Validation Errors:", validationErrors);
-                if (validationErrors.length > 0) {
-                  alert(validationErrors.join("\n"));
-                  console.log("Alerted");
-                  return;
-                }
+
                 const data = {
                   //store content of html form
                   namer:
@@ -119,6 +113,12 @@ function RegisterPage({ onSwitchLoginClick }) {
                   emailr:
                     document.querySelector("#reg-form").elements.emlr.value,
                 };
+
+                if (validate(data.namer, data.passr, data.emailr).length > 0) {
+                  alert(validationErrors.join("\n"));
+                  console.log("Alerted");
+                  return;
+                }
 
                 const options = {
                   method: "POST",
