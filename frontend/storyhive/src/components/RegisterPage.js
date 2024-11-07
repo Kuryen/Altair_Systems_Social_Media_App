@@ -114,7 +114,8 @@ function RegisterPage({ onSwitchLoginClick }) {
                     document.querySelector("#reg-form").elements.emlr.value,
                 };
 
-                if (validate(data.namer, data.passr, data.emailr).length > 0) {
+                const validationErrors = validate(data.namer, data.passr, data.emailr);
+                if (validationErrors.length > 0) {
                   alert(validationErrors.join("\n"));
                   console.log("Alerted");
                   return;
