@@ -2,6 +2,28 @@ import React, { useState } from "react";
 import beeLogo from "./pics/bee.png";
 
 function RegisterPage({ onSwitchLoginClick }) {
+  function validate(name, password, email) {
+    console.log("Validating...");
+    const errors = [];
+  
+    if (name.length === 0) {
+      errors.push("Username can't be empty");
+    }
+  
+    if (email.length < 5) {
+      errors.push("Email should be at least 5 charcters long");
+    }
+    if (email.split("").filter((x) => x === "@").length !== 1) {
+      errors.push("Email should contain a @");
+    }
+  
+    if (password.length === 0) {
+      errors.push("Password should be at least 1 characters long");
+    }
+
+    console.log("Validated!");
+    return errors;
+  }
   return (
     <div className="w-[1920px] h-[1239px] relative bg-[#bf6a02] border border-white">
       <div className="w-[1920px] h-[1239px] left-0 top-0 absolute border border-black">
@@ -81,6 +103,7 @@ function RegisterPage({ onSwitchLoginClick }) {
               type="submit"
               onClick={async (event) => {
                 event.preventDefault();
+
                 const data = {
                   //store content of html form
                   namer:
@@ -90,6 +113,14 @@ function RegisterPage({ onSwitchLoginClick }) {
                   emailr:
                     document.querySelector("#reg-form").elements.emlr.value,
                 };
+
+                const validationErrors = validate(data.namer, data.passr, data.emailr);
+                if (validationErrors.length > 0) {
+                  alert(validationErrors.join("\n"));
+                  console.log("Alerted");
+                  return;
+                }
+
                 const options = {
                   method: "POST",
                   body: JSON.stringify(data),
