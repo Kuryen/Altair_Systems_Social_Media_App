@@ -4,7 +4,7 @@ login("matt", "123");
 login("matt", "122");
 
 //testing the email validation function that is part of the register module
-console.log(validate("unittestuser@gmail.c"));
+console.log(validateEmail("unittestuser@gmail.c"));
 
 //Testing all execution paths of our register API + API call: invalid email, valid credentials, and existing credentials
 register("unittestuser", "123", "UnitTestUser@gmail.co");
@@ -33,7 +33,7 @@ function login(uname, pword){
     //console.log(json.status);
 }
 
-function validate(email){
+function validateEmail(email){
   console.log("email: " + email);
   if(String(email).match(/^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/) != null){
     return true;
