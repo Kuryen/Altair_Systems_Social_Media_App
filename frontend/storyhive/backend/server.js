@@ -49,6 +49,7 @@ app.get("*", (req, res) => {
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+const { run_post_tests } = require("../testing/post_tests");
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:10000",
@@ -107,3 +108,4 @@ server.listen(PORT, () => {
 //run_chat_tests();
 //run_login_tests();
 //run_register_tests();
+//run_post_tests();
