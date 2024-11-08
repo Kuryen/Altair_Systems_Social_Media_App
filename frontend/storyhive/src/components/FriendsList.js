@@ -13,22 +13,23 @@ export default function FriendsList({ friends, onProfileClick }) {
                 key={index}
                 className="hexagon"
                 onClick={() => onProfileClick(friend.username)}
+                
               >
-                {/* Conditionally render profile picture or username */}
-                {friend.profilePicture ? (
+                {/* Conditionally render profile picture or username */} 
+                  {/* COMMENTED OUT FRIEND PFP {friend.profilePicture ? (
                   <img
                     src={friend.profilePicture}
                     alt={`${friend.username}'s profile`}
                     className="friendProfilePicture"
                   />
-                ) : (
+                ) : ( 
                   <h6>{friend.username}</h6> // Display username if no profile picture
-                )}
+                )} */}
               </div>
-            ))
+            )) 
           ) : (
             <div className="text-gray-400">No friends to display.</div>
-          )}
+          )} 
         </div>
       </div>
     </div>

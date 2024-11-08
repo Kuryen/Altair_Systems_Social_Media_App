@@ -136,10 +136,10 @@ export default function Profile() {
       );
       setFriends(updatedFriends);
     };
-  
-    if (friends.length > 0) {
-      fetchFriendsProfilePictures();
-    }
+    //comment out friends pfp load
+    //if (friends.length > 0) {
+      //fetchFriendsProfilePictures();
+    //}
   }, [friends]);
 
   const handleAddFriend = () => {
