@@ -11,6 +11,10 @@ const buildPath = path.join(__dirname, "../build");
 const bodyParser = require("body-parser");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
+const { run_login_tests } = require("../testing/authentication_tests");
+const { run_register_tests } = require("../testing/authentication_tests");
+const { run_chat_tests } = require("../testing/chat_tests");
+
 app.use(express.static(buildPath));
 app.use(express.json());
 app.use(cors());
@@ -99,3 +103,7 @@ app.get("*", (req, res) => {
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+//run_chat_tests();
+//run_login_tests();
+//run_register_tests();

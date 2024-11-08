@@ -18,11 +18,13 @@ function Chat() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const input = document.getElementById("input");
-    if (input.value) {
+    if (input.value != "" && selectedUser != null) {
       const message = `${chatUsername}: ${input.value}`;
       const roomName = [chatUsername, selectedUser].sort().join("_");
       socket.emit("chat message", { message, room: roomName }); // Send message to WebSocket server
       input.value = ""; // Clear input field
+    }else{
+      alert("You must select a user to chat with and you cannot send an empty message!")
     }
   };
 

@@ -1,22 +1,24 @@
-//In order to achieve C0 coverage, we must visit each statement once.
-//Testing for one user/password combo that exists and one that does not exist will cover both paths inside our api.
-login("matt", "123");
-login("matt", "122");
-
-//testing the email validation function that is part of the register module
-console.log(validateEmail("unittestuser@gmail.c"));
-
-//Testing all execution paths of our register API + API call: invalid email, valid credentials, and existing credentials
-register("unittestuser", "123", "UnitTestUser@gmail.co");
-register("unittestuser", "123", "unittestuser@gmail.com");
-register("unittestuser", "123", "unittestuser@gmail.com");
+function run_login_tests(){
+  //In order to achieve C0 coverage, we must visit each statement once.
+  //Testing for one user/password combo that exists and one that does not exist will cover both paths inside our api.
+  login("matt", "123");
+  login("matt", "122");
+}
+function run_register_tests(){
+  //testing the email validation function that is part of the register module
+  console.log("validation result: " + validateEmail("unittestuser@gmail.c"));
+  //Testing all execution paths of our register API + API call: invalid email, valid credentials, and existing credentials
+  register("unittestuser", "123", "UnitTestUser@gmail.co");
+  register("unittestuser", "123", "unittestuser@gmail.com");
+  register("unittestuser", "123", "unittestuser@gmail.com");
+}
 
 function login(uname, pword){
     const data = {
-        //store the contents of the html form
-        name: uname,
-        pass: pword
-      };
+      //store the contents of the html form
+      name: uname,
+      pass: pword
+    };
     const options = {
       method: "POST",
       body: JSON.stringify(data),
@@ -34,7 +36,6 @@ function login(uname, pword){
 }
 
 function validateEmail(email){
-  console.log("email: " + email);
   if(String(email).match(/^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/) != null){
     return true;
   }else{
@@ -50,7 +51,7 @@ function register(uname, pword, email){
     emailr: email,
   };
 
-  if(validate(data.emailr)){
+  if(validateEmail(data.emailr)){
     const options = {
       method: "POST",
       body: JSON.stringify(data),
@@ -68,3 +69,5 @@ function register(uname, pword, email){
     console.log("This is not a valid email address!");
   }
 }
+
+module.exports = { run_login_tests, run_register_tests };
