@@ -84,21 +84,21 @@ function run_post_tests(){
 // postContent_test(postNoContent);
 // //----------------postContent_test----------------
 
-// //----------------postMediaTrim_test----------------
-// const post = {
-//     media: "hello"
-// }
+//----------------postMediaTrim_test----------------
+const post = {
+    media: "hello"
+}
 
-// const postEmpty = {
-//     media: "           "
-// }
+const postEmpty = {
+    media: "           "
+}
 
-// const postNoMedia = {
-//     notMedia: "hello"
-// }
+const postNoMedia = {
+    notMedia: "hello"
+}
 
-// postMediaTrim_test(postNoMedia);
-// //----------------postMediaTrim_test----------------
+postMediaTrim_test(postEmpty);
+//----------------postMediaTrim_test----------------
 
 function userPosts_test(currentUser)
 {
@@ -149,6 +149,8 @@ function postMediaTrim_test(post){
         if (post.media && post.media.trim() !== "")
         {
             console.log(post.media);
+        } else {
+            console.log("no media");
         }
 }
         
