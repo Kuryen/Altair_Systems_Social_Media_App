@@ -84,21 +84,21 @@ function run_post_tests(){
 // postContent_test(postNoContent);
 // //----------------postContent_test----------------
 
-//----------------postMediaTrim_test----------------
-const post = {
-    media: "hello"
-}
+// //----------------postMediaTrim_test----------------
+// const post = {
+//     media: "hello"
+// }
 
-const postEmpty = {
-    media: "           "
-}
+// const postEmpty = {
+//     media: "           "
+// }
 
-const postNoMedia = {
-    notMedia: "hello"
-}
+// const postNoMedia = {
+//     notMedia: "hello"
+// }
 
-postMediaTrim_test(postEmpty);
-//----------------postMediaTrim_test----------------
+// postMediaTrim_test(postEmpty);
+// //----------------postMediaTrim_test----------------
 
 function userPosts_test(currentUser)
 {
