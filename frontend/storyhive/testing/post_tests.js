@@ -1,9 +1,20 @@
 //testing the path that successfully sends the message
 function run_post_tests(){
-    post_test();
+    availablePost_test();
 }
 
+
+userPosts_test("matt");
+
+//VVVVVVVVVVVVVVuserPosts_testVVVVVVVVVVVVVV
 // const user = "matt";
+// const emptyUser = "";
+// const nullUser = null;
+// let userEmpty;
+// userPosts_test(user);
+//^^^^^^^^^^^^^^userPosts_test^^^^^^^^^^^^^^
+
+//VVVVVVVVVVVVVVVVVVVVVavailablePost_testVVVVVVVVVVVVVVVVVVVVVV
 // const userPostsEmpty = [];
 // const userPosts = ["hello", "world", "!"];
 // const arrayTest = {
@@ -14,10 +25,12 @@ function run_post_tests(){
 
 // const arrayTestEmpty = {};
 
-// post_test(arrayTest, userPostsEmpty);
-// post_test(arrayTest, userPosts);
-// post_test(arrayTestEmpty, userPosts);
-// post_test(arrayTestEmpty, userPostsEmpty);
+// availablePost_test(arrayTest, userPostsEmpty);
+// availablePost_test(arrayTest, userPosts);
+// availablePost_test(arrayTestEmpty, userPosts);
+// availablePost_test(arrayTestEmpty, userPostsEmpty);
+//^^^^^^^^^^^^^^^^^^availablePost_test^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 
 function userPosts_test(currentUser)
 {
@@ -30,26 +43,39 @@ function userPosts_test(currentUser)
             const userPosts = Object.values(json).filter((post) => {
                 const userName =
                   typeof post.userID === "object" ? post.userID.name : post.userID;
-                return userName === currentUser;
+                return console.log("current user: " + userName + "|" + "posts user:" + currentUser + "|" + (userName === currentUser));
               });
         })
 }
 //////////////////////////////////////////////////////////////////////
-function postDate_test(userPosts)
+function postDate_test(currentUser)
 {
-            userPosts.forEach((post) => {
-                // User information
+    fetch(`https://storyhive-app.onrender.com/posting/posts?user=${currentUser}`, {
+        method: "GET",
+      })
+        .then((response) => response.json())
+        .then((json) => {
+            // Filter posts by current user's username
+            const userPosts = Object.values(json).filter((post) => {
                 const userName =
-                  typeof post.userID === "object"
-                    ? post.userID.name
-                    : post.userID || "Unknown User";
-                let createdAt = "Date Unavailable";
-                if (post.createdAt) {
-                  const date = new Date(post.createdAt);
-                  if (!isNaN(date.getTime())) {
-                    createdAt = date.toLocaleString();
-                  }
-                }
+                  typeof post.userID === "object" ? post.userID.name : post.userID;
+                return (userName === currentUser);
+              });
+        })
+            userPosts.forEach((post) => {
+                console.log(post);
+                // // User information
+                // const userName =
+                //   typeof post.userID === "object"
+                //     ? post.userID.name
+                //     : post.userID || "Unknown User";
+                // let createdAt = "Date Unavailable";
+                // if (post.createdAt) {
+                //   const date = new Date(post.createdAt);
+                //   if (!isNaN(date.getTime())) {
+                //     createdAt = date.toLocaleString();
+                //   }
+                // }
               });
 }
 //////////////////////////////////////////////////////////////////////
@@ -73,7 +99,7 @@ function postTrim_test(userPosts){
         
 
 //////////////////////////////////////////////////////////////////////
-function post_test(arrTest, posts){
+function availablePost_test(arrTest, posts){
     console.log("-------------post test start-----------");
 
     if (Object.keys(arrTest).length === 0) {

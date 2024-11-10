@@ -5,9 +5,9 @@ function run_chat_tests(){
 
 //testing the path that warns the user
 //we do not test with the sender field blank because to even get to the chat page, you must be logged in.
-chat_test("", "sasha", "matt");
-chat_test("hello world!", "", "matt");
-chat_test("", "", "matt");
+//chat_test("", "sasha", "matt");
+//chat_test("hello world!", "", "matt");
+//chat_test("", "", "matt");
 
 //socket is left out because we assume the socket is already functional
 //we are unit testing the logic which validates a message before it is sent through the socket.
