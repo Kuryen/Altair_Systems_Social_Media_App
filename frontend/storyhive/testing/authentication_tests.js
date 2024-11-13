@@ -10,7 +10,7 @@ function run_register_tests(){
   //Testing all execution paths of our register API + API call: invalid email, valid credentials, and existing credentials
   register("unittestuser", "123", "UnitTestUser@gmail.co");
   register("unittestuser", "123", "unittestuser@gmail.com");
-  register("unittestuser", "123", "unittestuser@gmail.com");
+  register("unittestuser", "123", "UnitTestUser@gmail.com");
 }
 
 function login(uname, pword){

@@ -80,7 +80,7 @@ export default function LoginPage({ onSwitchLoginClick }) {
               };
               //send the json to the api and return the result!
               const response = await fetch(
-                "https://storyhive-app.onrender.com/authenticate/check-form",
+                "http://localhost:10000/authenticate/check-form",
                 options
               );
               const json = await response.json();

@@ -14,6 +14,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const { run_login_tests } = require("../testing/authentication_tests");
 const { run_register_tests } = require("../testing/authentication_tests");
 const { run_chat_tests } = require("../testing/chat_tests");
+const {run_search_tests } = require("../testing/search_tests");
 
 app.use(express.static(buildPath));
 app.use(express.json());
@@ -112,4 +113,8 @@ server.listen(PORT, () => {
 //run_register_tests();
 //run_post_tests();
 //run_online_users_tests();
+<<<<<<< Updated upstream
 //profile_test();
+=======
+run_search_tests();
+>>>>>>> Stashed changes

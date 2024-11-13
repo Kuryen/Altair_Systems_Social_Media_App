@@ -24,7 +24,7 @@ function Chat() {
       socket.emit("chat message", { message, room: roomName }); // Send message to WebSocket server
       input.value = ""; // Clear input field
     }else{
-      alert("You must select a user to chat with and you cannot send an empty message!")
+      alert("You must select a user to chat with and you cannot send an empty message!");
     }
   };
 
@@ -62,9 +62,13 @@ function Chat() {
 
   // New function to handle user selection
   const handleUserSelect = (user) => {
-    console.log("Selected user:", user);
-    setSelectedUser(user);
-    setCurrentChatUser(user); // Set the current chat user
+    if(user == chatUsername){
+      alert("You cannot chat with yourself. Please select a different user!");
+    }else{
+      console.log("Selected user:", user);
+      setSelectedUser(user);
+      setCurrentChatUser(user); // Set the current chat user
+    }
   };
 
   const handleNavigateToProfile = () => {
