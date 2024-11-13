@@ -59,53 +59,36 @@ export default function Profile() {
     }
   }, [profileUsername]); // Run whenever the profile being viewed changes
 
-      try {
-        const response = await axios.get(`http://localhost:10000/profilepicture/get-profile-picture/${profileUsername}`);
-        const fetchedProfilePicture = response.data?.profilePicture || "https://via.placeholder.com/150";
-        
-        // Update the profile picture state and add to cache
-        setProfilePicture(fetchedProfilePicture);
-        setProfilePictureCache((prevCache) => ({
-          ...prevCache,
-          [profileUsername]: fetchedProfilePicture,
-        }));
-      } catch (error) {
-        console.error("Error fetching profile picture:", error);
-        setProfilePicture("https://via.placeholder.com/150"); // Fallback on error
+  // Fetch friend's profile pictures
+  useEffect(() => {
+    const fetchFriendsProfilePictures = () => {
+      const updatedFriends = friends.map((friend) => {
+        const username = typeof friend === "string" ? friend : friend?.username;
+  
+        // Check for profile picture in local storage
+        const profilePicturePath = localStorage.getItem(`${username}_profilePicture`);
+        const profilePicture = profilePicturePath
+        //http://localhost:10000${profilePicturePath}?t=${new Date().getTime()} testing
+        //https://storyhive-app.onrender.com${profilePicturePath}?t=${new Date().getTime()} deployment
+          ? `http://localhost:10000${profilePicturePath}?t=${new Date().getTime()}`
+          : null;
+  
+        // Return the friend object with profile picture URL or fallback to username
+        return {
+          username,
+          profilePicture, // This can be null if not found
+        };
+      });
+  
+      // Only update state if there's a change to avoid unnecessary renders
+      if (JSON.stringify(friends) !== JSON.stringify(updatedFriends)) {
+        setFriends(updatedFriends);
       }
     };
   
-          // Determine the username based on the structure of friend
-          const username = typeof friend === "string" ? friend : friend?.username;
-  
-          // Ensure username is a valid string before proceeding
-          if (typeof username === "string" && username) {
-            try {
-              const profileResponse = await axios.get(`http://localhost:10000/profilepicture/get-profile-picture/${username}`);
-              console.log(`Profile picture for ${username}:`, profileResponse.data);
-  
-              // Return an object with username and profilePicture
-              return {
-                username,
-                profilePicture: profileResponse.data?.profilePicture || null,
-              };
-            } catch (error) {
-              console.error(`Error fetching profile picture for ${username}:`, error);
-              return { username }; // Return the username without a profile picture if there's an error
-            }
-          } else {
-            // Log an error if username is invalid and skip the API call
-            console.error("Invalid friend format or missing username:", friend);
-            return { username: "unknown" }; // Fallback to a default structure
-          }
-        })
-      );
-      setFriends(updatedFriends);
-    };
-    //comment out friends pfp load
-    //if (friends.length > 0) {
-      //fetchFriendsProfilePictures();
-    //}
+    if (friends.length > 0) {
+      fetchFriendsProfilePictures();
+    }
   }, [friends]);
   
 
