@@ -12,12 +12,12 @@ function determineUsername_test(friend){
   user = typeof friend === "string" ? friend : friend?.username;
   console.log("user: " + user);
 }
-
+/////////////////////////////////////////////////////////////////////////////
 const username = "testname";
 const usernameObject = { username: "objectName" };
 const emptyUsername = "";
 
-validUsername_test(usernameObject);
+//validUsername_test(usernameObject);
 
 function validUsername_test(username)
 {
