@@ -113,8 +113,4 @@ server.listen(PORT, () => {
 //run_register_tests();
 //run_post_tests();
 //run_online_users_tests();
-<<<<<<< Updated upstream
-//profile_test();
-=======
-run_search_tests();
->>>>>>> Stashed changes
+//run_search_tests();
