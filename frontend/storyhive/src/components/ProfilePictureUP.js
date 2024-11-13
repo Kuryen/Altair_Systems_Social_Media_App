@@ -1,26 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const ProfilePictureUploader = ({ username, onUploadSuccess }) => {
+const ProfilePictureUploader = ({ onUploadSuccess }) => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+
+  // Retrieve the loggedInUser from localStorage
+  const loggedInUser = localStorage.getItem("elementData");
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-      if (!validTypes.includes(file.type)) {
-        alert("Only JPG, PNG, and GIF files are allowed.");
-        return;
-      }
-
-      if (file.size > 2 * 1024 * 1024) { // 2 MB limit
-        alert("File size exceeds 2MB.");
-        return;
-      }
-
-      setSelectedFile(file);
-    }
+    setSelectedFile(e.target.files[0]);
   };
 
   const handleUpload = async () => {
@@ -29,28 +17,33 @@ const ProfilePictureUploader = ({ username, onUploadSuccess }) => {
       return;
     }
 
+    if (!loggedInUser) {
+      console.error("No logged in user found in localStorage.");
+      alert("Please login to upload a profile picture.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append('profile_picture', selectedFile);
-    formData.append('username', username);
 
-    setIsLoading(true);
     try {
-      const response = await axios.post('https://storyhive-app.onrender.com/profilepicture/upload-profile-picture', formData, {
+        //http://localhost:10000/profilepicture/upload-profile-picture testing
+        //https://storyhive-app.onrender.com/profilepicture/upload-profile-picture deployment
+      const response = await axios.post('http://localhost:10000/profilepicture/upload-profile-picture', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
       if (response.data.profilePicture) {
-        alert('Upload successful!');
-        onUploadSuccess(response.data.profilePicture);  // Notify parent about the new picture URL
-        setSelectedFile(null); // Reset selected file
+        // Store the uploaded file path in localStorage associated with the user
+        localStorage.setItem(`${loggedInUser}_profilePicture`, response.data.profilePicture);
+        alert('Profile picture uploaded successfully!');
+        onUploadSuccess(response.data.profilePicture); // Notify parent about the new picture URL
       }
     } catch (error) {
       console.error('Error uploading the file:', error);
-      alert('Upload failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+      alert('Failed to upload profile picture. Please try again.');
     }
   };
 
@@ -62,7 +55,6 @@ const ProfilePictureUploader = ({ username, onUploadSuccess }) => {
         onChange={handleFileChange}
         style={{ display: 'none' }}
         id="file-upload"
-        aria-label="Upload Profile Picture"
       />
       <label
         htmlFor="file-upload"
@@ -77,16 +69,12 @@ const ProfilePictureUploader = ({ username, onUploadSuccess }) => {
         </p>
       )}
 
-      {isLoading ? (
-        <p className="text-sm text-gray-600 mt-2">Uploading...</p>
-      ) : (
-        <button
-          onClick={handleUpload}
-          className="mt-4 px-4 py-2 bg-yellow-400 text-gray-800 rounded shadow-sm hover:bg-yellow-500 hover:shadow-lg transition duration-200 ease-in-out"
-        >
-          Upload Profile Picture
-        </button>
-      )}
+      <button
+        onClick={handleUpload}
+        className="mt-4 px-4 py-2 bg-yellow-400 text-gray-800 rounded shadow-sm hover:bg-yellow-500 hover:shadow-lg transition duration-200 ease-in-out"
+      >
+        Upload Profile Picture
+      </button>
     </div>
   );
 };

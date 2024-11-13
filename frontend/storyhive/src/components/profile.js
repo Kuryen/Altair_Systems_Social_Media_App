@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import beeLogo from "./pics/bee.png"; // Replace with your actual logo path
 import UserTabs from "./UserTabs";
 import FriendsList from "./FriendsList";
@@ -6,55 +8,31 @@ import SearchBar from "./searchbar";
 import SearchResultsList from "./searchresultlist";
 import "../css/profile.css";
 import socket from "../socket";
-import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
-import axios from "axios";
 import ProfilePictureUploader from "./ProfilePictureUP"; // Import the uploader component
 
 export default function Profile() {
   const navigate = useNavigate();
-  const loggedInUser =
-    localStorage.getItem("elementData") || "No content found!"; // Retrieve the loggedInUser from localStorage
+  const loggedInUser = localStorage.getItem("elementData") || "No content found!"; // Retrieve the loggedInUser from localStorage
   const [profileUsername, setProfileUsername] = useState(loggedInUser);
-  const [currentUser, setCurrentUser] = useState(true); //condition to change the profile view for users depending on if it is their profile or not
+  const [currentUser, setCurrentUser] = useState(true); // Condition to change the profile view for users depending on if it is their profile or not
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [friends, setFriends] = useState([]);
   const [results, setResults] = useState([]);
   const [newFriendAdded, setNewFriendAdded] = useState(false); // Track when a friend is added
-  const [profilePicture, setProfilePicture] = useState(
-    localStorage.getItem("profilePic") || "https://via.placeholder.com/150"
-  );
+  const [profilePictureUrl, setProfilePictureUrl] = useState('');
   const [profilePictureCache, setProfilePictureCache] = useState({});
   const [missingProfilePictures, setMissingProfilePictures] = useState(new Set());
 
   useEffect(() => {
+    // Set whether this profile is the current logged-in user
     setCurrentUser(profileUsername === loggedInUser);
   }, [profileUsername, loggedInUser]);
-
-  // First useEffect for socket connection
-  // useEffect(() => {
-  //   socket.connect();
-  //   // Emit username when the component mounts
-  //   socket.emit("registerUser", profileUsername); // Use actual username passed as prop
-
-  //   // Listen for online users update
-  //   socket.on("updateOnlineUsers", (users) => {
-  //     setOnlineUsers(users);
-  //   });
-
-  //   // Cleanup on unmount
-  //   return () => {
-  //     socket.off("updateOnlineUsers");
-  //     // Do not disconnect here unless you want to close the socket when leaving this component
-  //   };
-  // }, []); // Empty dependency array ensures this runs only once on mount
 
   useEffect(() => {
     // Fetch friends using your API
     const fetchFriends = async () => {
       try {
-        const response = await fetch(
-          `/friending/users-friends?user=${loggedInUser}`
-        );
+        const response = await fetch(`/friending/users-friends?user=${loggedInUser}`);
         if (!response.ok) {
           throw new Error("Failed to fetch friends");
         }
@@ -65,102 +43,63 @@ export default function Profile() {
       }
     };
     fetchFriends();
-  }, [loggedInUser, newFriendAdded]); //refresh when a new friend is added
+  }, [loggedInUser, newFriendAdded]); // Refresh when a new friend is added
 
-
-  //NOTE: MAKE SURE TO KEEP "/${profileUsername}" AT THE END OF GET REQUEST
-  //*********************************************************************
-  //http://localhost:10000/profilepicture/get-profile-picture for testing
-  //https://storyhive-app.onrender.com/profilepicture/get-profile-picture for deployment
-  
-  // Fetch profile picture for profileUsername, with caching
   useEffect(() => {
-    const fetchProfilePicture = async () => {
-      // Check if profile picture is in cache
-      if (profilePictureCache[profileUsername]) {
-        setProfilePicture(profilePictureCache[profileUsername]);
-        return;
-      }
+    // Fetch user profile picture from localStorage for the current profile being viewed
+    const profilePicturePath = localStorage.getItem(`${profileUsername}_profilePicture`);
+    if (profilePicturePath) {
+      // Add cache-busting parameter to force image refresh
+      //http://localhost:10000${profilePicturePath}?t=${new Date().getTime()} testing
+      //https://storyhive-app.onrender.com${profilePicturePath}?t=${new Date().getTime()} deployment
+      const url = `http://localhost:10000${profilePicturePath}?t=${new Date().getTime()}`;
+      setProfilePictureUrl(url);
+    } else {
+      setProfilePictureUrl(""); // Clear URL if no profile picture is found
+    }
+  }, [profileUsername]); // Run whenever the profile being viewed changes
 
-      try {
-        const response = await axios.get(`https://storyhive-app.onrender.com/profilepicture/get-profile-picture/${profileUsername}`);
-        const fetchedProfilePicture = response.data?.profilePicture || "https://via.placeholder.com/150";
-        
-        // Update the profile picture state and add to cache
-        setProfilePicture(fetchedProfilePicture);
-        setProfilePictureCache((prevCache) => ({
-          ...prevCache,
-          [profileUsername]: fetchedProfilePicture,
-        }));
-      } catch (error) {
-        console.error("Error fetching profile picture:", error);
-        setProfilePicture("https://via.placeholder.com/150"); // Fallback on error
-      }
-    };
-
-    fetchProfilePicture();
-  }, [profileUsername, profilePictureCache]); // Re-fetch profile picture when profileUsername changes
-
-  //SAME HERE
-  //********************************************************************
+  // Fetch friend's profile pictures
   useEffect(() => {
-    const fetchFriendsProfilePictures = async () => {
-      const updatedFriends = await Promise.all(
-        friends.map(async (friend) => {
-          const username = typeof friend === "string" ? friend : friend?.username;
+    const fetchFriendsProfilePictures = () => {
+      const updatedFriends = friends.map((friend) => {
+        const username = typeof friend === "string" ? friend : friend?.username;
   
-          // Check if the username is in the missing profile pictures cache
-          if (missingProfilePictures.has(username)) {
-            return { username, profilePicture: null };
-          }
+        // Check for profile picture in local storage
+        const profilePicturePath = localStorage.getItem(`${username}_profilePicture`);
+        const profilePicture = profilePicturePath
+        //http://localhost:10000${profilePicturePath}?t=${new Date().getTime()} testing
+        //https://storyhive-app.onrender.com${profilePicturePath}?t=${new Date().getTime()} deployment
+          ? `http://localhost:10000${profilePicturePath}?t=${new Date().getTime()}`
+          : null;
   
-          // Check if profile picture is in cache
-          if (profilePictureCache[username]) {
-            return {
-              username,
-              profilePicture: profilePictureCache[username],
-            };
-          }
+        // Return the friend object with profile picture URL or fallback to username
+        return {
+          username,
+          profilePicture, // This can be null if not found
+        };
+      });
   
-          try {
-            const profileResponse = await axios.get(`https://storyhive-app.onrender.com/profilepicture/get-profile-picture/${username}`);
-            const profilePicture = profileResponse.data?.profilePicture || null;
-  
-            // Cache the profile picture if it exists
-            if (profilePicture) {
-              setProfilePictureCache((prevCache) => ({
-                ...prevCache,
-                [username]: profilePicture,
-              }));
-            } else {
-              // Add username to the missing profile pictures cache
-              setMissingProfilePictures((prevSet) => new Set(prevSet).add(username));
-            }
-  
-            return { username, profilePicture };
-          } catch (error) {
-            console.error(`Error fetching profile picture for ${username}:`, error);
-            // Add username to the missing profile pictures cache on error
-            setMissingProfilePictures((prevSet) => new Set(prevSet).add(username));
-            return { username }; // Return the username without a profile picture if there's an error
-          }
-        })
-      );
-      setFriends(updatedFriends);
+      // Only update state if there's a change to avoid unnecessary renders
+      if (JSON.stringify(friends) !== JSON.stringify(updatedFriends)) {
+        setFriends(updatedFriends);
+      }
     };
   
     if (friends.length > 0) {
       fetchFriendsProfilePictures();
     }
-  }, [friends, profilePictureCache, missingProfilePictures]);
+  }, [friends]);
+  
 
   const handleAddFriend = () => {
-    setNewFriendAdded(!newFriendAdded); //toggle to refresh friend list
+    setNewFriendAdded(!newFriendAdded); // Toggle to refresh friend list
   };
 
   // Update the profileUsername to the friend's username when clicking on a friend's profile
   const handleProfileClick = (friendUsername) => {
-    setProfileUsername(friendUsername);
+    setProfileUsername(friendUsername); // Update state to show friend's profile
+    setProfilePictureUrl(''); // Reset profile picture URL state to trigger a re-fetch
   };
 
   // Return to the logged-in user's profile
@@ -168,9 +107,31 @@ export default function Profile() {
     setProfileUsername(loggedInUser);
   };
 
-  const handleUploadSuccess = (newProfilePictureUrl) => {
-    setProfilePicture(newProfilePictureUrl);
-    localStorage.setItem("profilePic", newProfilePictureUrl); // Update localStorage
+
+  //http://localhost:10000${newProfilePicturePath}?t=${new Date().getTime()} testing
+  //https://storyhive-app.onrender.com${newProfilePicturePath}?t=${new Date().getTime()} deployment
+  const handleUploadSuccess = (newProfilePicturePath) => {
+    // Construct the new profile picture URL with cache-busting query parameter
+    const newProfilePictureUrl = `http://localhost:10000${newProfilePicturePath}?t=${new Date().getTime()}`;
+
+    // Update the state with the new profile picture URL
+    setProfilePictureUrl(newProfilePictureUrl);
+
+    // Update the cache with the new URL for the current profile username
+    setProfilePictureCache((prevCache) => ({
+      ...prevCache,
+      [profileUsername]: newProfilePictureUrl,
+    }));
+
+    // Save the new profile picture URL path in local storage specific to the profile username
+    localStorage.setItem(`${profileUsername}_profilePicture`, newProfilePicturePath);
+
+    // If applicable, clear missing picture cache
+    setMissingProfilePictures((prevSet) => {
+      const newSet = new Set(prevSet);
+      newSet.delete(profileUsername); // Remove from missing cache if present
+      return newSet;
+    });
   };
 
   return (
@@ -198,10 +159,23 @@ export default function Profile() {
         <div className="profileInfoContainer">
           <div className="profileInfo">
             <div className="profilePic relative">
-              <img src={profilePicture} alt="User Avatar" />
+              {profilePictureUrl ? (
+                <img
+                  src={profilePictureUrl}
+                  alt="User Avatar"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = ""; // This triggers fallback to username
+                    setProfilePictureUrl(null); // Set state to null on error to trigger fallback display
+                  }}
+                />
+              ) : (
+                <div className="usernameFallbackContainer">
+                  <h6 className="username">{profileUsername}</h6>
+                </div>
+              )}
               {currentUser && (
                 <div className="relative">
-                  {/* ProfilePictureUploader component for uploading profile picture */}
                   <ProfilePictureUploader
                     username={profileUsername}
                     onUploadSuccess={handleUploadSuccess}
@@ -268,8 +242,6 @@ export default function Profile() {
 
       {/* Search bar */}
       <div className="searchBar">
-        {/* Placeholder for right side component */}
-        {/* Add the component you want here */}
         <div className="search-bar-container">
           <SearchBar setResults={setResults} />
 
@@ -285,11 +257,4 @@ export default function Profile() {
       </div>
     </div>
   );
-}
-
-{
-  /* Bottom Logo 
-      <div className="absolute bottom-10">
-        <img className="w-[178px] h-[90px]" src={beeLogo} alt="Logo" />
-      </div>*/
 }
