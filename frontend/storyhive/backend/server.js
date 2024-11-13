@@ -51,6 +51,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const { run_post_tests } = require("../testing/post_tests");
 const { run_online_users_tests } = require("../testing/online_users_tests");
+const { profile_test } = require("../testing/profile_test");
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:10000",
@@ -111,3 +112,4 @@ server.listen(PORT, () => {
 //run_register_tests();
 //run_post_tests();
 //run_online_users_tests();
+//profile_test();
