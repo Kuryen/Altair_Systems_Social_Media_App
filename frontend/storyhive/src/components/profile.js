@@ -59,32 +59,6 @@ export default function Profile() {
     }
   }, [profileUsername]); // Run whenever the profile being viewed changes
 
-<<<<<<< Updated upstream
-  // Fetch friend's profile pictures
-  useEffect(() => {
-    const fetchFriendsProfilePictures = () => {
-      const updatedFriends = friends.map((friend) => {
-        const username = typeof friend === "string" ? friend : friend?.username;
-  
-        // Check for profile picture in local storage
-        const profilePicturePath = localStorage.getItem(`${username}_profilePicture`);
-        const profilePicture = profilePicturePath
-        //http://localhost:10000${profilePicturePath}?t=${new Date().getTime()} testing
-        //https://storyhive-app.onrender.com${profilePicturePath}?t=${new Date().getTime()} deployment
-          ? `http://localhost:10000${profilePicturePath}?t=${new Date().getTime()}`
-          : null;
-  
-        // Return the friend object with profile picture URL or fallback to username
-        return {
-          username,
-          profilePicture, // This can be null if not found
-        };
-      });
-  
-      // Only update state if there's a change to avoid unnecessary renders
-      if (JSON.stringify(friends) !== JSON.stringify(updatedFriends)) {
-        setFriends(updatedFriends);
-=======
       try {
         const response = await axios.get(`http://localhost:10000/profilepicture/get-profile-picture/${profileUsername}`);
         const fetchedProfilePicture = response.data?.profilePicture || "https://via.placeholder.com/150";
@@ -98,15 +72,9 @@ export default function Profile() {
       } catch (error) {
         console.error("Error fetching profile picture:", error);
         setProfilePicture("https://via.placeholder.com/150"); // Fallback on error
->>>>>>> Stashed changes
       }
     };
   
-<<<<<<< Updated upstream
-    if (friends.length > 0) {
-      fetchFriendsProfilePictures();
-    }
-=======
           // Determine the username based on the structure of friend
           const username = typeof friend === "string" ? friend : friend?.username;
   
@@ -138,7 +106,6 @@ export default function Profile() {
     //if (friends.length > 0) {
       //fetchFriendsProfilePictures();
     //}
->>>>>>> Stashed changes
   }, [friends]);
   
 
