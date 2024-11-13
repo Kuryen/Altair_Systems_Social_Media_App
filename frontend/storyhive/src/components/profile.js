@@ -24,6 +24,7 @@ export default function Profile() {
     localStorage.getItem("profilePic") || "https://via.placeholder.com/150"
   );
   const [profilePictureCache, setProfilePictureCache] = useState({});
+  const [missingProfilePictures, setMissingProfilePictures] = useState(new Set());
 
   useEffect(() => {
     setCurrentUser(profileUsername === loggedInUser);
@@ -106,41 +107,52 @@ export default function Profile() {
     const fetchFriendsProfilePictures = async () => {
       const updatedFriends = await Promise.all(
         friends.map(async (friend) => {
-          // Log the friend to inspect its structure
-          console.log("Inspecting friend:", friend);
-  
-          // Determine the username based on the structure of friend
           const username = typeof friend === "string" ? friend : friend?.username;
   
-          // Ensure username is a valid string before proceeding
-          if (typeof username === "string" && username) {
-            try {
-              const profileResponse = await axios.get(`https://storyhive-app.onrender.com/profilepicture/get-profile-picture/${username}`);
-              console.log(`Profile picture for ${username}:`, profileResponse.data);
+          // Check if the username is in the missing profile pictures cache
+          if (missingProfilePictures.has(username)) {
+            return { username, profilePicture: null };
+          }
   
-              // Return an object with username and profilePicture
-              return {
-                username,
-                profilePicture: profileResponse.data?.profilePicture || null,
-              };
-            } catch (error) {
-              console.error(`Error fetching profile picture for ${username}:`, error);
-              return { username }; // Return the username without a profile picture if there's an error
+          // Check if profile picture is in cache
+          if (profilePictureCache[username]) {
+            return {
+              username,
+              profilePicture: profilePictureCache[username],
+            };
+          }
+  
+          try {
+            const profileResponse = await axios.get(`https://storyhive-app.onrender.com/profilepicture/get-profile-picture/${username}`);
+            const profilePicture = profileResponse.data?.profilePicture || null;
+  
+            // Cache the profile picture if it exists
+            if (profilePicture) {
+              setProfilePictureCache((prevCache) => ({
+                ...prevCache,
+                [username]: profilePicture,
+              }));
+            } else {
+              // Add username to the missing profile pictures cache
+              setMissingProfilePictures((prevSet) => new Set(prevSet).add(username));
             }
-          } else {
-            // Log an error if username is invalid and skip the API call
-            console.error("Invalid friend format or missing username:", friend);
-            return { username: "unknown" }; // Fallback to a default structure
+  
+            return { username, profilePicture };
+          } catch (error) {
+            console.error(`Error fetching profile picture for ${username}:`, error);
+            // Add username to the missing profile pictures cache on error
+            setMissingProfilePictures((prevSet) => new Set(prevSet).add(username));
+            return { username }; // Return the username without a profile picture if there's an error
           }
         })
       );
       setFriends(updatedFriends);
     };
-    //comment out friends pfp load
-    //if (friends.length > 0) {
-      //fetchFriendsProfilePictures();
-    //}
-  }, [friends]);
+  
+    if (friends.length > 0) {
+      fetchFriendsProfilePictures();
+    }
+  }, [friends, profilePictureCache, missingProfilePictures]);
 
   const handleAddFriend = () => {
     setNewFriendAdded(!newFriendAdded); //toggle to refresh friend list
@@ -158,6 +170,7 @@ export default function Profile() {
 
   const handleUploadSuccess = (newProfilePictureUrl) => {
     setProfilePicture(newProfilePictureUrl);
+    localStorage.setItem("profilePic", newProfilePictureUrl); // Update localStorage
   };
 
   return (

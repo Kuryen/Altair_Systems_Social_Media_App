@@ -26,10 +26,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage, limits: { fileSize: 2 * 1024 * 1024 } });
 
-// Get profile picture path
-router.get('/get-profile-picture/:username', async (req, res) => {
-  const { username } = req.params;
+// In-memory cache to store profile picture paths
+let profilePictureCache = {};
 
+// Helper function to fetch profile picture from the database via SSH
+async function fetchProfilePictureFromDB(username) {
   try {
     await ssh.connect({
       host: process.env.SECRET_IP,
@@ -40,26 +41,45 @@ router.get('/get-profile-picture/:username', async (req, res) => {
     const findQuery = `EJSON.stringify(db.userProfile.findOne({ userID: "${username}" }, { profilePic: 1, _id: 0 }))`;
     const result = await ssh.execCommand(`mongosh testDB --quiet --eval '${findQuery}'`);
 
-    // Check if result and result.stdout are available and contain valid data
     if (result && result.stdout) {
       const data = JSON.parse(result.stdout);
+      return data && data.profilePic ? data.profilePic : null;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching profile picture from DB:", error);
+    throw error;
+  }
+}
 
-      // Ensure profilePic field exists in the returned data
-      if (data && data.profilePic) {
-        res.status(200).json({ profilePicture: data.profilePic });
-      } else {
-        res.status(404).json({ error: 'User profile picture not found.' });
-      }
+// GET profile picture route with caching logic
+router.get('/get-profile-picture/:username', async (req, res) => {
+  const { username } = req.params;
+
+  // Check cache first
+  if (profilePictureCache[username]) {
+    console.log('Cache hit');
+    return res.status(200).json({ profilePicture: profilePictureCache[username] });
+  }
+
+  try {
+    // Fetch from the database if not in cache
+    const profilePicPath = await fetchProfilePictureFromDB(username);
+
+    if (profilePicPath) {
+      // Cache the retrieved profile picture path
+      profilePictureCache[username] = profilePicPath;
+      res.status(200).json({ profilePicture: profilePicPath });
     } else {
       res.status(404).json({ error: 'User profile picture not found.' });
     }
   } catch (error) {
-    console.error("Error fetching profile picture:", error);
     res.status(500).json({ error: 'Failed to retrieve profile picture.' });
   }
 });
 
-//post pfp
+// POST profile picture route to upload and update profile picture with cache update
 router.post('/upload-profile-picture', upload.single('profile_picture'), async (req, res) => {
   const username = req.body.username;
   if (!username || !req.file) return res.status(400).json({ error: 'Invalid request' });
@@ -79,7 +99,11 @@ router.post('/upload-profile-picture', upload.single('profile_picture'), async (
       { upsert: true }
     )`;
     
-    const result = await ssh.execCommand(`mongosh testDB --quiet --eval '${updateQuery}'`);
+    await ssh.execCommand(`mongosh testDB --quiet --eval '${updateQuery}'`);
+
+    // Update the cache
+    profilePictureCache[username] = filePath;
+
     res.status(200).json({ message: 'Profile picture uploaded successfully!', profilePicture: filePath });
   } catch (error) {
     console.error("Error updating profile picture:", error);

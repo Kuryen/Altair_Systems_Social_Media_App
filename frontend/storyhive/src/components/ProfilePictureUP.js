@@ -3,9 +3,24 @@ import axios from 'axios';
 
 const ProfilePictureUploader = ({ username, onUploadSuccess }) => {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(file.type)) {
+        alert("Only JPG, PNG, and GIF files are allowed.");
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) { // 2 MB limit
+        alert("File size exceeds 2MB.");
+        return;
+      }
+
+      setSelectedFile(file);
+    }
   };
 
   const handleUpload = async () => {
@@ -18,6 +33,7 @@ const ProfilePictureUploader = ({ username, onUploadSuccess }) => {
     formData.append('profile_picture', selectedFile);
     formData.append('username', username);
 
+    setIsLoading(true);
     try {
       const response = await axios.post('https://storyhive-app.onrender.com/profilepicture/upload-profile-picture', formData, {
         headers: {
@@ -28,22 +44,25 @@ const ProfilePictureUploader = ({ username, onUploadSuccess }) => {
       if (response.data.profilePicture) {
         alert('Upload successful!');
         onUploadSuccess(response.data.profilePicture);  // Notify parent about the new picture URL
+        setSelectedFile(null); // Reset selected file
       }
     } catch (error) {
       console.error('Error uploading the file:', error);
       alert('Upload failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="relative">
-      {/* Invisible file input */}
       <input
         type="file"
         accept="image/*"
         onChange={handleFileChange}
         style={{ display: 'none' }}
         id="file-upload"
+        aria-label="Upload Profile Picture"
       />
       <label
         htmlFor="file-upload"
@@ -58,20 +77,18 @@ const ProfilePictureUploader = ({ username, onUploadSuccess }) => {
         </p>
       )}
 
-      <button
-        onClick={handleUpload}
-        className="mt-4 px-4 py-2 bg-yellow-400 text-gray-800 rounded shadow-sm hover:bg-yellow-500 hover:shadow-lg transition duration-200 ease-in-out"
-      >
-        Upload Profile Picture
-      </button>
+      {isLoading ? (
+        <p className="text-sm text-gray-600 mt-2">Uploading...</p>
+      ) : (
+        <button
+          onClick={handleUpload}
+          className="mt-4 px-4 py-2 bg-yellow-400 text-gray-800 rounded shadow-sm hover:bg-yellow-500 hover:shadow-lg transition duration-200 ease-in-out"
+        >
+          Upload Profile Picture
+        </button>
+      )}
     </div>
   );
 };
 
 export default ProfilePictureUploader;
-
-
-//   frontend\storyhive\backend\uploads\profile_pictures\1729834988953-505370798.png
-
-//http://localhost:10000/profilepicture/upload-profile-picture testing
-//https://storyhive-app.onrender.com/profilepicture/upload-profile-picture deployment

@@ -16,7 +16,7 @@ export default function FriendsList({ friends, onProfileClick }) {
                 
               >
                 {/* Conditionally render profile picture or username */} 
-                  {/* COMMENTED OUT FRIEND PFP {friend.profilePicture ? (
+                  {friend.profilePicture ? (
                   <img
                     src={friend.profilePicture}
                     alt={`${friend.username}'s profile`}
@@ -24,7 +24,7 @@ export default function FriendsList({ friends, onProfileClick }) {
                   />
                 ) : ( 
                   <h6>{friend.username}</h6> // Display username if no profile picture
-                )} */}
+                )} 
               </div>
             )) 
           ) : (
