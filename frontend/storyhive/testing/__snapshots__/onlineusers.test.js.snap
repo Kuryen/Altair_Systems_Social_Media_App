@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OnlineUsers Component matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="w-1/4 bg-gray-100 p-4"
+  >
+    <h2
+      class="text-xl font-bold mb-2"
+    >
+      Online Users
+    </h2>
+    <ul>
+      <li
+        class="cursor-pointer hover:bg-blue-200 p-2 rounded"
+      >
+        User1
+      </li>
+      <li
+        class="cursor-pointer hover:bg-blue-200 p-2 rounded"
+      >
+        User2
+      </li>
+      <li
+        class="cursor-pointer hover:bg-blue-200 p-2 rounded"
+      >
+        User3
+      </li>
+    </ul>
+  </div>
+</DocumentFragment>
+`;

@@ -5,18 +5,18 @@ function RegisterPage({ onSwitchLoginClick }) {
   function validate(name, password, email) {
     console.log("Validating...");
     const errors = [];
-  
+
     if (name.length === 0) {
       errors.push("Username can't be empty");
     }
-  
+
     if (email.length < 5) {
       errors.push("Email should be at least 5 charcters long");
     }
     if (email.split("").filter((x) => x === "@").length !== 1) {
       errors.push("Email should contain a @");
     }
-  
+
     if (password.length === 0) {
       errors.push("Password should be at least 1 characters long");
     }
@@ -29,15 +29,15 @@ function RegisterPage({ onSwitchLoginClick }) {
       <div className="w-[1920px] h-[1239px] left-0 top-0 absolute border border-black">
         <button
           onClick={onSwitchLoginClick}
-          class="w-[350px] h-[95px] left-[1366px] top-[100px] absolute"
+          className="w-[350px] h-[95px] left-[1366px] top-[100px] absolute"
         >
-          <div class="w-[350px] h-[95px] left-0 top-[1px] absolute bg-[#a2845e] rounded-[100px]"></div>
+          <div className="w-[350px] h-[95px] left-0 top-[1px] absolute bg-[#a2845e] rounded-[100px]"></div>
 
-          <div class="w-[198px] h-[95px] left-40 top-0 absolute bg-[#fff1c2] rounded-[100px]"></div>
-          <div class="left-[215px] top-[29px] absolute text-[#111111] text-3xl font-bold font-['Poppins'] lowercase">
+          <div className="w-[198px] h-[95px] left-40 top-0 absolute bg-[#fff1c2] rounded-[100px]"></div>
+          <div className="left-[215px] top-[29px] absolute text-[#111111] text-3xl font-bold font-['Poppins'] lowercase">
             SIGNUP
           </div>
-          <div class="left-[60px] top-[35px] absolute text-[#222222] text-xl font-bold font-['Poppins'] lowercase">
+          <div className="left-[60px] top-[35px] absolute text-[#222222] text-xl font-bold font-['Poppins'] lowercase">
             LOGIN
           </div>
         </button>
@@ -92,7 +92,7 @@ function RegisterPage({ onSwitchLoginClick }) {
 
           {/* bee image */}
           <img
-            class="w-[126px] h-[138px] left-[898px] top-[271px] absolute"
+            className="w-[126px] h-[138px] left-[898px] top-[271px] absolute"
             src={beeLogo}
             alt="site bee logo"
           />
@@ -114,7 +114,11 @@ function RegisterPage({ onSwitchLoginClick }) {
                     document.querySelector("#reg-form").elements.emlr.value,
                 };
 
-                const validationErrors = validate(data.namer, data.passr, data.emailr);
+                const validationErrors = validate(
+                  data.namer,
+                  data.passr,
+                  data.emailr
+                );
                 if (validationErrors.length > 0) {
                   alert(validationErrors.join("\n"));
                   console.log("Alerted");

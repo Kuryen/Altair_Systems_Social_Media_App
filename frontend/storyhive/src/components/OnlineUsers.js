@@ -3,11 +3,15 @@ import socket from "../socket"; // Ensure socket is imported here
 
 function OnlineUsers({ onlineUsers, onSelectUser }) {
   const handleSelectUser = (user) => {
-    socket.emit("startChat", {
-      from: localStorage.getItem("profileUsername"),
-      to: user,
-    });
-    onSelectUser(user); // Notify parent component to set selected user
+    const profileUsername = localStorage.getItem("profileUsername");
+    // Check if profileUsername is not null or undefined
+    if (profileUsername) {
+      socket.emit("startChat", {
+        from: profileUsername,
+        to: user,
+      });
+      onSelectUser(user); // Notify parent component to set selected user
+    }
   };
 
   return (

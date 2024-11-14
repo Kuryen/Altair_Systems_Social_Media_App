@@ -11,11 +11,6 @@ const buildPath = path.join(__dirname, "../build");
 const bodyParser = require("body-parser");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
-const { run_login_tests } = require("../testing/authentication_tests");
-const { run_register_tests } = require("../testing/authentication_tests");
-const { run_chat_tests } = require("../testing/chat_tests");
-const {run_search_tests } = require("../testing/search_tests");
-
 app.use(express.static(buildPath));
 app.use(express.json());
 app.use(cors());
@@ -37,9 +32,12 @@ const friendRoutes = require("./friending");
 app.use("/friending", friendRoutes);
 
 const pfpRoutes = require("./profilepicture");
-app.use("/profilepicture", pfpRoutes)
+app.use("/profilepicture", pfpRoutes);
 
-app.use('/uploads/profile_pictures', express.static(path.join(__dirname, 'uploads/profile_pictures')));
+app.use(
+  "/uploads/profile_pictures",
+  express.static(path.join(__dirname, "uploads/profile_pictures"))
+);
 //launches the frontend from server.js
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
@@ -50,9 +48,6 @@ app.get("*", (req, res) => {
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const { run_post_tests } = require("../testing/post_tests");
-const { run_online_users_tests } = require("../testing/online_users_tests");
-const { profile_test } = require("../testing/profile_test");
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:10000",
@@ -107,10 +102,3 @@ app.get("*", (req, res) => {
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-//run_chat_tests();
-//run_login_tests();
-//run_register_tests();
-//run_post_tests();
-//run_online_users_tests();
-//run_search_tests();
