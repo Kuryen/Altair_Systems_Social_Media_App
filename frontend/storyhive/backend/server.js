@@ -102,3 +102,13 @@ app.get("*", (req, res) => {
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+<<<<<<< Updated upstream
+=======
+
+run_chat_tests();
+//run_login_tests();
+//run_register_tests();
+//run_post_tests();
+//run_online_users_tests();
+//run_search_tests();
+>>>>>>> Stashed changes
