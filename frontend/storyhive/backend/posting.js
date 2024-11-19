@@ -79,4 +79,40 @@ router.post("/make-post", (req, res) => {
       });
 });
 
+// USED TO GET ALL POSTS FROM ALL USERS
+router.get("/get-all-posts", (req, res) => {
+  try {
+      ssh
+          .connect({
+              // Credentials stored in .env
+              host: process.env.SECRET_IP,
+              username: process.env.SECRET_USER,
+              privateKeyPath: process.env.SECRET_KEY,
+          })
+          .then(() => {
+              // Fetch all posts from the collection
+              ssh
+                  .execCommand(
+                      "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({}, { textContent: 1, userID: 1, createdAt: 1, likeCount: 1, commentCount: 1, sharesCount: 1 }).toArray())'"
+                  )
+                  .then(function (result) {
+                      const data = JSON.parse(result.stdout); // Parse the stringified JSON output
+                      res.json(data); // Send the result as JSON to the client
+                  })
+                  .catch((err) => {
+                      console.error("Error executing command:", err);
+                      res.status(500).json({ message: "Error fetching posts." });
+                  });
+          })
+          .catch((err) => {
+              console.error("SSH connection error:", err);
+              res.status(500).json({ message: "Error connecting to the database." });
+          });
+  } catch (error) {
+      console.error("Unexpected error:", error);
+      res.status(500).json({ message: error.message });
+  }
+});
+
+
 module.exports = router;
