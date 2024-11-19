@@ -29,7 +29,7 @@ const ProfilePictureUploader = ({ onUploadSuccess }) => {
     try {
         //http://localhost:10000/profilepicture/upload-profile-picture testing
         //https://storyhive-app.onrender.com/profilepicture/upload-profile-picture deployment
-      const response = await axios.post('http://localhost:10000/profilepicture/upload-profile-picture', formData, {
+      const response = await axios.post('https://storyhive-app.onrender.com/profilepicture/upload-profile-picture', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

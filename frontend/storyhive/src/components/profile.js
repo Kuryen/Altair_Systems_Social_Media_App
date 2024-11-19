@@ -52,7 +52,7 @@ export default function Profile() {
       // Add cache-busting parameter to force image refresh
       //http://localhost:10000${profilePicturePath}?t=${new Date().getTime()} testing
       //https://storyhive-app.onrender.com${profilePicturePath}?t=${new Date().getTime()} deployment
-      const url = `http://localhost:10000${profilePicturePath}?t=${new Date().getTime()}`;
+      const url = `https://storyhive-app.onrender.com${profilePicturePath}?t=${new Date().getTime()}`;
       setProfilePictureUrl(url);
     } else {
       setProfilePictureUrl(""); // Clear URL if no profile picture is found
@@ -70,7 +70,7 @@ export default function Profile() {
         const profilePicture = profilePicturePath
         //http://localhost:10000${profilePicturePath}?t=${new Date().getTime()} testing
         //https://storyhive-app.onrender.com${profilePicturePath}?t=${new Date().getTime()} deployment
-          ? `http://localhost:10000${profilePicturePath}?t=${new Date().getTime()}`
+          ? `https://storyhive-app.onrender.com${profilePicturePath}?t=${new Date().getTime()}`
           : null;
   
         // Return the friend object with profile picture URL or fallback to username
@@ -112,7 +112,7 @@ export default function Profile() {
   //https://storyhive-app.onrender.com${newProfilePicturePath}?t=${new Date().getTime()} deployment
   const handleUploadSuccess = (newProfilePicturePath) => {
     // Construct the new profile picture URL with cache-busting query parameter
-    const newProfilePictureUrl = `http://localhost:10000${newProfilePicturePath}?t=${new Date().getTime()}`;
+    const newProfilePictureUrl = `https://storyhive-app.onrender.com${newProfilePicturePath}?t=${new Date().getTime()}`;
 
     // Update the state with the new profile picture URL
     setProfilePictureUrl(newProfilePictureUrl);
