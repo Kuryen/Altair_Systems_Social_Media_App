@@ -31,9 +31,9 @@ function RegisterPage({ onSwitchLoginClick }) {
           onClick={onSwitchLoginClick}
           className="switchTab"
         >
-          <div className="left-0 top-[1px] selectedTab"></div>
+          <div className="left-0 top-[1px] unselectedTab"></div>
 
-          <div className="left-40 top-0 unselectedTab"></div>
+          <div className="left-40 top-0 selectedTab"></div>
           <div className="left-[215px] top-[29px] textOfSelectedTab">
             SIGNUP
           </div>
