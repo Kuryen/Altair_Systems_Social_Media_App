@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../css/hexagon.css";
+import "../css/friendsList.css";
 
 export default function FriendsList({ friends, onProfileClick }) {
   // State to track which images have failed to load
