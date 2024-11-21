@@ -2,39 +2,39 @@ import React from "react";
 import { Button } from "bootstrap";
 import beeLogo from "./pics/bee.png";
 import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
+import "../css/loginRegister.css";
 
 export default function LoginPage({ onSwitchLoginClick }) {
   const navigate = useNavigate(); // Initialize useNavigate
 
   return (
-    <div className="w-[1920px] h-[1239px] relative bg-[#bf6a02] border border-white">
-      <div className="w-[1920px] h-[1239px] left-0 top-0 absolute border border-black">
+    <div className="LRContainer">
         <button
           onClick={onSwitchLoginClick}
-          className="w-[350px] h-[95px] left-[1366px] top-[100px] absolute"
+          className="switchTab"
         >
-          <div className="w-[350px] h-[95px] left-0 top-[1px] absolute bg-[#a2845e] rounded-[100px]"></div>
-          <div className="left-[215px] top-[33px] absolute text-[#111111] text-xl font-bold font-['Poppins'] lowercase">
+          <div className="left-0 top-[1px] unselectedTab"></div>
+          <div className="left-[215px] top-[33px] textOfUnselectedTab">
             SIGNUP
           </div>
-          <div className="w-[198px] h-[95px] left-0 top-0 absolute bg-[#fff1c2] rounded-[100px]"></div>
-          <div className="left-[60px] top-[25px] absolute text-[#222222] text-3xl font-bold font-['Poppins'] lowercase">
+          <div className="left-0 top-0 selectedTab"></div>
+          <div className="left-[60px] top-[25px] textOfSelectedTab">
             LOGIN
           </div>
         </button>
 
-        <div className="w-[771px] h-[820px] left-[575px] top-[244px] absolute rounded-[100px] bg-white shadow-xl"></div>
-        <div className="w-[607px] h-[60px] left-[701px] top-[409px] relative pl-7 text-black text-[40px] font-bold font-['Poppins']">
+        <div className="left-[575px] top-[244px] whiteBack"></div>
+        <div className="left-[701px] top-[409px] welcomeText">
           Welcome back to Storyhive
           <br />
         </div>
 
         <form id="login-form1">
           {/* username bubble and input */}
-          <div className="w-[584px] h-[126px] left-[669px] top-[420px] relative">
+          <div className="left-[669px] top-[420px] inputContainer">
             <label className="w-full h-full" htmlFor="uname">
               <input
-                className="rounded-[100px] border-2 border-[#aaaaaa] text-black text-2xl w-full h-full pl-10 placeholder:text-2xl placeholder:italic"
+                className="inputBubble"
                 type="text"
                 id="uname"
                 name="uname"
@@ -45,10 +45,10 @@ export default function LoginPage({ onSwitchLoginClick }) {
           </div>
 
           {/* password bubble and input */}
-          <div className="w-[584px] h-[126px] left-[668px] top-[440px] relative">
+          <div className="left-[668px] top-[440px] inputContainer">
             <label className="w-full h-full" htmlFor="pword">
               <input
-                className="rounded-[100px] border-2 border-[#aaaaaa] text-black text-2xl w-full h-full pl-10 placeholder:text-2xl placeholder:italic"
+                className="inputBubble"
                 type="password"
                 id="pword"
                 name="pword"
@@ -60,7 +60,7 @@ export default function LoginPage({ onSwitchLoginClick }) {
         </form>
 
         {/* Next button */}
-        <div className="w-[237px] h-[102px] left-[701px] top-[455px] relative">
+        <div className="left-[701px] top-[455px] submitButtonContainer">
           <button
             type="submit"
             onClick={async (event) => {
@@ -98,7 +98,7 @@ export default function LoginPage({ onSwitchLoginClick }) {
                 alert(json.status); // Display error message
               }
             }}
-            className="w-[186px] h-[80px] top-[12px] relative bg-[#e5a000] text-black text-3xl font-semibold font-['Arial'] rounded-[100px] hover:text-white"
+            className="top-[12px] submitButton"
           >
             Submit
           </button>
@@ -107,7 +107,7 @@ export default function LoginPage({ onSwitchLoginClick }) {
         {/* forgot password link */}
         <a
           href="#"
-          className="w-[269px] h-[59px] left-[1005px] top-[385px] relative text-black text-[25px] font-normal font-['Poppins'] underline lowercase"
+          className="left-[1005px] top-[385px] forgotPassword"
         >
           FORGOT PASSWORD
         </a>
@@ -119,7 +119,6 @@ export default function LoginPage({ onSwitchLoginClick }) {
           alt="site bee logo"
         />
       </div>
-    </div>
   );
 }
 

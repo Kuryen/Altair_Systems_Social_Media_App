@@ -1,5 +1,5 @@
 .LRContainer {
-  @apply w-screen h-screen relative bg-[#bf6a02];
+  @apply w-[1920px] h-[1239px] relative bg-[#bf6a02];
 }
 
 .LRContainer .switchTab {
@@ -51,5 +51,5 @@
 }
 
 .LRContainer .forgotPassword {
-  @apply w-[269px] h-[59px] left-[1005px] top-[385px] relative text-black text-[25px] font-normal font-['Poppins'] underline lowercase;
+  @apply w-[269px] h-[59px] relative text-black text-[25px] font-normal font-['Poppins'] underline lowercase;
 }
