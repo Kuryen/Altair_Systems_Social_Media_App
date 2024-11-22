@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../css/searchbar.css";
 
 export default function SearchBar({ setResults }) {
   const [input, setInput] = useState("");
@@ -28,14 +29,14 @@ export default function SearchBar({ setResults }) {
   };
 
   return (
-    <div className="flex items-center w-full h-10 px-4 bg-white rounded-lg shadow-md">
+    <div className="searchbarContainer">
       <span className="text-royalblue"></span>
       <input
         type="search"
         placeholder="Follow a user..."
         value={input}
         onChange={(e) => handleChange(e.target.value)}
-        className="w-full h-full ml-2 text-lg bg-transparent border-none focus:outline-none"
+        className="search"
       />
     </div>
   );

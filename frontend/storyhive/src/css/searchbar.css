@@ -1,0 +1,23 @@
+.searchbarContainer{
+    @apply flex items-center w-full h-10 px-4 bg-white rounded-lg shadow-md;
+}
+
+.searchbarContainer .search{
+    @apply w-full h-full ml-2 text-lg bg-transparent border-none focus:outline-none;
+}
+
+.searchResultListContainer {
+    @apply w-full bg-white flex flex-col shadow-md rounded-lg mt-4 max-h-[300px] overflow-y-auto;
+}
+
+.searchResultListContainer p{
+    @apply p-2 text-gray-500;
+}
+
+.searchResultContainerisAlreadyFriend{
+    @apply px-5 py-2.5 cursor-not-allowed text-gray-400
+}
+
+.searchResultContainerisNotAlreadyFriend{
+    @apply px-5 py-2.5 hover:bg-gray-200 cursor-pointer
+}

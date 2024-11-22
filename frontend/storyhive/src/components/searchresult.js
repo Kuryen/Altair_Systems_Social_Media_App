@@ -1,3 +1,5 @@
+import "../css/searchbar.css";
+
 export default function SearchResult({
   result,
   currentUserID,
@@ -37,11 +39,11 @@ export default function SearchResult({
 
   return (
     <div
-      className={`px-5 py-2.5 ${
+      className={
         isAlreadyFriend
-          ? "cursor-not-allowed text-gray-400"
-          : "hover:bg-gray-200 cursor-pointer"
-      }`}
+          ? "searchResultContainerisAlreadyFriend"
+          : "searchResultContainerisNotAlreadyFriend"
+        }
       onClick={!isAlreadyFriend ? addFriend : undefined}
     >
       {result}

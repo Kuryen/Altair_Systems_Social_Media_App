@@ -1,8 +1,9 @@
 import SearchResult from "./searchresult";
+import "../css/searchbar.css";
 
 export default function SearchResultsList({ results, currentUserID, onFriendAdded, existingFriends }) {
     return (
-      <div className="w-full bg-white flex flex-col shadow-md rounded-lg mt-4 max-h-[300px] overflow-y-auto">
+      <div className="searchResultContainer">
         {results.length > 0 ? (
           results.map((result, id) => (
             <SearchResult 
@@ -14,7 +15,7 @@ export default function SearchResultsList({ results, currentUserID, onFriendAdde
             />
           ))
         ) : (
-          <p className="p-2 text-gray-500">No results found</p>
+          <p>No results found</p>
         )}
       </div>
     );

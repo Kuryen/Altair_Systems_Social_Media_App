@@ -1,5 +1,6 @@
 import React from "react";
 import socket from "../socket"; // Ensure socket is imported here
+import "../css/onlineUsers.css"
 
 function OnlineUsers({ onlineUsers, onSelectUser }) {
   const handleSelectUser = (user) => {
@@ -15,14 +16,14 @@ function OnlineUsers({ onlineUsers, onSelectUser }) {
   };
 
   return (
-    <div className="w-1/4 bg-gray-100 p-4">
-      <h2 className="text-xl font-bold mb-2">Online Users</h2>
+    <div className="onlineUsersContainer">
+      <h2>Online Users</h2>
       <ul>
         {onlineUsers.map((user, index) => (
           <li
             key={index}
             onClick={() => handleSelectUser(user)}
-            className="cursor-pointer hover:bg-blue-200 p-2 rounded"
+            className="onlineUser"
           >
             {user}
           </li>

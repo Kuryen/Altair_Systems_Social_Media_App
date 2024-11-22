@@ -1,0 +1,16 @@
+.onlineUsersContainer{
+    @apply w-1/4 bg-gray-100 p-4;
+}
+
+.onlineUsersContainer h2{
+    @apply text-xl font-bold mb-2;
+}
+
+.onlineUser {
+    @apply text-blue-500 cursor-pointer p-2 list-none;
+  }
+  
+.onlineUser:hover {
+    @apply bg-gray-200;
+}
+  

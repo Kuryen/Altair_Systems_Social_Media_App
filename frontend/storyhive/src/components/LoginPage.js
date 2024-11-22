@@ -114,7 +114,6 @@ export default function LoginPage({ onSwitchLoginClick }) {
 
         {/* bee image */}
         <img
-          className="w-[126px] h-[138px] left-[898px] top-[271px] absolute"
           src={beeLogo}
           alt="site bee logo"
         />
