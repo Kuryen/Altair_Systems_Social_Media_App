@@ -86,7 +86,7 @@ export default function Post() {
 
           // Stats and action buttons
           const postActions = document.createElement("div");
-          postActions.className = "p-4 flex justify-between items-center";
+          postActions.className = "postStatsContainer";
           postActions.innerHTML = `
             <div class="text-gray-500">
               <span class="mr-2">${post.likeCount || 0} Likes</span>

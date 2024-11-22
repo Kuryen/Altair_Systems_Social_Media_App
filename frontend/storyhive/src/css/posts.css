@@ -21,3 +21,7 @@
 .postContainer .post{
     @apply mt-4 max-h-80 overflow-auto bg-orange-100 p-4 rounded-lg;
 }
+
+.postStatsContainer{
+    @apply p-4 flex justify-between items-center;
+}
