@@ -3,7 +3,7 @@ import "../css/searchbar.css";
 
 export default function SearchResultsList({ results, currentUserID, onFriendAdded, existingFriends }) {
     return (
-      <div className="searchResultContainer">
+      <div className="searchResultListContainer">
         {results.length > 0 ? (
           results.map((result, id) => (
             <SearchResult 
