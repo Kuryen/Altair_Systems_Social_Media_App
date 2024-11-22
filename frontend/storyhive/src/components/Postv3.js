@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import CreatePostButton from "./CreatePostButton";
+import "../css/posts.css";
 
 export default function Post() {
   // Function to get posts from the database and manually update the DOM
@@ -46,11 +47,11 @@ export default function Post() {
         //note : switch from mapping to forEach to complement username checking logic
         userPosts.forEach((post) => {
           const postElement = document.createElement("div");
-          postElement.className = "bg-gray-100 shadow-md rounded-lg mb-4";
+          postElement.className = "postContentContainer";
 
           // User information
           const userInfo = document.createElement("div");
-          userInfo.className = "flex items-center border-b border-gray-300 p-4";
+          userInfo.className = "userInfoContainer";
           const userName =
             typeof post.userID === "object"
               ? post.userID.name
@@ -67,7 +68,7 @@ export default function Post() {
 
           // Post content
           const postContent = document.createElement("div");
-          postContent.className = "p-4 border-b border-gray-300";
+          postContent.className = "postContent";
           if (post.textContent) {
             const postText = document.createElement("p");
             postText.className = "text-gray-800 text-lg mt-2";
@@ -78,7 +79,7 @@ export default function Post() {
             const postImage = document.createElement("img");
             postImage.src = post.media;
             postImage.alt = "Post Media";
-            postImage.className = "mt-2 rounded-md w-full h-auto";
+            postImage.className = "media";
             postContent.appendChild(postImage);
           }
           postElement.appendChild(postContent);
@@ -114,11 +115,11 @@ export default function Post() {
   }, []); // Empty dependency array ensures it runs only once on mount
 
   return (
-    <div className="w-full mt-6">
+    <div className="postContainer">
       <CreatePostButton onPostCreated={getPosts} />
       <div
         id="posts-container"
-        className="mt-4 max-h-80 overflow-auto bg-orange-100 p-4 rounded-lg"
+        className="post"
       ></div>
     </div>
   );

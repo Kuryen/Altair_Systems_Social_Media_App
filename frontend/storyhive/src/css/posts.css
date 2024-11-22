@@ -1,0 +1,23 @@
+.postContentContainer{
+    @apply bg-gray-100 shadow-md rounded-lg mb-4;
+}
+
+.userInfoContainer{
+    @apply flex items-center border-b border-gray-300 p-4;
+}
+
+.postContent {
+    @apply p-4 border-b border-gray-300;
+}
+
+.media {
+    @apply mt-2 rounded-md w-full h-auto;
+}
+
+.postContainer {
+    @apply w-full mt-6;
+}
+
+.postContainer .post{
+    @apply mt-4 max-h-80 overflow-auto bg-orange-100 p-4 rounded-lg;
+}

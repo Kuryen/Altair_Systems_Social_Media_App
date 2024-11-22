@@ -57,7 +57,6 @@ export default function CreatePostButton({ onPostCreated }) {
                 onChange={(e) => setPostContent(e.target.value)}
                 placeholder="What do you want to share?"
                 required
-                className="w-full p-2 border rounded"
               />
             </div>
             <div className="mt-3">
