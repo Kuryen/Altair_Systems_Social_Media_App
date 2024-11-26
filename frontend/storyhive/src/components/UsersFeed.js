@@ -20,6 +20,30 @@ const UsersFeed = () => {
     fetchAllPosts();
   }, []);
 
+  const handleLike = async (postId, index) => {
+    try {
+      const response = await fetch("posting/setLikes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ postId }),
+      });
+
+      if (response.ok) {
+        // Update the like count locally
+        const updatedPosts = [...posts];
+        updatedPosts[index].likeCount =
+          parseInt(updatedPosts[index].likeCount) + 1;
+        setPosts(updatedPosts);
+      } else {
+        console.error("Failed to like the post");
+      }
+    } catch (error) {
+      console.error("Error liking the post:", error);
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -30,7 +54,7 @@ const UsersFeed = () => {
         {posts.length === 0 ? (
           <p className="text-gray-500">No posts available.</p>
         ) : (
-          posts.map((post) => (
+          posts.map((post, index) => (
             <div
               key={post._id}
               className="bg-gray-100 shadow-md rounded-lg mb-4"
@@ -64,7 +88,12 @@ const UsersFeed = () => {
                   <span>{post.sharesCount || 0} Shares</span>
                 </div>
                 <div>
-                  <button className="text-blue-500 hover:underline">Like</button>
+                  <button
+                    className="text-blue-500 hover:underline"
+                    onClick={() => handleLike(post._id, index)}
+                  >
+                    Like
+                  </button>
                   <button className="text-blue-500 hover:underline ml-4">Comment</button>
                   <button className="text-blue-500 hover:underline ml-4">Share</button>
                 </div>
