@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Tooltip } from 'react-tooltip'
 import "../css/hexagon.css";
 import "../css/friendsList.css";
 
@@ -25,6 +26,9 @@ export default function FriendsList({ friends, onProfileClick }) {
               <div
                 key={friend.username}
                 className="hexagon"
+                data-tooltip-id="my-tooltip"
+                data-tooltip-content={`${friend.username}`}
+                data-tooltip-place="top"
                 onClick={() => onProfileClick(friend.username)} // Ensure this updates to the clicked friend's profile
               >
                 {/* Conditionally render profile picture or username */}
@@ -49,6 +53,7 @@ export default function FriendsList({ friends, onProfileClick }) {
           )}
         </div>
       </div>
+      <Tooltip id="my-tooltip" opacity = {1}/>
     </div>
   );
 }
