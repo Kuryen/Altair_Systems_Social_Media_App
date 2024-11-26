@@ -12,8 +12,8 @@
 
 .container .hexagonArea .hexagon {
   position: relative;
-  width: 50px; /*keep ratio of width to height*/
-  height: 62.5px; /*keep ratio of width to height */
+  width: 75px; /*keep ratio of width to height*/
+  height: 93.75px; /*keep ratio of width to height */
   margin: -5px 5px;
   clip-path: polygon(0 25%, 50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%);
   background: #e5ac3f;
@@ -34,7 +34,7 @@
 .container .hexagonArea .hexagon h6 {
   font-weight: 600;
   margin-top: 0px;
-  font-size: 10px;
+  font-size: 20px;
   letter-spacing: 1px;
   text-wrap: wrap;
 }
@@ -47,17 +47,17 @@
 /* have to do individually or else messes up hover scaling */
 .container .hexagonArea .hexagon:nth-child(7n + 5) {
   grid-column: 2 / span 1;
-  margin-left: -29px; /*WORKING ON THISmove left right*/
+  margin-left: -43px; /*move horizontal*/
 }
 
 .container .hexagonArea .hexagon:nth-child(7n + 6) {
   grid-column: 3 / span 1;
-  margin-left: -29px; /*move left right*/
+  margin-left: -43px; /*move horizontal*/
 }
 
 .container .hexagonArea .hexagon:nth-child(7n + 7) {
   grid-column: 4 / span 1;
-  margin-left: -29px; /*move left right*/
+  margin-left: -43px; /*move horizontal*/
 }
 
 /* Default for other hexagons, 4 columns */

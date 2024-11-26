@@ -5,7 +5,7 @@
 
 /* Friends List Sidebar */
 .profilePageContainer .friendsTab {
-  @apply w-[10px] h-full bg-gray-200 overflow-y-auto;
+  @apply w-[550px] h-full bg-gray-200 overflow-y-auto;
 }
 
 /* Main Profile Section */

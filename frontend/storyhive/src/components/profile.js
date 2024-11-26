@@ -137,7 +137,7 @@ export default function Profile() {
   return (
     <div className="profilePageContainer">
       {/* Friends List - Left Side */}
-      <div className="friendTab">
+      <div className="friendsTab">
         <FriendsList friends={friends} onProfileClick={handleProfileClick} />
       </div>
 
