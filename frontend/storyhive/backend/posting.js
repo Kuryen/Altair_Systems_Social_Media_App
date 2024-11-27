@@ -79,4 +79,92 @@ router.post("/make-post", (req, res) => {
       });
 });
 
+// USED TO GET ALL POSTS FROM ALL USERS
+router.get("/get-all-posts", (req, res) => {
+  try {
+    ssh
+      .connect({
+        // Credentials stored in .env
+        host: process.env.SECRET_IP,
+        username: process.env.SECRET_USER,
+        privateKeyPath: process.env.SECRET_KEY,
+      })
+      .then(() => {
+        ssh
+          .execCommand(
+            "mongosh testDB --quiet --eval 'EJSON.stringify(db.posts.find({}, { _id: 1, textContent: 1, userID: 1, createdAt: 1, likeCount: 1, commentCount: 1, sharesCount: 1 }).toArray())'"
+          )
+          .then(function (result) {
+            const data = JSON.parse(result.stdout); // Parse the stringified JSON output
+            
+            // Format the _id to be a string instead of an object
+            const formattedData = data.map(post => ({
+              ...post,
+              _id: post._id.$oid  // Extract the _id value from the $oid object
+            }));
+
+           // console.log("Formatted posts data:", formattedData); // Log the formatted data
+            res.json(formattedData); // Send the result as JSON to the client
+          })
+          .catch((err) => {
+            console.error("Error executing command:", err);
+            res.status(500).json({ message: "Error fetching posts." });
+          });
+      })
+      .catch((err) => {
+        console.error("SSH connection error:", err);
+        res.status(500).json({ message: "Error connecting to the database." });
+      });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+router.post("/setLikes", async (req, res) => {
+  const { postId } = req.body;
+
+  if (!postId) {
+    return res.status(400).json({ message: "Post ID is required." });
+  }
+
+  try {
+    ssh
+      .connect({
+        host: process.env.SECRET_IP,
+        username: process.env.SECRET_USER,
+        privateKeyPath: process.env.SECRET_KEY,
+      })
+      .then(() => {
+        const likeQuery = `
+          db.posts.updateOne(
+            { _id: ObjectId("${postId}") },
+            { $inc: { likeCount: 1 } }
+          )
+        `;
+        ssh
+          .execCommand(`mongosh testDB --quiet --eval '${likeQuery}'`)
+          .then((result) => {
+            if (result.stderr) {
+              console.error("Error updating likes:", result.stderr);
+              return res.status(500).json({ message: "Failed to update likes." });
+            }
+            res.json({ message: "Like updated successfully!" });
+          })
+          .catch((err) => {
+            console.error("Error executing query:", err);
+            res.status(500).json({ message: "Failed to execute query." });
+          });
+      })
+      .catch((err) => {
+        console.error("SSH connection error:", err);
+        res.status(500).json({ message: "Database connection error." });
+      });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "An unexpected error occurred." });
+  }
+});
+
+
+
 module.exports = router;
