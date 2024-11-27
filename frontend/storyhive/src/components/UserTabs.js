@@ -2,6 +2,7 @@ import { useState } from "react";
 import Postv3 from "./Postv3.js";
 import CreatePostButton from "./CreatePostButton";
 import "../css/userTabs.css";
+import UsersFeed from "./UsersFeed.js";
 
 export default function UserTabs() {
   const [activeSection, setActiveSection] = useState("posts");
@@ -17,7 +18,7 @@ export default function UserTabs() {
       {/* Buttons tab */}
       <div className="userTabs">
         {/* Likes button */}
-        <button onClick={() => setActiveSection("likes")}>Likes</button>
+        <button onClick={() => setActiveSection("Feed")}>Feed</button>
 
         {/* Posts button */}
         <button onClick={() => setActiveSection("posts")}>Posts</button>
@@ -27,10 +28,9 @@ export default function UserTabs() {
       </div>
 
       {/* Content that shows up when you click on "Likes" */}
-      {activeSection === "likes" && (
+      {activeSection === "Feed" && (
         <div className="content">
-          <h2 className="text-2xl">Likes</h2>
-          <p>This is the content for Likes.</p>
+          <UsersFeed />
         </div>
       )}
 
