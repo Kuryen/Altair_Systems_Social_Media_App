@@ -25,3 +25,15 @@
 .postStatsContainer{
     @apply p-4 flex justify-between items-center;
 }
+
+.postStatButtons{
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded hover:underline
+}
+
+.postLikeButton{
+    @apply py-2 px-4 font-bold rounded bg-blue-500 text-white
+}
+
+.postUnlikeButton{
+    @apply py-2 px-4 font-bold rounded bg-red-500 text-white
+}
