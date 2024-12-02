@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import "../css/posts.css";
 
 const UsersFeed = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [likedPosts, setLikedPosts] = useState(Array(posts.length).fill(false));
 
   useEffect(() => {
     const fetchAllPosts = async () => {
@@ -33,9 +35,17 @@ const UsersFeed = () => {
       if (response.ok) {
         // Update the like count locally
         const updatedPosts = [...posts];
-        updatedPosts[index].likeCount =
-          parseInt(updatedPosts[index].likeCount) + 1;
+        if (likedPosts[index]) {
+          updatedPosts[index].likeCount =
+            parseInt(updatedPosts[index].likeCount) - 1;
+        } else {
+          updatedPosts[index].likeCount =
+          parseInt(updatedPosts[index].likeCount) + 1; 
+        }
         setPosts(updatedPosts);
+        const updatedLikedPosts = [...likedPosts];
+        updatedLikedPosts[index] = !updatedLikedPosts[index]; // Toggle the like status for the specific post
+        setLikedPosts(updatedLikedPosts);
       } else {
         console.error("Failed to like the post");
       }
@@ -49,53 +59,61 @@ const UsersFeed = () => {
   }
 
   return (
-    <div className="w-full mt-6">
-      <div className="mt-4 max-h-80 overflow-auto bg-orange-100 p-4 rounded-lg">
+    <div className="feedContainer">
+      <div className="feed">
         {posts.length === 0 ? (
           <p className="text-gray-500">No posts available.</p>
         ) : (
           posts.map((post, index) => (
             <div
               key={post._id}
-              className="bg-gray-100 shadow-md rounded-lg mb-4"
+              className="postContentContainer"
             >
               {/* User Information */}
-              <div className="flex items-center border-b border-gray-300 p-4">
+              <div className="userInfoContainer">
                 <span className="font-bold text-gray-800">
                   {post.userID.name || post.userID || "Unknown User"}
                 </span>
               </div>
 
               {/* Post Content */}
-              <div className="p-4 border-b border-gray-300">
+              <div className="postContent">
                 {post.textContent && (
-                  <p className="text-gray-800 text-lg mt-2">{post.textContent}</p>
+                  <p className="text-gray-800 text-lg mt-2">
+                    {post.textContent}
+                  </p>
                 )}
                 {post.media && post.media.trim() !== "" && (
                   <img
                     src={post.media}
                     alt="Post Media"
-                    className="mt-2 rounded-md w-full h-auto"
+                    className="media"
                   />
                 )}
               </div>
 
               {/* Stats and Action Buttons */}
-              <div className="p-4 flex justify-between items-center">
+              <div className="postStatsContainer">
                 <div className="text-gray-500">
                   <span className="mr-2">{post.likeCount || 0} Likes</span>
-                  <span className="mr-2">{post.commentCount || 0} Comments</span>
+                  <span className="mr-2">
+                    {post.commentCount || 0} Comments
+                  </span>
                   <span>{post.sharesCount || 0} Shares</span>
                 </div>
                 <div>
                   <button
-                    className="text-blue-500 hover:underline"
+                    className={`${
+                      likedPosts[index]
+                        ? "postUnlikeButton"
+                        : "postLikeButton"
+                    } `}
                     onClick={() => handleLike(post._id, index)}
                   >
-                    Like
+                    {likedPosts[index] ? "Unlike" : "Like"}
                   </button>
-                  <button className="text-blue-500 hover:underline ml-4">Comment</button>
-                  <button className="text-blue-500 hover:underline ml-4">Share</button>
+                  <button className="postStatButtons">Comment</button>
+                  <button className="postStatButtons">Share</button>
                 </div>
               </div>
             </div>
