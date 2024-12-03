@@ -158,9 +158,10 @@ export default function Profile() {
           <h3>Storyhive</h3>
           <div className="navBar">
             <p>Hello, {profileUsername}</p>
-            <p className="logoutButton" onClick={handleLogout}>
-            Logout
-            </p>
+            <p>HIVE</p>
+            <p>BUZZ</p>
+            <p>BLOOM</p>
+            <p>Settings</p>
           </div>
         </div>
 
