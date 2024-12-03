@@ -28,7 +28,7 @@ function Chat() {
     }
   };
 
-  // Listen for new chat messages from the WebSocket
+  // Listen for new chat messages from the WebSocket.
   useEffect(() => {
     if (!socket.connected) {
       socket.connect();
