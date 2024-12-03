@@ -115,15 +115,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 150px; /* Ensure this matches your profile picture dimensions */
-  height: 150px; /* Ensure this matches your profile picture dimensions */
-  border-radius: 50%; /* Circle shape */
-  background-color: #e5ac3f; /* Adjust to match the surrounding color scheme */
+  width: 150px; 
+  height: 150px; 
+  border-radius: 50%; 
+  background-color: #e5ac3f; 
 }
 
 .profilePic .usernameFallbackContainer h6 {
   margin: 0;
-  font-size: 1.2rem; /* Adjust size as needed */
-  color: black !important; /* Use !important to override other styles */
-  font-weight: bold; /* Optional: add emphasis */
+  font-size: 1.2rem; 
+  color: black !important; 
+  font-weight: bold; 
+}
+
+.logoutButton {
+  @apply text-white text-[11px] font-light; 
+  cursor: pointer; 
+}
+
+.logoutButton:hover {
+  text-decoration: underline; 
 }

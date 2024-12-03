@@ -134,6 +134,16 @@ export default function Profile() {
     });
   };
 
+  //handle user logout
+  const handleLogout = () => {
+    // Clear session or authentication tokens (example using localStorage)
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userId');
+    
+    // Redirect to the login page
+    navigate('/');
+  };
+
   return (
     <div className="profilePageContainer">
       {/* Friends List - Left Side */}
@@ -152,6 +162,9 @@ export default function Profile() {
             <p>BUZZ</p>
             <p>BLOOM</p>
             <p>Settings</p>
+            <p className="logoutButton" onClick={handleLogout}>
+            Logout
+            </p>
           </div>
         </div>
 
