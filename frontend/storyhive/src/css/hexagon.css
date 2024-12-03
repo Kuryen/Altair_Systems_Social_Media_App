@@ -3,10 +3,10 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 4 columns in the first row */
   justify-content: center;
+  transform: translateX(5px);
 }
 
 .container .hexagonArea {
-  transform: translateX(-10px);
   display: contents;
 }
 
@@ -14,7 +14,7 @@
   position: relative;
   width: 75px; /*keep ratio of width to height*/
   height: 93.75px; /*keep ratio of width to height */
-  margin: -5px 5px;
+  margin: -8px 10px;
   clip-path: polygon(0 25%, 50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%);
   background: #e5ac3f;
   display: flex;
@@ -23,7 +23,7 @@
   flex-direction: column;
   cursor: pointer;
   transition: 0.2s;
-  margin-left: -1px;
+  margin-left: -2px;
 }
 
 .container .hexagonArea .hexagon img {

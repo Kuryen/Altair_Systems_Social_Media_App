@@ -25,3 +25,23 @@
 .postStatsContainer{
     @apply p-4 flex justify-between items-center;
 }
+
+.postStatButtons{
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 mr-1 rounded hover:underline
+}
+
+.postLikeButton{
+    @apply py-1 px-3 mr-1 font-bold rounded bg-blue-500 text-white hover:underline hover:bg-blue-700
+}
+
+.postUnlikeButton{
+    @apply py-1 px-3 mr-1 font-bold rounded bg-red-500 text-white hover:underline hover:bg-red-700
+}
+
+.feedContainer{
+    @apply w-full mt-6
+}
+
+.feedContainer .feed{
+    @apply mt-4 max-h-80 overflow-auto bg-orange-100 p-4 rounded-lg
+}

@@ -51,15 +51,16 @@ export default function CreatePostButton({ onPostCreated }) {
       {showForm && (
         <div className="formContainer">
           <form onSubmit={handleSubmit}>
-            <div>
+            <div class="textFieldContainer">
               <textarea
+                className="textField"
                 value={postContent}
                 onChange={(e) => setPostContent(e.target.value)}
                 placeholder="What do you want to share?"
                 required
               />
             </div>
-            <div className="mt-3">
+            <div className="submitPostButton">
               <button type="submit">Post</button>
             </div>
           </form>

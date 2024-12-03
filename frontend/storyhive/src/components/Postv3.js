@@ -94,9 +94,8 @@ export default function Post() {
               <span>${post.sharesCount || 0} Shares</span>
             </div>
             <div>
-              <button class="text-blue-500 hover:underline">Like</button>
-              <button class="text-blue-500 hover:underline ml-4">Comment</button>
-              <button class="text-blue-500 hover:underline ml-4">Share</button>
+              <button class="postStatButtons">Comment</button>
+              <button class="postStatButtons">Share</button>
             </div>`;
           postElement.appendChild(postActions);
 
