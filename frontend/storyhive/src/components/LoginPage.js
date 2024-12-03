@@ -60,7 +60,7 @@ export default function LoginPage({ onSwitchLoginClick }) {
         </form>
 
         {/* Next button */}
-        <div className="left-[701px] top-[455px] submitButtonContainer">
+        <div className="left-[851px] top-[500px] submitButtonContainer">
           <button
             type="submit"
             onClick={async (event) => {
@@ -105,12 +105,12 @@ export default function LoginPage({ onSwitchLoginClick }) {
         </div>
 
         {/* forgot password link */}
-        <a
+        {/* <a
           href="#"
           className="left-[1005px] top-[385px] forgotPassword"
         >
           FORGOT PASSWORD
-        </a>
+        </a> */}
 
         {/* bee image */}
         <img

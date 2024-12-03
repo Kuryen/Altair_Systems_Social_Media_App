@@ -158,10 +158,6 @@ export default function Profile() {
           <h3>Storyhive</h3>
           <div className="navBar">
             <p>Hello, {profileUsername}</p>
-            <p>HIVE</p>
-            <p>BUZZ</p>
-            <p>BLOOM</p>
-            <p>Settings</p>
             <p className="logoutButton" onClick={handleLogout}>
             Logout
             </p>
@@ -203,8 +199,6 @@ export default function Profile() {
             <div className="profileInteractContainer">
               {currentUser ? (
                 <>
-                  <button>Edit Profile</button>
-                  <button>Share Profile</button>
                 </>
               ) : (
                 <button onClick={handleBackToOwnProfile}>
