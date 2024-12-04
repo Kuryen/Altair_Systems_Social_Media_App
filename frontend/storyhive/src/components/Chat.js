@@ -18,17 +18,17 @@ function Chat() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const input = document.getElementById("input");
-    if (input.value != "" && selectedUser != null) {
+    if (input.value !== "" && selectedUser !== null) {
       const message = `${chatUsername}: ${input.value}`;
       const roomName = [chatUsername, selectedUser].sort().join("_");
       socket.emit("chat message", { message, room: roomName }); // Send message to WebSocket server
       input.value = ""; // Clear input field
-    }else{
+    } else {
       alert("You must select a user to chat with and you cannot send an empty message!");
     }
   };
 
-  // Listen for new chat messages from the WebSocket
+  // Listen for new chat messages from the WebSocket.
   useEffect(() => {
     if (!socket.connected) {
       socket.connect();
@@ -60,11 +60,11 @@ function Chat() {
     };
   }, [chatUsername]);
 
-  // New function to handle user selection
+  // Handle user selection
   const handleUserSelect = (user) => {
-    if(user == chatUsername){
+    if (user === chatUsername) {
       alert("You cannot chat with yourself. Please select a different user!");
-    }else{
+    } else {
       console.log("Selected user:", user);
       setSelectedUser(user);
       setCurrentChatUser(user); // Set the current chat user
@@ -72,7 +72,6 @@ function Chat() {
   };
 
   const handleNavigateToProfile = () => {
-    //navigate back to profile.js
     navigate("/profile");
   };
 
@@ -119,19 +118,27 @@ function Chat() {
           </div>
 
           {/* Chat Input */}
-          <div className="chatInputContainer">
-            <form className="chatSendBar" id="form" onSubmit={handleSubmit}>
-              <input
-                className="chatInputField"
-                id="input"
-                autoComplete="off"
-                placeholder="Type your message..."
-              />
-              <button className="chatSendButton" type="submit">
-                Send
-              </button>
-            </form>
-          </div>
+          {selectedUser && selectedUser !== chatUsername ? (
+            <div className="chatInputContainer">
+              <form className="chatSendBar" id="form" onSubmit={handleSubmit}>
+                <input
+                  className="chatInputField"
+                  id="input"
+                  autoComplete="off"
+                  placeholder="Type your message..."
+                />
+                <button className="chatSendButton" type="submit">
+                  Send
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div className="chatInputContainer">
+              <p className="noChatSelectedMessage">
+                Select a user to start a conversation.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

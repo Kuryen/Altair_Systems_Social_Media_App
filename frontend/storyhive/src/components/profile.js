@@ -134,6 +134,16 @@ export default function Profile() {
     });
   };
 
+  //handle user logout
+  const handleLogout = () => {
+    // Clear session or authentication tokens (example using localStorage)
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userId');
+    
+    // Redirect to the login page
+    navigate('/');
+  };
+
   return (
     <div className="profilePageContainer">
       {/* Friends List - Left Side */}
@@ -148,10 +158,9 @@ export default function Profile() {
           <h3>Storyhive</h3>
           <div className="navBar">
             <p>Hello, {profileUsername}</p>
-            <p>HIVE</p>
-            <p>BUZZ</p>
-            <p>BLOOM</p>
-            <p>Settings</p>
+            <p className="logoutButton" onClick={handleLogout}>
+            Logout
+            </p>
           </div>
         </div>
 
@@ -190,8 +199,6 @@ export default function Profile() {
             <div className="profileInteractContainer">
               {currentUser ? (
                 <>
-                  <button>Edit Profile</button>
-                  <button>Share Profile</button>
                 </>
               ) : (
                 <button onClick={handleBackToOwnProfile}>
