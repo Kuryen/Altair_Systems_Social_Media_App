@@ -90,12 +90,8 @@ export default function Post() {
           postActions.innerHTML = `
             <div class="text-gray-500">
               <span class="mr-2">${post.likeCount || 0} Likes</span>
-              <span class="mr-2">${post.commentCount || 0} Comments</span>
-              <span>${post.sharesCount || 0} Shares</span>
             </div>
             <div>
-              <button class="postStatButtons">Comment</button>
-              <button class="postStatButtons">Share</button>
             </div>`;
           postElement.appendChild(postActions);
 

@@ -22,9 +22,6 @@ export default function UserTabs() {
 
         {/* Posts button */}
         <button onClick={() => setActiveSection("posts")}>Posts</button>
-
-        {/* Replies button */}
-        <button onClick={() => setActiveSection("replies")}>Replies</button>
       </div>
 
       {/* Content that shows up when you click on "Likes" */}
