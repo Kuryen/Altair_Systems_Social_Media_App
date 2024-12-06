@@ -63,7 +63,8 @@ export default function Post() {
               createdAt = date.toLocaleString();
             }
           }
-          userInfo.innerHTML = `<span class="font-bold text-gray-800">${userName}</span>`;
+          userInfo.innerHTML = `<span class="font-bold text-gray-800">${userName}</span>
+            <span class="text-gray-500 text-sm ml-2">| Created At: ${createdAt}</span>`;
           postElement.appendChild(userInfo);
 
           // Post content

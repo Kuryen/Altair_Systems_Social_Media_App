@@ -74,6 +74,13 @@ const UsersFeed = () => {
                 <span className="font-bold text-gray-800">
                   {post.userID.name || post.userID || "Unknown User"}
                 </span>
+                {/* Display the createdAt date */}
+                <span className="text-gray-500 text-sm ml-2">
+                  | Created At:{" "}
+                  {post.createdAt
+                    ? new Date(post.createdAt).toLocaleString()
+                    : "Date Unavailable"}
+                </span>
               </div>
 
               {/* Post Content */}
