@@ -217,12 +217,8 @@ export default function Profile() {
             </p>
             <div className="stats">
               <div className="statDisplay">
-                <p>210</p>
-                <h1>Followers</h1>
               </div>
               <div className="statDisplay">
-                <p>200</p>
-                <h1>Following</h1>
               </div>
               {currentUser && (
                 <div className="statDisplay">

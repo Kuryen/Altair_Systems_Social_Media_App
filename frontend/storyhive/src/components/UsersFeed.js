@@ -74,6 +74,13 @@ const UsersFeed = () => {
                 <span className="font-bold text-gray-800">
                   {post.userID.name || post.userID || "Unknown User"}
                 </span>
+                {/* Display the createdAt date */}
+                <span className="text-gray-500 text-sm ml-2">
+                  | Created At:{" "}
+                  {post.createdAt
+                    ? new Date(post.createdAt).toLocaleString()
+                    : "Date Unavailable"}
+                </span>
               </div>
 
               {/* Post Content */}
@@ -96,10 +103,10 @@ const UsersFeed = () => {
               <div className="postStatsContainer">
                 <div className="text-gray-500">
                   <span className="mr-2">{post.likeCount || 0} Likes</span>
-                  <span className="mr-2">
+                  {/* <span className="mr-2">
                     {post.commentCount || 0} Comments
                   </span>
-                  <span>{post.sharesCount || 0} Shares</span>
+                  <span>{post.sharesCount || 0} Shares</span> */}
                 </div>
                 <div>
                   <button
@@ -112,8 +119,6 @@ const UsersFeed = () => {
                   >
                     {likedPosts[index] ? "Unlike" : "Like"}
                   </button>
-                  <button className="postStatButtons">Comment</button>
-                  <button className="postStatButtons">Share</button>
                 </div>
               </div>
             </div>

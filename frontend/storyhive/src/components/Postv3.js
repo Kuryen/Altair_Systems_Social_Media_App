@@ -63,7 +63,8 @@ export default function Post() {
               createdAt = date.toLocaleString();
             }
           }
-          userInfo.innerHTML = `<span class="font-bold text-gray-800">${userName}</span>`;
+          userInfo.innerHTML = `<span class="font-bold text-gray-800">${userName}</span>
+            <span class="text-gray-500 text-sm ml-2">| Created At: ${createdAt}</span>`;
           postElement.appendChild(userInfo);
 
           // Post content
@@ -90,12 +91,8 @@ export default function Post() {
           postActions.innerHTML = `
             <div class="text-gray-500">
               <span class="mr-2">${post.likeCount || 0} Likes</span>
-              <span class="mr-2">${post.commentCount || 0} Comments</span>
-              <span>${post.sharesCount || 0} Shares</span>
             </div>
             <div>
-              <button class="postStatButtons">Comment</button>
-              <button class="postStatButtons">Share</button>
             </div>`;
           postElement.appendChild(postActions);
 
