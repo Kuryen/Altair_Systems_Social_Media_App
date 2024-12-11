@@ -1,5 +1,11 @@
 import React from "react";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  act,
+  waitFor,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Profile from "../src/components/profile";
 import "@testing-library/jest-dom/extend-expect";
@@ -25,6 +31,13 @@ function validUsername_test(username) {
     return false;
   }
 }
+
+// Mock navigate for routing
+const mockNavigate = jest.fn();
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockNavigate,
+}));
 
 // Mocked Components
 jest.mock("../src/components/UserTabs", () => () => (
@@ -90,6 +103,7 @@ describe("Profile Utility Functions", () => {
 
 describe("Profile Component", () => {
   beforeEach(() => {
+    localStorage.clear();
     localStorage.setItem("elementData", "loggedUser");
     fetch.mockClear();
   });
@@ -146,5 +160,27 @@ describe("Profile Component", () => {
     });
 
     expect(screen.getByText("No friends to display.")).toBeInTheDocument();
+  });
+
+  test("handles user logout", async () => {
+    await act(async () => {
+      render(
+        <MemoryRouter>
+          <Profile />
+        </MemoryRouter>
+      );
+    });
+
+    // Simulate clicking the logout button
+    const logoutButton = screen.getByText("Logout");
+    fireEvent.click(logoutButton);
+
+    // Check that the correct localStorage key is cleared
+    await waitFor(() => {
+      expect(localStorage.getItem("elementData")).toBeNull();
+    });
+
+    // Verify navigation to the login page
+    expect(mockNavigate).toHaveBeenCalledWith("/");
   });
 });

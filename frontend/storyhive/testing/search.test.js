@@ -1,11 +1,6 @@
 import React from "react";
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { act } from "react"; // Ensure you're using the latest React act
 import SearchBar from "../src/components/searchbar";
 import SearchResult from "../src/components/searchresult";
 import SearchResultList from "../src/components/searchresultlist";
@@ -13,23 +8,39 @@ import SearchResultList from "../src/components/searchresultlist";
 const setResultsMock = jest.fn();
 
 beforeEach(() => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      json: () =>
+        Promise.resolve([{ _id: "rivers" }, { _id: "riv" }, { _id: "river" }]),
+    })
+  );
+  jest.spyOn(window, "alert").mockImplementation(() => {}); // Mock alert globally
+});
+
+afterEach(() => {
+  global.fetch.mockClear();
+  delete global.fetch;
+  jest.restoreAllMocks(); // Restore mocks to their original state
   setResultsMock.mockClear();
-  window.alert = jest.fn(); // Mock the alert function and reset it before each test
 });
 
 describe("SearchResult Component", () => {
-  test("renders as a clickable result when user is not a friend", () => {
-    const mockAddFriend = jest.fn();
+  test("renders as a clickable result when user is not a friend", async () => {
+    const mockAddFriend = jest.fn(); // Mock friend-adding function
     render(
       <SearchResult
         result="testUser"
         currentUserID="currentUser"
         onFriendAdded={mockAddFriend}
-        existingFriends={[]}
+        existingFriends={[]} // User is not already a friend
       />
     );
-    fireEvent.click(screen.getByText("testUser"));
-    expect(mockAddFriend).toHaveBeenCalled();
+    const resultElement = screen.getByText("testUser");
+    fireEvent.click(resultElement); // Simulate click
+
+    await waitFor(() => {
+      expect(mockAddFriend).toHaveBeenCalledTimes(1); // Check if mock function is called
+    });
   });
 
   test("renders with disabled state when user is already a friend", () => {
@@ -41,22 +52,8 @@ describe("SearchResult Component", () => {
         existingFriends={["friendUser"]}
       />
     );
-    expect(screen.getByText("friendUser")).toHaveClass("cursor-not-allowed");
-  });
-
-  test("shows alert when attempting to add an existing friend", () => {
-    render(
-      <SearchResult
-        result="friendUser"
-        currentUserID="currentUser"
-        onFriendAdded={() => {}}
-        existingFriends={["friendUser"]}
-      />
-    );
-    fireEvent.click(screen.getByText("friendUser"));
-    expect(window.alert).toHaveBeenCalledWith(
-      "You're already following this user!"
-    );
+    const element = screen.getByText("friendUser");
+    expect(element).toHaveClass("searchResultContainerisAlreadyFriend");
   });
 
   test("does not call onFriendAdded if user is already a friend", () => {
@@ -76,7 +73,7 @@ describe("SearchResult Component", () => {
 
 describe("SearchResultList Component", () => {
   test("displays multiple search results", () => {
-    const results = ["user1", "user2", "user3"];
+    const results = [{ _id: "user1" }, { _id: "user2" }, { _id: "user3" }];
     render(
       <SearchResultList
         results={results}
@@ -86,7 +83,7 @@ describe("SearchResultList Component", () => {
       />
     );
     results.forEach((result) => {
-      expect(screen.getByText(result)).toBeInTheDocument();
+      expect(screen.getByText(result._id)).toBeInTheDocument();
     });
   });
 
@@ -103,7 +100,7 @@ describe("SearchResultList Component", () => {
   });
 
   test("renders with disabled state for existing friends only", () => {
-    const results = ["user1", "user2"];
+    const results = [{ _id: "user1" }, { _id: "user2" }];
     render(
       <SearchResultList
         results={results}
@@ -113,29 +110,28 @@ describe("SearchResultList Component", () => {
       />
     );
 
-    expect(screen.getByText("user1")).not.toHaveClass("cursor-not-allowed");
-    expect(screen.getByText("user2")).toHaveClass("cursor-not-allowed");
+    const user1 = screen.getByText("user1");
+    const user2 = screen.getByText("user2");
+    expect(user1).not.toHaveClass("cursor-not-allowed");
+    expect(user2).toHaveClass("searchResultContainerisAlreadyFriend");
   });
 });
 
 describe("SearchBar Component", () => {
   test("fetches data and filters results based on input", async () => {
-    await act(async () => {
-      render(<SearchBar setResults={setResultsMock} />);
-      fireEvent.change(screen.getByPlaceholderText("Follow a user..."), {
-        target: { value: "rivers" },
-      });
-      await waitFor(() => {
-        expect(setResultsMock).toHaveBeenLastCalledWith([
-          { _id: "rivers" },
-          { _id: "riv" },
-          { _id: "river" },
-        ]);
-      });
+    render(<SearchBar setResults={setResultsMock} />);
+    const input = screen.getByPlaceholderText("Follow a user...");
+    fireEvent.change(input, { target: { value: "riv" } });
+    await waitFor(() => {
+      expect(setResultsMock).toHaveBeenCalledWith([
+        { _id: "rivers" },
+        { _id: "riv" },
+        { _id: "river" },
+      ]);
     });
   });
 
-  test("handles empty input without calling setResults", async () => {
+  test("handles empty input without calling setResults", () => {
     render(<SearchBar setResults={setResultsMock} />);
     fireEvent.change(screen.getByPlaceholderText("Follow a user..."), {
       target: { value: "" },

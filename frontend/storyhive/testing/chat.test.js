@@ -1,5 +1,11 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  act,
+  waitFor,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Chat from "../src/components/Chat";
 import socket from "../src/socket";
@@ -25,22 +31,91 @@ describe("Chat Component", () => {
         <Chat />
       </MemoryRouter>
     );
-    expect(
-      screen.getByPlaceholderText("Type your message...")
-    ).toBeInTheDocument();
-    expect(screen.getByText("Send")).toBeInTheDocument();
     expect(screen.getByText("Online Users")).toBeInTheDocument();
+    expect(screen.getByText("Exit Chatroom")).toBeInTheDocument();
   });
 
-  test("displays an alert if no message or recipient is selected", () => {
-    window.alert = jest.fn();
+  test("chat input is hidden until a user is selected", async () => {
     render(
       <MemoryRouter>
         <Chat />
       </MemoryRouter>
     );
 
-    fireEvent.click(screen.getByText("Send")); // Click Send without entering a message or selecting a recipient
+    expect(
+      screen.getByText("Select a user to start a conversation.")
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByPlaceholderText("Type your message...")
+    ).not.toBeInTheDocument();
+
+    act(() => {
+      socket.on.mock.calls.forEach(([event, callback]) => {
+        if (event === "updateOnlineUsers") callback(["User2"]);
+      });
+    });
+
+    const user2 = await screen.findByText("User2");
+    fireEvent.click(user2);
+
+    expect(
+      screen.getByPlaceholderText("Type your message...")
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Select a user to start a conversation.")
+    ).not.toBeInTheDocument();
+  });
+
+  test("displays an alert if no message or recipient is selected", async () => {
+    window.alert = jest.fn();
+
+    render(
+      <MemoryRouter>
+        <Chat />
+      </MemoryRouter>
+    );
+
+    // Ensure initial state message is displayed
+    expect(
+      screen.getByText("Select a user to start a conversation.")
+    ).toBeInTheDocument();
+
+    // Verify "Send" button is not visible initially
+    const sendButton = screen.queryByText("Send");
+    expect(sendButton).toBeNull();
+
+    // Simulate selecting a user to make "Send" button appear
+    const mockUser = "User2";
+    const mockCallback = jest.fn();
+    const mockOnlineUsers = [mockUser];
+
+    // Mock the `updateOnlineUsers` event to include a user
+    socket.on.mockImplementation((event, callback) => {
+      if (event === "updateOnlineUsers") {
+        callback(mockOnlineUsers);
+      }
+    });
+
+    // Trigger the updateOnlineUsers event
+    socket.on.mock.calls.forEach(([event, callback]) => {
+      if (event === "updateOnlineUsers") callback(mockOnlineUsers);
+    });
+
+    // Wait for the user to appear in the online users list
+    const onlineUser = await screen.findByText(mockUser);
+    expect(onlineUser).toBeInTheDocument();
+
+    // Simulate selecting the user
+    fireEvent.click(onlineUser);
+
+    // Check that the "Send" button is now visible
+    const sendButtonAfterSelection = screen.getByText("Send");
+    expect(sendButtonAfterSelection).toBeInTheDocument();
+
+    // Click the "Send" button without entering a message
+    fireEvent.click(sendButtonAfterSelection);
+
+    // Assert the alert is called with the correct message
     expect(window.alert).toHaveBeenCalledWith(
       "You must select a user to chat with and you cannot send an empty message!"
     );
@@ -53,29 +128,19 @@ describe("Chat Component", () => {
       </MemoryRouter>
     );
 
-    // Mock the `updateOnlineUsers` event to add User2
-    socket.on.mockImplementation((event, callback) => {
-      if (event === "updateOnlineUsers") {
-        callback(["User2"]);
-      }
+    act(() => {
+      socket.on.mock.calls.forEach(([event, callback]) => {
+        if (event === "updateOnlineUsers") callback(["User2"]);
+      });
     });
 
-    // Manually trigger the updateOnlineUsers event
-    socket.on.mock.calls.forEach(([event, callback]) => {
-      if (event === "updateOnlineUsers") callback(["User2"]);
-    });
-
-    // Wait for "User2" to appear in the online users list
     const user2 = await screen.findByText("User2");
-    expect(user2).toBeInTheDocument();
+    fireEvent.click(user2);
 
-    // Simulate sending a message to User2
     const input = screen.getByPlaceholderText("Type your message...");
     fireEvent.change(input, { target: { value: "Hello" } });
-    fireEvent.click(user2); // Select User2 as the recipient
-    fireEvent.click(screen.getByText("Send")); // Click send button
+    fireEvent.click(screen.getByText("Send"));
 
-    // Ensure message is emitted via socket with correct format
     expect(socket.emit).toHaveBeenCalledWith("chat message", {
       message: "User1: Hello",
       room: expect.any(String),
@@ -91,21 +156,14 @@ describe("Chat Component", () => {
       </MemoryRouter>
     );
 
-    // Mock the `updateOnlineUsers` event to include the user itself
-    socket.on.mockImplementation((event, callback) => {
-      if (event === "updateOnlineUsers") {
-        callback(["User1"]);
-      }
+    act(() => {
+      socket.on.mock.calls.forEach(([event, callback]) => {
+        if (event === "updateOnlineUsers") callback(["User1"]);
+      });
     });
 
-    // Manually trigger the updateOnlineUsers event
-    socket.on.mock.calls.forEach(([event, callback]) => {
-      if (event === "updateOnlineUsers") callback(["User1"]);
-    });
-
-    // Wait for "User1" to appear in the online users list
     const user1 = await screen.findByText("User1");
-    fireEvent.click(user1); // Attempt to select self
+    fireEvent.click(user1);
 
     expect(window.alert).toHaveBeenCalledWith(
       "You cannot chat with yourself. Please select a different user!"
@@ -119,19 +177,12 @@ describe("Chat Component", () => {
       </MemoryRouter>
     );
 
-    // Mock the `chat message` event to receive a new message
-    socket.on.mockImplementation((event, callback) => {
-      if (event === "chat message") {
-        callback("User2: Hello!");
-      }
+    act(() => {
+      socket.on.mock.calls.forEach(([event, callback]) => {
+        if (event === "chat message") callback("User2: Hello!");
+      });
     });
 
-    // Manually trigger the `chat message` event
-    socket.on.mock.calls.forEach(([event, callback]) => {
-      if (event === "chat message") callback("User2: Hello!");
-    });
-
-    // Wait for the new message to appear in the chat
     const message = await screen.findByText("User2: Hello!");
     expect(message).toBeInTheDocument();
   });

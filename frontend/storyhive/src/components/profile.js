@@ -137,6 +137,7 @@ export default function Profile() {
   //handle user logout
   const handleLogout = () => {
     // Clear session or authentication tokens (example using localStorage)
+    localStorage.removeItem("elementData");
     localStorage.removeItem('userToken');
     localStorage.removeItem('userId');
     

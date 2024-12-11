@@ -1,3 +1,4 @@
+import React from 'react';
 import SearchResult from "./searchresult";
 import "../css/searchbar.css";
 

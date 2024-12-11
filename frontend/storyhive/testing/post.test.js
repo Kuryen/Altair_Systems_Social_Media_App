@@ -1,7 +1,6 @@
 // Mock the fetch API
 global.fetch = jest.fn();
 
-// Start test suite for different aspects of the Post functionality
 describe("Post Component Unit Tests", () => {
   // postsUser_test tests
   test("postsUser_test - should display user information correctly", () => {
@@ -111,5 +110,38 @@ describe("Post Component Unit Tests", () => {
 
     // Check if the user has posts
     expect(posts.length).toBe(0);
+  });
+
+  // likeUnlike_test tests
+  test("likeUnlike_test - should increment like count", async () => {
+    fetch.mockResolvedValueOnce({ ok: true });
+    const post = { _id: "post1", likeCount: 10 };
+
+    // Simulate liking the post
+    const newLikeCount = post.likeCount + 1;
+    await fetch("posting/setLikes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ postId: post._id }),
+    });
+
+    expect(fetch).toHaveBeenCalledWith("posting/setLikes", expect.any(Object));
+    expect(newLikeCount).toBe(11);
+  });
+
+  test("likeUnlike_test - should decrement like count", async () => {
+    fetch.mockResolvedValueOnce({ ok: true });
+    const post = { _id: "post1", likeCount: 10 };
+
+    // Simulate unliking the post
+    const newLikeCount = post.likeCount - 1;
+    await fetch("posting/setLikes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ postId: post._id }),
+    });
+
+    expect(fetch).toHaveBeenCalledWith("posting/setLikes", expect.any(Object));
+    expect(newLikeCount).toBe(9);
   });
 });

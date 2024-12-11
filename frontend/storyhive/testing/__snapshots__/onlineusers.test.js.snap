@@ -3,26 +3,24 @@
 exports[`OnlineUsers Component matches snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="w-1/4 bg-gray-100 p-4"
+    class="onlineUsersContainer"
   >
-    <h2
-      class="text-xl font-bold mb-2"
-    >
+    <h2>
       Online Users
     </h2>
     <ul>
       <li
-        class="cursor-pointer hover:bg-blue-200 p-2 rounded"
+        class="onlineUser"
       >
         User1
       </li>
       <li
-        class="cursor-pointer hover:bg-blue-200 p-2 rounded"
+        class="onlineUser"
       >
         User2
       </li>
       <li
-        class="cursor-pointer hover:bg-blue-200 p-2 rounded"
+        class="onlineUser"
       >
         User3
       </li>
